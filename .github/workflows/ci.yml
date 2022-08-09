@@ -1,0 +1,34 @@
+name: ci
+
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up Go
+        uses: actions/setup-go@v3
+        with:
+          go-version: 1.18
+
+      - name: Build
+        run: bash ./scripts/build.sh
+
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: build-artifact
+          path: output/ttm.*
+
+      - name: Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: lastest
+          tag_name: latest
+          files: |
+            output/ttm.*
