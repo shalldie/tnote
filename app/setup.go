@@ -1,32 +1,50 @@
 package app
 
-import "github.com/rivo/tview"
+import (
+	"unicode"
+
+	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
+)
 
 var (
-	app          *tview.Application
-	projectPanel *ProjectPanel
-	taskPanel    *TaskPanel
-	detailPanel  *DetailPanel
-	statusBar    *StatusBar
+	app             *tview.Application
+	layout, content *tview.Flex
+	projectPanel    *ProjectPanel
+	taskPanel       *TaskPanel
+	detailPanel     *DetailPanel
+	statusBar       *StatusBar
 )
 
 func Setup() {
+	// 应用
+	app = tview.NewApplication().EnableMouse(true)
+
+	// panel
 	projectPanel = NewProjectPanel()
 	taskPanel = NewTaskPanel()
 	detailPanel = NewDetailPanel()
 
+	// layout
 	prepareLayout(projectPanel, taskPanel, detailPanel)
+
+	// shortcuts
+	setKeyboardShortcuts()
+
+	if err := app.SetRoot(layout, true).SetFocus(projectPanel).Run(); err != nil {
+		panic(err)
+	}
 }
 
 func prepareLayout(col0 tview.Primitive, col1 tview.Primitive, col2 tview.Primitive) {
 
-	app = tview.NewApplication().EnableMouse(true)
-
-	layout := tview.NewFlex().SetDirection(tview.FlexRow)
+	// 容器 - 上下
+	layout = tview.NewFlex().SetDirection(tview.FlexRow)
 
 	splitItem := createSplitItem()
 
-	content := tview.NewFlex().
+	// 容器 - 上 - 左中右
+	content = tview.NewFlex().
 		AddItem(splitItem, 1, 1, false).
 		AddItem(col0, 30, 1, false).
 		AddItem(splitItem, 1, 1, false).
@@ -35,6 +53,7 @@ func prepareLayout(col0 tview.Primitive, col1 tview.Primitive, col2 tview.Primit
 		AddItem(col2, 0, 1, false).
 		AddItem(splitItem, 1, 1, false)
 
+	// 容器 - 下
 	statusBar = newStatusBar(app)
 
 	layout.AddItem(content, 0, 1, false).
@@ -45,8 +64,40 @@ func prepareLayout(col0 tview.Primitive, col1 tview.Primitive, col2 tview.Primit
 				AddItem(splitItem, 2, 1, false),
 			1, 1, false)
 
-	if err := app.SetRoot(layout, true).SetFocus(content).Run(); err != nil {
-		panic(err)
-	}
+}
 
+func setKeyboardShortcuts() *tview.Application {
+	return app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+		if ignoreKeyEvt() {
+			return event
+		}
+
+		// Global shortcuts
+		switch unicode.ToLower(event.Rune()) {
+		case 'p':
+			app.SetFocus(projectPanel)
+			// contents.RemoveItem(taskDetailPane)
+			return nil
+		// case 'q':
+		case 't':
+			app.SetFocus(taskPanel)
+			// contents.RemoveItem(taskDetailPane)
+			return nil
+		}
+
+		// Handle based on current focus. Handlers may modify event
+		switch {
+		case projectPanel.HasFocus():
+			event = projectPanel.handleShortcuts(event)
+			// case taskPane.HasFocus():
+			// 	event = taskPane.handleShortcuts(event)
+			// 	if event != nil && projectDetailPane.isShowing() {
+			// 		event = projectDetailPane.handleShortcuts(event)
+			// 	}
+			// case taskDetailPane.HasFocus():
+			// 	event = taskDetailPane.handleShortcuts(event)
+		}
+
+		return event
+	})
 }

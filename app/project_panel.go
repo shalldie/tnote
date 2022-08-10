@@ -2,6 +2,7 @@ package app
 
 import (
 	"strings"
+	"unicode"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -18,9 +19,14 @@ type ProjectPanel struct {
 }
 
 func NewProjectPanel() *ProjectPanel {
+
+	tcell.Style{}.Underline(true).Background(tcell.ColorBlue)
 	p := &ProjectPanel{
-		Flex:       tview.NewFlex().SetDirection(tview.FlexRow),
-		list:       tview.NewList().ShowSecondaryText(false),
+		Flex: tview.NewFlex().SetDirection(tview.FlexRow),
+		list: tview.NewList().ShowSecondaryText(false).SetHighlightFullLine(true).
+			SetSelectedStyle(
+				tcell.Style{}.Background(tcell.ColorBlue),
+			),
 		newProject: makeLightTextInput(" + [新项目] "),
 	}
 
@@ -31,7 +37,16 @@ func NewProjectPanel() *ProjectPanel {
 	p.list.SetBorderPadding(0, 0, 1, 1)
 	p.newProject.SetBorderPadding(0, 0, 1, 1)
 
-	// 事件
+	// 事件 - list
+	p.SetFocusFunc(func() {
+		app.SetFocus(p.list)
+	})
+	p.list.SetChangedFunc(func(i int, s1, s2 string, r rune) {
+		p.activeProject = p.projects[i]
+		p.SetTitle(p.activeProject.Name)
+	})
+
+	// 事件 - newproject
 	p.newProject.SetDoneFunc(func(key tcell.Key) {
 		switch key {
 		case tcell.KeyEnter:
@@ -72,5 +87,20 @@ func (p *ProjectPanel) addNewProject() {
 	p.loadFromDB()
 	p.newProject.SetText("")
 	app.SetFocus(p)
+}
 
+func (p *ProjectPanel) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
+	switch unicode.ToLower(event.Rune()) {
+	case 'j':
+		p.list.SetCurrentItem(p.list.GetCurrentItem() + 1)
+		return nil
+	case 'k':
+		p.list.SetCurrentItem(p.list.GetCurrentItem() - 1)
+		return nil
+	case 'n':
+		app.SetFocus(p.newProject)
+		return nil
+	}
+
+	return event
 }
