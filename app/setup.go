@@ -25,11 +25,17 @@ func Setup() {
 	taskPanel = NewTaskPanel()
 	detailPanel = NewDetailPanel()
 
+	projectPanel.child = taskPanel
+	taskPanel.parent = projectPanel
+
 	// layout
 	prepareLayout(projectPanel, taskPanel, detailPanel)
 
 	// shortcuts
 	setKeyboardShortcuts()
+
+	// project p.loadFromDB()
+	projectPanel.reset()
 
 	if err := app.SetRoot(layout, true).SetFocus(projectPanel).Run(); err != nil {
 		panic(err)
@@ -89,8 +95,8 @@ func setKeyboardShortcuts() *tview.Application {
 		switch {
 		case projectPanel.HasFocus():
 			event = projectPanel.handleShortcuts(event)
-			// case taskPane.HasFocus():
-			// 	event = taskPane.handleShortcuts(event)
+		case taskPanel.HasFocus():
+			event = taskPanel.handleShortcuts(event)
 			// 	if event != nil && projectDetailPane.isShowing() {
 			// 		event = projectDetailPane.handleShortcuts(event)
 			// 	}

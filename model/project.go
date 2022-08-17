@@ -4,11 +4,13 @@ var projectPrefix = "project_"
 
 type Project struct {
 	*Model
+	TaskIds []string
 }
 
 func NewProject() *Project {
 	p := &Project{
-		NewModel(),
+		Model:   NewModel(),
+		TaskIds: []string{},
 	}
 	p.ID = projectPrefix + p.ID
 	return p

@@ -42,6 +42,26 @@ func Get(key string, sender any) []byte {
 	return data
 }
 
+func GetMany[T any](keys []string, senders []T) {
+	db := LoadDB()
+	defer db.Close()
+
+	gs.ForEach(keys, func(key string, index int) {
+		sender := senders[index]
+
+		data, err := db.Get([]byte(key), nil)
+		if err != nil {
+			panic(err)
+		}
+
+		if reflect.ValueOf(sender).Kind() == reflect.Pointer {
+			decode := gob.NewDecoder(bytes.NewBuffer(data))
+			decode.Decode(sender)
+		}
+
+	})
+}
+
 func Save(key string, sender any) {
 
 	var buffer bytes.Buffer
@@ -76,6 +96,32 @@ func FindKeysLike(patterns ...string) []string {
 			keys = append(keys, key)
 		}
 	}
+	iter.Release()
 
 	return keys
+}
+
+func FindByPattern(patterns ...string) map[string][]byte {
+	db := LoadDB()
+	defer db.Close()
+
+	m := map[string][]byte{}
+
+	iter := db.NewIterator(nil, nil)
+	for iter.Next() {
+		key := string(iter.Key())
+		value := iter.Value()
+
+		matched := gs.Every(patterns, func(pattern string, index int) bool {
+			subMatched, _ := regexp.MatchString(pattern, key)
+			return subMatched
+		})
+
+		if matched {
+			m[key] = gs.Copy(value)
+		}
+	}
+	iter.Release()
+
+	return m
 }
