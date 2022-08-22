@@ -14,7 +14,7 @@ import (
 
 var homeDir, _ = os.UserHomeDir()
 
-var CONFIG_FILE_PATH = filepath.Join(homeDir, ".ttm2.db")
+var CONFIG_FILE_PATH = filepath.Join(homeDir, ".ttm.badger.db")
 
 func LoadDB() *badger.DB {
 
@@ -78,29 +78,6 @@ func Save(key string, sender any) {
 		panic(err)
 	}
 }
-
-// func FindKeysLike(patterns ...string) []string {
-// 	db := LoadDB()
-// 	defer db.Close()
-
-// 	keys := []string{}
-// 	iter := db.NewIterator(nil, nil)
-// 	for iter.Next() {
-// 		key := string(iter.Key())
-
-// 		matched := gs.Every(patterns, func(pattern string, index int) bool {
-// 			subMatched, _ := regexp.MatchString(pattern, key)
-// 			return subMatched
-// 		})
-
-// 		if matched {
-// 			keys = append(keys, key)
-// 		}
-// 	}
-// 	iter.Release()
-
-// 	return keys
-// }
 
 func FindByPattern(patterns ...string) map[string][]byte {
 	db := LoadDB()

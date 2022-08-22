@@ -4,6 +4,7 @@ import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
+	"strconv"
 	"time"
 
 	"github.com/shalldie/ttm/app"
@@ -12,7 +13,7 @@ import (
 )
 
 func main() {
-	main2()
+	main1()
 	// main3()
 }
 
@@ -22,13 +23,12 @@ func main1() {
 
 func main2() {
 	ts := time.Now()
-	// db.Save("name", "tom")
-	db.Save("name", "tom2")
-	result := db.Get("name", nil)
-
-	fmt.Println(string(result))
+	prefix := "dafdsafdsafdsafda"
+	for i := 0; i < 10; i++ {
+		db.Save(prefix+strconv.Itoa(i), i)
+	}
+	db.FindByPattern(prefix)
 	fmt.Println(time.Now().Sub(ts).String())
-	// m := db.FindByPattern("project_")
 
 }
 

@@ -5,11 +5,12 @@ package app
 import (
 	"time"
 
+	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 )
 
 type StatusBar struct {
-	*tview.Pages
+	*tview.Grid
 	app     *tview.Application
 	message *tview.TextView
 }
@@ -26,40 +27,34 @@ var restorInQ = 0
 
 func newStatusBar(app *tview.Application) *StatusBar {
 	sb := &StatusBar{
-		Pages:   tview.NewPages(),
+		Grid: tview.NewGrid(),
+		// Pages:   tview.NewPages(),
 		app:     app,
-		message: tview.NewTextView().SetDynamicColors(true).SetText("Loading..."),
+		message: tview.NewTextView().SetDynamicColors(true).SetTextColor(tcell.ColorYellow),
 	}
 
-	sb.AddPage(messagePage, sb.message, true, true)
-	sb.AddPage(defaultPage,
-		tview.NewGrid(). // Content will not be modified, So, no need to declare explicitly
-					SetColumns(0, 0, 0, 0).
-					SetRows(0).
-					AddItem(tview.NewTextView().SetText("方向：↑ ↓"), 0, 0, 1, 1, 0, 0, false). // ↑ ↓ ← →
-					AddItem(tview.NewTextView().SetText("新建：N").SetTextAlign(tview.AlignCenter), 0, 1, 1, 1, 0, 0, false).
-					AddItem(tview.NewTextView().SetText("上一步：Esc").SetTextAlign(tview.AlignCenter), 0, 2, 1, 1, 0, 0, false).
-					AddItem(tview.NewTextView().SetText("退出：Ctrl + C").SetTextAlign(tview.AlignRight), 0, 3, 1, 1, 0, 0, false),
-		true,
-		true,
-	)
+	sb.SetColumns(0, 0, 0, 0).
+		SetRows(0).
+		AddItem(sb.message, 0, 0, 1, 1, 0, 0, false).
+		AddItem(tview.NewTextView().SetText("方向：↑↓←→ ；退出：Ctrl + C").SetTextAlign(tview.AlignRight), 0, 3, 1, 1, 0, 0, false) // ↑ ↓ ← →
 
 	return sb
 }
 
-func (fo *StatusBar) Restore() {
-	fo.app.QueueUpdateDraw(func() {
-		fo.SwitchToPage(defaultPage)
-	})
+func (sb *StatusBar) Restore() {
+	sb.ShowMessage("")
 }
 
-func (fo *StatusBar) ShowForSeconds(message string, timeout int) {
-	if fo.app == nil {
+func (sb *StatusBar) ShowMessage(message string) {
+	sb.message.SetText(message)
+}
+
+func (sb *StatusBar) ShowForSeconds(message string, timeout int) {
+	if sb.app == nil {
 		return
 	}
 
-	fo.message.SetText(message)
-	fo.SwitchToPage(messagePage)
+	sb.ShowMessage(message)
 	restorInQ++
 
 	go func() {
@@ -67,7 +62,7 @@ func (fo *StatusBar) ShowForSeconds(message string, timeout int) {
 
 		// Apply restore only if this is the last pending restore
 		if restorInQ == 1 {
-			fo.Restore()
+			sb.Restore()
 		}
 		restorInQ--
 	}()

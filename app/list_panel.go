@@ -16,6 +16,7 @@ type ListPanel[T any] struct {
 	*tview.Flex
 	list             *tview.List       // 列表组件
 	newItem          *tview.InputField // 新加项组件
+	tipBar           *tview.TextView
 	items            []*T              // 列表
 	parent           IListPanel        // 上一个panel
 	child            IListPanel        // 上一个panel
@@ -34,11 +35,12 @@ func newListPanel[T any](title string, newItemText string) *ListPanel[T] {
 				tcell.Style{}.Background(tcell.ColorBlue),
 			),
 		newItem: makeLightTextInput(" + [" + newItemText + "] "),
+		tipBar:  tview.NewTextView().SetText(" 新建：N ; 删除：D").SetTextColor(tcell.ColorYellow),
 	}
 
 	// 组件
 	l.SetBorder(true).SetTitle(" " + title + " ")
-	l.AddItem(l.list, 0, 1, true).AddItem(l.newItem, 1, 0, false)
+	l.AddItem(l.list, 0, 1, true).AddItem(l.newItem, 1, 0, false).AddItem(l.tipBar, 1, 0, false)
 	// 兼容 powerlevel10k
 	l.list.SetBorderPadding(0, 0, 1, 1)
 	l.newItem.SetBorderPadding(0, 0, 1, 1)
@@ -88,25 +90,25 @@ func (l *ListPanel[T]) setFocus() {
 // 处理快捷键
 func (l *ListPanel[T]) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	switch unicode.ToLower(event.Rune()) {
-	case 'j':
-		targetIndex := l.list.GetCurrentItem() + 1
-		if targetIndex >= l.list.GetItemCount() {
-			targetIndex = 0
-		}
-		l.list.SetCurrentItem(targetIndex)
-		return nil
-	case 'k':
-		l.list.SetCurrentItem(l.list.GetCurrentItem() - 1)
-		return nil
+	// 新建
 	case 'n':
+		app.SetFocus(l.newItem)
+		return nil
+	// 删除
+	case 'd':
 		app.SetFocus(l.newItem)
 		return nil
 	}
 
-	if event.Key() == tcell.KeyESC && l.parent != nil {
+	// 向左
+	if event.Key() == tcell.KeyLeft && l.parent != nil {
 		l.parent.setFocus()
-	} else if event.Key() == tcell.KeyEnter && l.child != nil {
+		return nil
+	}
+	// 向右
+	if event.Key() == tcell.KeyRight && l.child != nil {
 		l.child.setFocus()
+		return nil
 	}
 
 	return event

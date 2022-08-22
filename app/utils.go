@@ -43,6 +43,10 @@ func confirm(text string, f func()) {
 
 // 是否焦点在输入框
 func ignoreKeyEvt() bool {
+	// if detailPanel.detailView.HasFocus() {
+	// 	return true
+	// }
+
 	textInputs := []string{"*tview.InputField", "*femto.View"}
 	return gs.Contains(textInputs, reflect.TypeOf(app.GetFocus()).String())
 }
