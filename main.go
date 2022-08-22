@@ -4,15 +4,15 @@ import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
+	"time"
 
-	"github.com/shalldie/gog/gs"
 	"github.com/shalldie/ttm/app"
 	"github.com/shalldie/ttm/db"
 	"github.com/shalldie/ttm/model"
 )
 
 func main() {
-	main1()
+	main2()
 	// main3()
 }
 
@@ -21,12 +21,15 @@ func main1() {
 }
 
 func main2() {
-	keys := db.FindKeysLike("project_")
-	gs.ForEach(keys, func(key string, index int) {
-		p := model.NewProject()
-		db.Get(key, p)
-		fmt.Println(key, p.ID)
-	})
+	ts := time.Now()
+	// db.Save("name", "tom")
+	db.Save("name", "tom2")
+	result := db.Get("name", nil)
+
+	fmt.Println(string(result))
+	fmt.Println(time.Now().Sub(ts).String())
+	// m := db.FindByPattern("project_")
+
 }
 
 func main3() {

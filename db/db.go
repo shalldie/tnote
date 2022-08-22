@@ -8,16 +8,20 @@ import (
 	"reflect"
 	"regexp"
 
+	"github.com/dgraph-io/badger/v3"
 	"github.com/shalldie/gog/gs"
-	"github.com/syndtr/goleveldb/leveldb"
 )
 
 var homeDir, _ = os.UserHomeDir()
 
-var CONFIG_FILE_PATH = filepath.Join(homeDir, ".ttm.db")
+var CONFIG_FILE_PATH = filepath.Join(homeDir, ".ttm2.db")
 
-func LoadDB() *leveldb.DB {
-	db, err := leveldb.OpenFile(CONFIG_FILE_PATH, nil)
+func LoadDB() *badger.DB {
+
+	opt := badger.DefaultOptions(CONFIG_FILE_PATH)
+	opt.Logger = nil
+	db, err := badger.Open(opt)
+
 	if err != nil {
 		panic(err)
 	}
@@ -29,10 +33,20 @@ func Get(key string, sender any) []byte {
 	db := LoadDB()
 	defer db.Close()
 
-	data, err := db.Get([]byte(key), nil)
-	if err != nil {
-		panic(err)
-	}
+	var data []byte
+
+	db.View(func(txn *badger.Txn) error {
+		item, err := txn.Get([]byte(key))
+		if err != nil {
+			panic(err)
+		}
+
+		item.Value(func(val []byte) error {
+			data = append([]byte{}, val...)
+			return nil
+		})
+		return nil
+	})
 
 	if reflect.ValueOf(sender).Kind() == reflect.Pointer {
 		decode := gob.NewDecoder(bytes.NewBuffer(data))
@@ -40,26 +54,6 @@ func Get(key string, sender any) []byte {
 	}
 
 	return data
-}
-
-func GetMany[T any](keys []string, senders []T) {
-	db := LoadDB()
-	defer db.Close()
-
-	gs.ForEach(keys, func(key string, index int) {
-		sender := senders[index]
-
-		data, err := db.Get([]byte(key), nil)
-		if err != nil {
-			panic(err)
-		}
-
-		if reflect.ValueOf(sender).Kind() == reflect.Pointer {
-			decode := gob.NewDecoder(bytes.NewBuffer(data))
-			decode.Decode(sender)
-		}
-
-	})
 }
 
 func Save(key string, sender any) {
@@ -75,31 +69,38 @@ func Save(key string, sender any) {
 	db := LoadDB()
 	defer db.Close()
 
-	db.Put([]byte(key), buffer.Bytes(), nil)
-}
+	err = db.Update(func(txn *badger.Txn) error {
+		err := txn.Set([]byte(key), buffer.Bytes())
+		return err
+	})
 
-func FindKeysLike(patterns ...string) []string {
-	db := LoadDB()
-	defer db.Close()
-
-	keys := []string{}
-	iter := db.NewIterator(nil, nil)
-	for iter.Next() {
-		key := string(iter.Key())
-
-		matched := gs.Every(patterns, func(pattern string, index int) bool {
-			subMatched, _ := regexp.MatchString(pattern, key)
-			return subMatched
-		})
-
-		if matched {
-			keys = append(keys, key)
-		}
+	if err != nil {
+		panic(err)
 	}
-	iter.Release()
-
-	return keys
 }
+
+// func FindKeysLike(patterns ...string) []string {
+// 	db := LoadDB()
+// 	defer db.Close()
+
+// 	keys := []string{}
+// 	iter := db.NewIterator(nil, nil)
+// 	for iter.Next() {
+// 		key := string(iter.Key())
+
+// 		matched := gs.Every(patterns, func(pattern string, index int) bool {
+// 			subMatched, _ := regexp.MatchString(pattern, key)
+// 			return subMatched
+// 		})
+
+// 		if matched {
+// 			keys = append(keys, key)
+// 		}
+// 	}
+// 	iter.Release()
+
+// 	return keys
+// }
 
 func FindByPattern(patterns ...string) map[string][]byte {
 	db := LoadDB()
@@ -107,21 +108,31 @@ func FindByPattern(patterns ...string) map[string][]byte {
 
 	m := map[string][]byte{}
 
-	iter := db.NewIterator(nil, nil)
-	for iter.Next() {
-		key := string(iter.Key())
-		value := iter.Value()
+	db.View(func(txn *badger.Txn) error {
+		it := txn.NewIterator(badger.DefaultIteratorOptions)
+		defer it.Close()
 
-		matched := gs.Every(patterns, func(pattern string, index int) bool {
-			subMatched, _ := regexp.MatchString(pattern, key)
-			return subMatched
-		})
+		for it.Rewind(); it.Valid(); it.Next() {
+			item := it.Item()
+			key := string(item.Key())
 
-		if matched {
-			m[key] = gs.Copy(value)
+			matched := gs.Every(patterns, func(pattern string, index int) bool {
+				subMatched, _ := regexp.MatchString(pattern, key)
+				return subMatched
+			})
+
+			if !matched {
+				continue
+			}
+
+			item.Value(func(val []byte) error {
+				m[string(key)] = append([]byte{}, val...)
+				return nil
+			})
+
 		}
-	}
-	iter.Release()
+		return nil
+	})
 
 	return m
 }
