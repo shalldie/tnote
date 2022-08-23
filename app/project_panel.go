@@ -53,9 +53,13 @@ func NewProjectPanel() *ProjectPanel {
 
 	p.onSelectedChange = func(item *model.Project) {
 		// p.SetTitle("loading...")
+		// taskPanel.setFocus()
 		p.model = item
 		taskPanel.reset()
-		// taskPanel.setFocus()
+
+		// go func() {
+		// 	app.Draw()
+		// }()
 	}
 
 	return p

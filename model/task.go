@@ -10,9 +10,7 @@ type Task struct {
 
 func NewTask() *Task {
 	t := &Task{
-		Model:    NewModel(),
-		Name:     "",
-		DetailId: "",
+		Model: NewModel(),
 	}
 	t.ID = taskPrefix + t.ID
 	return t

@@ -6,7 +6,6 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/pgavlin/femto"
 	"github.com/pgavlin/femto/runtime"
-	"github.com/shalldie/ttm/db"
 	"github.com/shalldie/ttm/model"
 )
 
@@ -26,7 +25,7 @@ func NewDetailPanel() *DetailPanel {
 	p.AddItem(p.editor, 0, 1, false)
 	p.AddTip("编辑：E ; 保存：Esc")
 
-	p.reset()
+	// p.reset()
 
 	return p
 }
@@ -43,33 +42,35 @@ func (d *DetailPanel) reset() {
 	d.loadModel()
 }
 
-func (d *DetailPanel) loadModel() {
+func (p *DetailPanel) loadModel() {
 	did := taskPanel.model.DetailId
 	if len(did) <= 0 {
-		d.model = model.NewDetail()
-		taskPanel.model.DetailId = did
-		db.Save(taskPanel.model.ID, taskPanel.model)
-		db.Save(d.model.ID, d.model)
+		p.model = model.NewDetail()
+		taskPanel.model.DetailId = p.model.ID
+		// go func() {
+		taskPanel.SaveModel()
+		p.SaveModel()
+		// }()
 	} else {
-		d.model = model.FindDetails(did)[0]
+		p.model = model.FindDetails(did)[0]
 	}
-	d.editor.Buf = makeBufferFromString(d.model.Content)
+	p.editor.Buf = makeBufferFromString(p.model.Content)
 }
 
-func (d *DetailPanel) activateEditor() {
-	d.editor.Readonly = false
-	d.editor.SetBorderColor(tcell.ColorDarkOrange)
-	app.SetFocus(d.editor)
+func (p *DetailPanel) activateEditor() {
+	p.editor.Readonly = false
+	p.editor.SetBorderColor(tcell.ColorDarkOrange)
+	app.SetFocus(p.editor)
 }
 
-func (d *DetailPanel) deactivateEditor() {
-	d.editor.Readonly = true
-	d.editor.SetBorderColor(tcell.ColorLightSlateGray)
-	app.SetFocus(d)
+func (p *DetailPanel) deactivateEditor() {
+	p.editor.Readonly = true
+	p.editor.SetBorderColor(tcell.ColorLightSlateGray)
+	// app.SetFocus(p)
 }
 
-func (d *DetailPanel) prepareEditor() {
-	d.editor = femto.NewView(makeBufferFromString(""))
+func (p *DetailPanel) prepareEditor() {
+	p.editor = femto.NewView(makeBufferFromString(""))
 
 	var colorScheme femto.Colorscheme
 	if monokai := runtime.Files.FindFile(femto.RTColorscheme, "monokai"); monokai != nil {
@@ -78,24 +79,23 @@ func (d *DetailPanel) prepareEditor() {
 		}
 	}
 
-	d.editor.SetColorscheme(colorScheme)
-	d.editor.SetBorder(true).SetBorderPadding(0, 0, 1, 1)
-	d.editor.SetBorderColor(tcell.ColorLightSlateGray)
+	p.editor.SetColorscheme(colorScheme)
+	p.editor.SetBorder(true).SetBorderPadding(0, 0, 1, 1)
+	p.editor.SetBorderColor(tcell.ColorLightSlateGray)
 
-	d.editor.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+	p.editor.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyEsc:
 			// d.updateTaskNote(d.taskDetailView.Buf.String())
-			d.deactivateEditor()
+			p.deactivateEditor()
+			p.model.Content = p.editor.Buf.String()
+			p.SaveModel()
+			p.SetFocus()
 			return nil
 		}
 
 		return event
 	})
-}
-
-func (d *DetailPanel) setFocus() {
-	app.SetFocus(d)
 }
 
 func makeBufferFromString(content string) *femto.Buffer {
@@ -111,31 +111,20 @@ func makeBufferFromString(content string) *femto.Buffer {
 }
 
 // 处理快捷键
-func (d *DetailPanel) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
-	if !d.isReady() {
+func (p *DetailPanel) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
+	if !p.isReady() {
 		return event
 	}
 	switch unicode.ToLower(event.Rune()) {
 	case 'e':
-		d.activateEditor()
+		p.activateEditor()
 		return nil
 	}
 
-	if event.Key() == tcell.KeyLeft && d.prev != nil {
-		d.prev.SetFocus()
+	if event.Key() == tcell.KeyLeft && p.prev != nil {
+		p.prev.SetFocus()
 		return nil
 	}
-
-	if event.Key() == tcell.KeyESC {
-		d.deactivateEditor()
-		return nil
-	}
-
-	// if event.Key() == tcell.KeyESC && l.parent != nil {
-	// 	l.parent.setFocus()
-	// } else if event.Key() == tcell.KeyEnter && l.child != nil {
-	// 	l.child.setFocus()
-	// }
 
 	return event
 }

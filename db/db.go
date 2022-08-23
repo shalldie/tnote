@@ -7,6 +7,7 @@ import (
 	"path/filepath"
 	"reflect"
 	"regexp"
+	"sync"
 
 	"github.com/dgraph-io/badger/v3"
 	"github.com/shalldie/gog/gs"
@@ -15,6 +16,8 @@ import (
 var homeDir, _ = os.UserHomeDir()
 
 var CONFIG_FILE_PATH = filepath.Join(homeDir, ".ttm.badger.db")
+
+var dbm *sync.Mutex = &sync.Mutex{}
 
 func LoadDB() *badger.DB {
 
@@ -30,6 +33,8 @@ func LoadDB() *badger.DB {
 }
 
 func Get(key string, sender any) []byte {
+	dbm.Lock()
+	defer dbm.Unlock()
 	db := LoadDB()
 	defer db.Close()
 
@@ -57,6 +62,8 @@ func Get(key string, sender any) []byte {
 }
 
 func Save(key string, sender any) {
+	dbm.Lock()
+	defer dbm.Unlock()
 
 	var buffer bytes.Buffer
 	encode := gob.NewEncoder(&buffer)
@@ -80,6 +87,9 @@ func Save(key string, sender any) {
 }
 
 func FindByPattern(patterns ...string) map[string][]byte {
+	dbm.Lock()
+	defer dbm.Unlock()
+
 	db := LoadDB()
 	defer db.Close()
 

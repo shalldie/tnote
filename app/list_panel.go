@@ -10,10 +10,10 @@ import (
 
 type ListPanel[T any] struct {
 	*BasePanel[T]
-	list             *tview.List       // 列表组件
-	newItem          *tview.InputField // 新加项组件
-	items            []*T              // 列表
-	model            *T                // 活动项
+	list    *tview.List       // 列表组件
+	newItem *tview.InputField // 新加项组件
+	items   []*T              // 列表
+	// model            *T                // 活动项
 	loadFromDB       func()            // 从db中获取数据
 	addNewItem       func(text string) // 添加新项
 	onSelectedChange func(item *T)     // 选择项改变
@@ -47,7 +47,10 @@ func newListPanel[T any](title string, newItemText string) *ListPanel[T] {
 	l.list.SetChangedFunc(func(i int, s1, s2 string, r rune) {
 		l.model = l.items[i]
 		if l.onSelectedChange != nil {
-			l.onSelectedChange(l.model)
+			go func() {
+				l.onSelectedChange(l.model)
+				app.Draw()
+			}()
 		}
 	})
 

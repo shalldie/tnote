@@ -14,26 +14,26 @@ type TaskPanel struct {
 }
 
 func NewTaskPanel() *TaskPanel {
-	t := &TaskPanel{
+	p := &TaskPanel{
 		ListPanel: newListPanel[model.Task]("任务", "新任务"),
 	}
 
-	t.loadFromDB = func() {
+	p.loadFromDB = func() {
 		pattern := strings.Join(projectPanel.model.TaskIds, "|")
 		tasks := []*model.Task{}
 		if len(pattern) > 0 {
 			tasks = model.FindTasks(pattern)
 		}
-		t.items = gs.Sort(tasks, func(item1, item2 *model.Task) bool {
+		p.items = gs.Sort(tasks, func(item1, item2 *model.Task) bool {
 			return item1.CreatedTime < item2.CreatedTime
 		})
-		t.list.Clear()
-		for _, item := range t.items {
-			t.list.AddItem(" - "+item.Name, "", 0, func() {})
+		p.list.Clear()
+		for _, item := range p.items {
+			p.list.AddItem(" - "+item.Name, "", 0, func() {})
 		}
 	}
 
-	t.addNewItem = func(text string) {
+	p.addNewItem = func(text string) {
 
 		if utf8.RuneCountInString(text) < 3 {
 			statusBar.ShowForSeconds("任务名长度最少3个字符", 5)
@@ -47,15 +47,19 @@ func NewTaskPanel() *TaskPanel {
 		db.Save(task.ID, task)
 		db.Save(projectPanel.model.ID, projectPanel.model)
 
-		t.reset()
+		p.reset()
 
-		curIndex := gs.FindIndex(t.items, func(item *model.Task, index int) bool {
+		curIndex := gs.FindIndex(p.items, func(item *model.Task, index int) bool {
 			return item.ID == task.ID
 		})
 
-		t.list.SetCurrentItem(curIndex)
-		t.setFocus()
+		p.list.SetCurrentItem(curIndex)
+		p.setFocus()
 	}
 
-	return t
+	p.onSelectedChange = func(item *model.Task) {
+		detailPanel.reset()
+	}
+
+	return p
 }

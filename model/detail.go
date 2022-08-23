@@ -9,8 +9,7 @@ type Detail struct {
 
 func NewDetail() *Detail {
 	t := &Detail{
-		Model:   NewModel(),
-		Content: "",
+		Model: NewModel(),
 	}
 	t.ID = detailPrefix + t.ID
 	return t
