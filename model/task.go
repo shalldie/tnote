@@ -4,11 +4,15 @@ var taskPrefix = "task_"
 
 type Task struct {
 	*Model
+	Name     string
+	DetailId string
 }
 
 func NewTask() *Task {
 	t := &Task{
-		NewModel(),
+		Model:    NewModel(),
+		Name:     "",
+		DetailId: "",
 	}
 	t.ID = taskPrefix + t.ID
 	return t

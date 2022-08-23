@@ -8,19 +8,12 @@ import (
 	"github.com/rivo/tview"
 )
 
-type IListPanel interface {
-	setFocus()
-}
-
 type ListPanel[T any] struct {
-	*tview.Flex
+	*BasePanel[T]
 	list             *tview.List       // 列表组件
 	newItem          *tview.InputField // 新加项组件
-	tipBar           *tview.TextView
 	items            []*T              // 列表
-	parent           IListPanel        // 上一个panel
-	child            IListPanel        // 上一个panel
-	activeItem       *T                // 新加项
+	model            *T                // 活动项
 	loadFromDB       func()            // 从db中获取数据
 	addNewItem       func(text string) // 添加新项
 	onSelectedChange func(item *T)     // 选择项改变
@@ -29,18 +22,19 @@ type ListPanel[T any] struct {
 func newListPanel[T any](title string, newItemText string) *ListPanel[T] {
 	// instance
 	l := &ListPanel[T]{
-		Flex: tview.NewFlex().SetDirection(tview.FlexRow),
+		BasePanel: newBasePanel[T](),
 		list: tview.NewList().ShowSecondaryText(false).SetHighlightFullLine(true).
 			SetSelectedStyle(
 				tcell.Style{}.Background(tcell.ColorBlue),
 			),
 		newItem: makeLightTextInput(" + [" + newItemText + "] "),
-		tipBar:  tview.NewTextView().SetText(" 新建：N ; 删除：D").SetTextColor(tcell.ColorYellow),
 	}
 
 	// 组件
-	l.SetBorder(true).SetTitle(" " + title + " ")
-	l.AddItem(l.list, 0, 1, true).AddItem(l.newItem, 1, 0, false).AddItem(l.tipBar, 1, 0, false)
+	l.SetTitle(" " + title + " ")
+	l.AddItem(l.list, 0, 1, true).AddItem(l.newItem, 1, 0, false)
+	l.AddTip("新建：N ; 删除：D")
+
 	// 兼容 powerlevel10k
 	l.list.SetBorderPadding(0, 0, 1, 1)
 	l.newItem.SetBorderPadding(0, 0, 1, 1)
@@ -51,9 +45,9 @@ func newListPanel[T any](title string, newItemText string) *ListPanel[T] {
 	})
 	// SetSelectedFunc
 	l.list.SetChangedFunc(func(i int, s1, s2 string, r rune) {
-		l.activeItem = l.items[i]
+		l.model = l.items[i]
 		if l.onSelectedChange != nil {
-			l.onSelectedChange(l.activeItem)
+			l.onSelectedChange(l.model)
 		}
 	})
 
@@ -62,7 +56,9 @@ func newListPanel[T any](title string, newItemText string) *ListPanel[T] {
 		switch key {
 		case tcell.KeyEnter:
 			l.addNewItem(strings.TrimSpace(l.newItem.GetText()))
+			statusBar.ShowForSeconds("添加完毕...", 3)
 		case tcell.KeyEsc:
+			l.newItem.SetText("")
 			l.setFocus()
 		}
 	})
@@ -75,7 +71,7 @@ func newListPanel[T any](title string, newItemText string) *ListPanel[T] {
 func (l *ListPanel[T]) reset() {
 	l.list.Clear()
 	l.items = make([]*T, 0)
-	l.activeItem = nil
+	l.model = nil
 	if l.loadFromDB != nil {
 		l.loadFromDB()
 	}
@@ -101,13 +97,13 @@ func (l *ListPanel[T]) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	}
 
 	// 向左
-	if event.Key() == tcell.KeyLeft && l.parent != nil {
-		l.parent.setFocus()
+	if event.Key() == tcell.KeyLeft && l.prev != nil {
+		l.prev.SetFocus()
 		return nil
 	}
 	// 向右
-	if event.Key() == tcell.KeyRight && l.child != nil {
-		l.child.setFocus()
+	if event.Key() == tcell.KeyRight && l.next != nil {
+		l.next.SetFocus()
 		return nil
 	}
 

@@ -19,7 +19,7 @@ func NewTaskPanel() *TaskPanel {
 	}
 
 	t.loadFromDB = func() {
-		pattern := strings.Join(projectPanel.activeItem.TaskIds, "|")
+		pattern := strings.Join(projectPanel.model.TaskIds, "|")
 		tasks := []*model.Task{}
 		if len(pattern) > 0 {
 			tasks = model.FindTasks(pattern)
@@ -43,9 +43,9 @@ func NewTaskPanel() *TaskPanel {
 		task := model.NewTask()
 		task.Name = text
 
-		projectPanel.activeItem.TaskIds = append(projectPanel.activeItem.TaskIds, task.ID)
+		projectPanel.model.TaskIds = append(projectPanel.model.TaskIds, task.ID)
 		db.Save(task.ID, task)
-		db.Save(projectPanel.activeItem.ID, projectPanel.activeItem)
+		db.Save(projectPanel.model.ID, projectPanel.model)
 
 		t.reset()
 

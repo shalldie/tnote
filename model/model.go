@@ -11,7 +11,6 @@ import (
 
 type Model struct {
 	ID          string
-	Name        string
 	CreatedTime int64
 }
 

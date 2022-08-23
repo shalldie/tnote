@@ -6,41 +6,54 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/pgavlin/femto"
 	"github.com/pgavlin/femto/runtime"
-	"github.com/rivo/tview"
+	"github.com/shalldie/ttm/db"
+	"github.com/shalldie/ttm/model"
 )
 
 type DetailPanel struct {
-	*tview.Flex
-	parent    IListPanel // 上一个panel
-	editorTip *tview.TextView
-	editor    *femto.View
+	*BasePanel[model.Detail]
+	editor *femto.View
 }
 
 func NewDetailPanel() *DetailPanel {
-	detail := &DetailPanel{
-		Flex: tview.NewFlex().SetDirection(tview.FlexRow),
+	p := &DetailPanel{
+		BasePanel: newBasePanel[model.Detail](),
 	}
 
-	detail.SetBorder(true).SetTitle(" 任务详情 ").SetBorderPadding(0, 0, 1, 1)
+	p.SetTitle("任务详情").SetBorderPadding(0, 0, 1, 1)
 
-	detail.editorTip = tview.NewTextView().SetText(" 编辑：E ; 保存：Esc").SetTextColor(tcell.ColorYellow)
+	p.prepareEditor()
+	p.AddItem(p.editor, 0, 1, false)
+	p.AddTip("编辑：E ; 保存：Esc")
 
-	detail.prepareEditor()
+	p.reset()
 
-	detail.AddItem(detail.editor, 0, 1, false)
-	detail.AddItem(detail.editorTip, 1, 0, false)
+	return p
+}
 
-	detail.reset()
-
-	return detail
+func (d *DetailPanel) isReady() bool {
+	return taskPanel.model != nil
 }
 
 func (d *DetailPanel) reset() {
 	d.deactivateEditor()
+	if !d.isReady() {
+		return
+	}
+	d.loadModel()
+}
 
-	d.editor.Buf = makeBufferFromString("some thing new")
-	// d.detailView
-	// d.editor.set
+func (d *DetailPanel) loadModel() {
+	did := taskPanel.model.DetailId
+	if len(did) <= 0 {
+		d.model = model.NewDetail()
+		taskPanel.model.DetailId = did
+		db.Save(taskPanel.model.ID, taskPanel.model)
+		db.Save(d.model.ID, d.model)
+	} else {
+		d.model = model.FindDetails(did)[0]
+	}
+	d.editor.Buf = makeBufferFromString(d.model.Content)
 }
 
 func (d *DetailPanel) activateEditor() {
@@ -99,14 +112,17 @@ func makeBufferFromString(content string) *femto.Buffer {
 
 // 处理快捷键
 func (d *DetailPanel) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
+	if !d.isReady() {
+		return event
+	}
 	switch unicode.ToLower(event.Rune()) {
 	case 'e':
 		d.activateEditor()
 		return nil
 	}
 
-	if event.Key() == tcell.KeyLeft && d.parent != nil {
-		d.parent.setFocus()
+	if event.Key() == tcell.KeyLeft && d.prev != nil {
+		d.prev.SetFocus()
 		return nil
 	}
 

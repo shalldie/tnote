@@ -25,10 +25,10 @@ func Setup() {
 	taskPanel = NewTaskPanel()
 	detailPanel = NewDetailPanel()
 
-	projectPanel.child = taskPanel
-	taskPanel.parent = projectPanel
-	taskPanel.child = detailPanel
-	detailPanel.parent = taskPanel
+	projectPanel.next = taskPanel
+	taskPanel.prev = projectPanel
+	taskPanel.next = detailPanel
+	detailPanel.prev = taskPanel
 
 	// layout
 	prepareLayout(projectPanel, taskPanel, detailPanel)
@@ -62,7 +62,7 @@ func prepareLayout(col0 tview.Primitive, col1 tview.Primitive, col2 tview.Primit
 		AddItem(splitItem, 1, 1, false)
 
 	// 容器 - 下
-	statusBar = newStatusBar(app)
+	statusBar = newStatusBar()
 
 	layout.AddItem(content, 0, 1, false).
 		AddItem(
