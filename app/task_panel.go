@@ -5,7 +5,6 @@ import (
 	"unicode/utf8"
 
 	"github.com/shalldie/gog/gs"
-	"github.com/shalldie/ttm/db"
 	"github.com/shalldie/ttm/model"
 )
 
@@ -27,7 +26,9 @@ func NewTaskPanel() *TaskPanel {
 		p.items = gs.Sort(tasks, func(item1, item2 *model.Task) bool {
 			return item1.CreatedTime < item2.CreatedTime
 		})
+
 		p.list.Clear()
+
 		for _, item := range p.items {
 			p.list.AddItem(" - "+item.Name, "", 0, func() {})
 		}
@@ -44,8 +45,9 @@ func NewTaskPanel() *TaskPanel {
 		task.Name = text
 
 		projectPanel.model.TaskIds = append(projectPanel.model.TaskIds, task.ID)
-		db.Save(task.ID, task)
-		db.Save(projectPanel.model.ID, projectPanel.model)
+		projectPanel.SaveModel()
+		p.model = task
+		p.SaveModel()
 
 		p.reset()
 

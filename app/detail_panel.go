@@ -34,27 +34,36 @@ func (d *DetailPanel) isReady() bool {
 	return taskPanel.model != nil
 }
 
-func (d *DetailPanel) reset() {
-	d.deactivateEditor()
-	if !d.isReady() {
+func (p *DetailPanel) reset() {
+	// p.deactivateEditor()
+	p.model = nil
+	if !p.isReady() {
 		return
 	}
-	d.loadModel()
+	p.loadModel()
 }
 
 func (p *DetailPanel) loadModel() {
+	p.model = nil
 	did := taskPanel.model.DetailId
-	if len(did) <= 0 {
+
+	// 查找是否存在对应的 detail
+	if len(did) > 0 {
+		targetList := model.FindDetails(did)
+		if len(targetList) > 0 {
+			p.model = targetList[0]
+		}
+	}
+
+	// 不存在则创建
+	if p.model == nil {
 		p.model = model.NewDetail()
 		taskPanel.model.DetailId = p.model.ID
-		// go func() {
 		taskPanel.SaveModel()
 		p.SaveModel()
-		// }()
-	} else {
-		p.model = model.FindDetails(did)[0]
 	}
-	p.editor.Buf = makeBufferFromString(p.model.Content)
+
+	p.setContent(p.model.Content)
 }
 
 func (p *DetailPanel) activateEditor() {
@@ -69,10 +78,17 @@ func (p *DetailPanel) deactivateEditor() {
 	// app.SetFocus(p)
 }
 
+func (p *DetailPanel) setContent(content string) {
+	p.editor.Buf = makeBufferFromString(content)
+	p.editor.SetColorscheme(colorScheme) // 不重新设置会丢失主题样式
+}
+
+var colorScheme femto.Colorscheme
+
 func (p *DetailPanel) prepareEditor() {
 	p.editor = femto.NewView(makeBufferFromString(""))
+	p.editor.SetRuntimeFiles(runtime.Files)
 
-	var colorScheme femto.Colorscheme
 	if monokai := runtime.Files.FindFile(femto.RTColorscheme, "monokai"); monokai != nil {
 		if data, err := monokai.Data(); err == nil {
 			colorScheme = femto.ParseColorscheme(string(data))
