@@ -3,14 +3,11 @@
 set -e
 
 BASE_PATH=$(
-    cd $(dirname $0)
+    cd $(dirname $0)/..
     pwd
 )
 
-BASE_PATH=$(
-    cd $(dirname $BASE_PATH)
-    pwd
-)
+cd $BASE_PATH
 
 export CGO_ENABLED=0
 

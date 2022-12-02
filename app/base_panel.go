@@ -2,6 +2,7 @@ package app
 
 import (
 	"reflect"
+	"sync"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -15,6 +16,7 @@ type IPanel interface {
 // panel 基类
 type BasePanel[T any] struct {
 	*tview.Flex
+	mu    *sync.Mutex // goroutine 的时候要加锁
 	model *T
 	prev  IPanel
 	next  IPanel
@@ -24,6 +26,7 @@ type BasePanel[T any] struct {
 func newBasePanel[T any]() *BasePanel[T] {
 	p := &BasePanel[T]{
 		Flex: tview.NewFlex().SetDirection(tview.FlexRow),
+		mu:   &sync.Mutex{},
 	}
 
 	p.SetBorder(true)

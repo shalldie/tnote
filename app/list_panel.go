@@ -47,7 +47,10 @@ func newListPanel[T any](title string, newItemText string) *ListPanel[T] {
 	l.list.SetChangedFunc(func(i int, s1, s2 string, r rune) {
 		l.model = l.items[i]
 		if l.onSelectedChange != nil {
+			// l.onSelectedChange(l.model)
 			go func() {
+				l.mu.Lock()
+				defer l.mu.Unlock()
 				l.onSelectedChange(l.model)
 				app.Draw()
 			}()
@@ -72,6 +75,9 @@ func newListPanel[T any](title string, newItemText string) *ListPanel[T] {
 
 // 重置数据、状态
 func (l *ListPanel[T]) reset() {
+	// l.mu.Lock()
+	// defer l.mu.Unlock()
+
 	l.list.Clear()
 	l.items = make([]*T, 0)
 	l.model = nil
