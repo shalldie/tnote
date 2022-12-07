@@ -14,27 +14,27 @@ type TaskPanel struct {
 
 func NewTaskPanel() *TaskPanel {
 	p := &TaskPanel{
-		ListPanel: newListPanel[model.Task]("任务", "新任务"),
+		ListPanel: NewListPanel[model.Task]("任务", "新任务"),
 	}
 
-	p.loadFromDB = func() {
-		pattern := strings.Join(projectPanel.model.TaskIds, "|")
+	p.LoadFromDB = func() {
+		pattern := strings.Join(projectPanel.Model.TaskIds, "|")
 		tasks := []*model.Task{}
 		if len(pattern) > 0 {
 			tasks = model.FindTasks(pattern)
 		}
-		p.items = gs.Sort(tasks, func(item1, item2 *model.Task) bool {
+		p.Items = gs.Sort(tasks, func(item1, item2 *model.Task) bool {
 			return item1.CreatedTime < item2.CreatedTime
 		})
 
-		p.list.Clear()
+		p.List.Clear()
 
-		for _, item := range p.items {
-			p.list.AddItem(" - "+item.Name, "", 0, func() {})
+		for _, item := range p.Items {
+			p.List.AddItem(" - "+item.Name, "", 0, func() {})
 		}
 	}
 
-	p.addNewItem = func(text string) {
+	p.AddNewItem = func(text string) {
 
 		if utf8.RuneCountInString(text) < 3 {
 			statusBar.ShowForSeconds("任务名长度最少3个字符", 5)
@@ -44,23 +44,23 @@ func NewTaskPanel() *TaskPanel {
 		task := model.NewTask()
 		task.Name = text
 
-		projectPanel.model.TaskIds = append(projectPanel.model.TaskIds, task.ID)
+		projectPanel.Model.TaskIds = append(projectPanel.Model.TaskIds, task.ID)
 		projectPanel.SaveModel()
-		p.model = task
+		p.Model = task
 		p.SaveModel()
 
-		p.reset()
+		p.Reset()
 
-		curIndex := gs.FindIndex(p.items, func(item *model.Task, index int) bool {
+		curIndex := gs.FindIndex(p.Items, func(item *model.Task, index int) bool {
 			return item.ID == task.ID
 		})
 
-		p.list.SetCurrentItem(curIndex)
-		p.setFocus()
+		p.List.SetCurrentItem(curIndex)
+		p.SetFocus()
 	}
 
-	p.onSelectedChange = func(item *model.Task) {
-		detailPanel.reset()
+	p.OnSelectedChange = func(item *model.Task) {
+		detailPanel.Reset()
 	}
 
 	return p

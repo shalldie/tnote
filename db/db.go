@@ -41,8 +41,8 @@ func LoadDB() *leveldb.DB {
 }
 
 func Get(key string, sender any) []byte {
-	dbm.Lock()
-	defer dbm.Unlock()
+	// dbm.Lock()
+	// defer dbm.Unlock()
 	db := LoadDB()
 	defer db.Close()
 

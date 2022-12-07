@@ -11,18 +11,18 @@ import (
 
 type DetailPanel struct {
 	*BasePanel[model.Detail]
-	editor *femto.View
+	Editor *femto.View
 }
 
 func NewDetailPanel() *DetailPanel {
 	p := &DetailPanel{
-		BasePanel: newBasePanel[model.Detail](),
+		BasePanel: NewBasePanel[model.Detail](),
 	}
 
 	p.SetTitle("任务详情").SetBorderPadding(0, 0, 1, 1)
 
-	p.prepareEditor()
-	p.AddItem(p.editor, 0, 1, false)
+	p.PrepareEditor()
+	p.AddItem(p.Editor, 0, 1, false)
 	p.AddTip("编辑：E ; 保存：Esc")
 
 	// p.reset()
@@ -30,64 +30,64 @@ func NewDetailPanel() *DetailPanel {
 	return p
 }
 
-func (d *DetailPanel) isReady() bool {
-	return taskPanel.model != nil
+func (d *DetailPanel) IsReady() bool {
+	return taskPanel.Model != nil
 }
 
-func (p *DetailPanel) reset() {
+func (p *DetailPanel) Reset() {
 	// p.deactivateEditor()
-	p.model = nil
-	if !p.isReady() {
+	p.Model = nil
+	if !p.IsReady() {
 		return
 	}
-	p.loadModel()
+	p.LoadModel()
 }
 
-func (p *DetailPanel) loadModel() {
-	p.model = nil
-	did := taskPanel.model.DetailId
+func (p *DetailPanel) LoadModel() {
+	p.Model = nil
+	did := taskPanel.Model.DetailId
 
 	// 查找是否存在对应的 detail
 	if len(did) > 0 {
 		targetList := model.FindDetails(did)
 		if len(targetList) > 0 {
-			p.model = targetList[0]
+			p.Model = targetList[0]
 		}
 	}
 
 	// 不存在则创建
-	if p.model == nil {
-		p.model = model.NewDetail()
-		taskPanel.model.DetailId = p.model.ID
+	if p.Model == nil {
+		p.Model = model.NewDetail()
+		taskPanel.Model.DetailId = p.Model.ID
 		taskPanel.SaveModel()
 		p.SaveModel()
 	}
 
-	p.setContent(p.model.Content)
+	p.SetContent(p.Model.Content)
 }
 
-func (p *DetailPanel) activateEditor() {
-	p.editor.Readonly = false
-	p.editor.SetBorderColor(tcell.ColorDarkOrange)
-	app.SetFocus(p.editor)
+func (p *DetailPanel) ActivateEditor() {
+	p.Editor.Readonly = false
+	p.Editor.SetBorderColor(tcell.ColorDarkOrange)
+	app.SetFocus(p.Editor)
 }
 
-func (p *DetailPanel) deactivateEditor() {
-	p.editor.Readonly = true
-	p.editor.SetBorderColor(tcell.ColorLightSlateGray)
+func (p *DetailPanel) DeactivateEditor() {
+	p.Editor.Readonly = true
+	p.Editor.SetBorderColor(tcell.ColorLightSlateGray)
 	// app.SetFocus(p)
 }
 
-func (p *DetailPanel) setContent(content string) {
-	p.editor.Buf = makeBufferFromString(content)
-	p.editor.SetColorscheme(colorScheme) // 不重新设置会丢失主题样式
+func (p *DetailPanel) SetContent(content string) {
+	p.Editor.Buf = makeBufferFromString(content)
+	p.Editor.SetColorscheme(colorScheme) // 不重新设置会丢失主题样式
 }
 
 var colorScheme femto.Colorscheme
 
-func (p *DetailPanel) prepareEditor() {
-	p.editor = femto.NewView(makeBufferFromString(""))
-	p.editor.SetRuntimeFiles(runtime.Files)
+func (p *DetailPanel) PrepareEditor() {
+	p.Editor = femto.NewView(makeBufferFromString(""))
+	p.Editor.SetRuntimeFiles(runtime.Files)
 
 	if monokai := runtime.Files.FindFile(femto.RTColorscheme, "monokai"); monokai != nil {
 		if data, err := monokai.Data(); err == nil {
@@ -95,16 +95,16 @@ func (p *DetailPanel) prepareEditor() {
 		}
 	}
 
-	p.editor.SetColorscheme(colorScheme)
-	p.editor.SetBorder(true).SetBorderPadding(0, 0, 1, 1)
-	p.editor.SetBorderColor(tcell.ColorLightSlateGray)
+	p.Editor.SetColorscheme(colorScheme)
+	p.Editor.SetBorder(true).SetBorderPadding(0, 0, 1, 1)
+	p.Editor.SetBorderColor(tcell.ColorLightSlateGray)
 
-	p.editor.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+	p.Editor.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyEsc:
 			// d.updateTaskNote(d.taskDetailView.Buf.String())
-			p.deactivateEditor()
-			p.model.Content = p.editor.Buf.String()
+			p.DeactivateEditor()
+			p.Model.Content = p.Editor.Buf.String()
 			p.SaveModel()
 			p.SetFocus()
 			return nil
@@ -128,17 +128,17 @@ func makeBufferFromString(content string) *femto.Buffer {
 
 // 处理快捷键
 func (p *DetailPanel) handleShortcuts(event *tcell.EventKey) *tcell.EventKey {
-	if !p.isReady() {
+	if !p.IsReady() {
 		return event
 	}
 	switch unicode.ToLower(event.Rune()) {
 	case 'e':
-		p.activateEditor()
+		p.ActivateEditor()
 		return nil
 	}
 
-	if event.Key() == tcell.KeyLeft && p.prev != nil {
-		p.prev.SetFocus()
+	if event.Key() == tcell.KeyLeft && p.Prev != nil {
+		p.Prev.SetFocus()
 		return nil
 	}
 

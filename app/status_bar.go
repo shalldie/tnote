@@ -14,20 +14,11 @@ type StatusBar struct {
 	message *tview.TextView
 }
 
-// Name of page keys
-const (
-	defaultPage = "default"
-	messagePage = "message"
-)
-
-// Used to skip queued restore of statusBar
-// in case of new showForSeconds within waiting period
 var restorInQ = 0
 
-func newStatusBar() *StatusBar {
+func NewStatusBar() *StatusBar {
 	sb := &StatusBar{
-		Grid: tview.NewGrid(),
-		// Pages:   tview.NewPages(),
+		Grid:    tview.NewGrid(),
 		message: tview.NewTextView().SetDynamicColors(true).SetTextColor(tcell.ColorYellow),
 	}
 

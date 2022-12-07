@@ -1,2 +1,3 @@
 # ttm
-The task manager in cli.
+
+Ternimal task manager. 终端任务管理。

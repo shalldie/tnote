@@ -25,10 +25,10 @@ func Setup() {
 	taskPanel = NewTaskPanel()
 	detailPanel = NewDetailPanel()
 
-	projectPanel.next = taskPanel
-	taskPanel.prev = projectPanel
-	taskPanel.next = detailPanel
-	detailPanel.prev = taskPanel
+	projectPanel.Next = taskPanel
+	taskPanel.Prev = projectPanel
+	taskPanel.Next = detailPanel
+	detailPanel.Prev = taskPanel
 
 	// layout
 	prepareLayout(projectPanel, taskPanel, detailPanel)
@@ -37,7 +37,7 @@ func Setup() {
 	setKeyboardShortcuts()
 
 	// project p.loadFromDB()
-	projectPanel.reset()
+	projectPanel.Reset()
 
 	if err := app.SetRoot(layout, true).SetFocus(projectPanel).Run(); err != nil {
 		panic(err)
@@ -62,7 +62,7 @@ func prepareLayout(col0 tview.Primitive, col1 tview.Primitive, col2 tview.Primit
 		AddItem(splitItem, 1, 1, false)
 
 	// 容器 - 下
-	statusBar = newStatusBar()
+	statusBar = NewStatusBar()
 
 	layout.AddItem(content, 0, 1, false).
 		AddItem(
@@ -96,9 +96,9 @@ func setKeyboardShortcuts() *tview.Application {
 		// Handle based on current focus. Handlers may modify event
 		switch {
 		case projectPanel.HasFocus():
-			event = projectPanel.handleShortcuts(event)
+			event = projectPanel.HandleShortcuts(event)
 		case taskPanel.HasFocus():
-			event = taskPanel.handleShortcuts(event)
+			event = taskPanel.HandleShortcuts(event)
 			// 	if event != nil && projectDetailPane.isShowing() {
 			// 		event = projectDetailPane.handleShortcuts(event)
 			// 	}

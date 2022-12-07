@@ -16,17 +16,17 @@ type IPanel interface {
 // panel 基类
 type BasePanel[T any] struct {
 	*tview.Flex
-	mu    *sync.Mutex // goroutine 的时候要加锁
-	model *T
-	prev  IPanel
-	next  IPanel
+	Mu    *sync.Mutex // goroutine 的时候要加锁
+	Model *T
+	Prev  IPanel
+	Next  IPanel
 }
 
 // 创建 panel 实例
-func newBasePanel[T any]() *BasePanel[T] {
+func NewBasePanel[T any]() *BasePanel[T] {
 	p := &BasePanel[T]{
 		Flex: tview.NewFlex().SetDirection(tview.FlexRow),
-		mu:   &sync.Mutex{},
+		Mu:   &sync.Mutex{},
 	}
 
 	p.SetBorder(true)
@@ -54,7 +54,7 @@ func (p *BasePanel[T]) AddTip(tip string) *BasePanel[T] {
 
 // 保存当前 model 到 db
 func (p *BasePanel[T]) SaveModel() *BasePanel[T] {
-	id := reflect.ValueOf(*p.model).FieldByName("ID").String()
-	db.Save(id, p.model)
+	id := reflect.ValueOf(*p.Model).FieldByName("ID").String()
+	db.Save(id, p.Model)
 	return p
 }
