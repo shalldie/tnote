@@ -15,9 +15,9 @@ import (
 	"github.com/syndtr/goleveldb/leveldb"
 )
 
-var homeDir, _ = os.UserHomeDir()
+var HomeDir, _ = os.UserHomeDir()
 
-var CONFIG_FILE_PATH = filepath.Join(homeDir, ".ttm.leveldb.db")
+var CONFIG_FILE_PATH = filepath.Join(HomeDir, ".ttm.leveldb.db")
 
 var dbm *sync.Mutex = &sync.Mutex{}
 
