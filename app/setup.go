@@ -91,6 +91,7 @@ func setKeyboardShortcuts() *tview.Application {
 			app.SetFocus(taskPanel)
 			// contents.RemoveItem(taskDetailPane)
 			return nil
+
 		}
 
 		// Handle based on current focus. Handlers may modify event

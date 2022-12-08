@@ -27,3 +27,6 @@ for os_name in ${TARGET_OS_NAMES[*]}; do
     mv ttm.$os_name output/ttm.$os_name
 
 done
+
+
+upx output/ttm.*

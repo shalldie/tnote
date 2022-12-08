@@ -21,25 +21,25 @@ func createSplitItem() *tview.Box {
 	return tview.NewBox().SetBorder(false)
 }
 
-func confirm(text string, f func()) {
+// func confirm(text string, f func()) {
 
-	activePane := app.GetFocus()
-	modal := tview.NewModal().
-		SetText(text).
-		AddButtons([]string{"Yes", "No"}).
-		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-			if buttonLabel == "Yes" {
-				f()
-			}
-			app.SetRoot(layout, true).EnableMouse(true)
-			app.SetFocus(activePane)
-		})
+// 	activePane := app.GetFocus()
+// 	modal := tview.NewModal().
+// 		SetText(text).
+// 		AddButtons([]string{"Yes", "No"}).
+// 		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+// 			if buttonLabel == "Yes" {
+// 				f()
+// 			}
+// 			app.SetRoot(layout, true).EnableMouse(true)
+// 			app.SetFocus(activePane)
+// 		})
 
-	pages := tview.NewPages().
-		AddPage("background", layout, true, true).
-		AddPage("modal", modal, true, true)
-	_ = app.SetRoot(pages, true).EnableMouse(true)
-}
+// 	pages := tview.NewPages().
+// 		AddPage("background", layout, true, true).
+// 		AddPage("modal", modal, true, true)
+// 	_ = app.SetRoot(pages, true).EnableMouse(true)
+// }
 
 // 是否焦点在输入框
 func ignoreKeyEvt() bool {

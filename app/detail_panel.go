@@ -1,6 +1,8 @@
 package app
 
 import (
+	"fmt"
+	"time"
 	"unicode"
 
 	"github.com/gdamore/tcell/v2"
@@ -23,7 +25,8 @@ func NewDetailPanel() *DetailPanel {
 
 	p.PrepareEditor()
 	p.AddItem(p.Editor, 0, 1, false)
-	p.AddTip("编辑：E ; 保存：Esc")
+	p.AddTip("编辑：E ; 保存：Esc", " ")
+	// p.AddRightTip("创建时间：2022-12-08 23:22:33")
 
 	// p.reset()
 
@@ -64,6 +67,8 @@ func (p *DetailPanel) LoadModel() {
 	}
 
 	p.SetContent(p.Model.Content)
+	timeContent := fmt.Sprintf(" 创建时间：%s ", time.Unix(p.Model.CreatedTime, 0).Format("2006-01-02 15:04:05"))
+	p.Tips[1].SetText(timeContent)
 }
 
 func (p *DetailPanel) ActivateEditor() {

@@ -3,6 +3,7 @@ package app
 import (
 	"reflect"
 	"sync"
+	"unicode/utf8"
 
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
@@ -20,6 +21,7 @@ type BasePanel[T any] struct {
 	Model *T
 	Prev  IPanel
 	Next  IPanel
+	Tips  []*tview.TextView
 }
 
 // 创建 panel 实例
@@ -46,9 +48,23 @@ func (p *BasePanel[T]) SetTitle(title string) *BasePanel[T] {
 }
 
 // 添加 tip
-func (p *BasePanel[T]) AddTip(tip string) *BasePanel[T] {
-	tipcom := tview.NewTextView().SetText(" " + tip + " ").SetTextColor(tcell.ColorYellow)
-	p.AddItem(tipcom, 1, 0, false)
+func (p *BasePanel[T]) AddTip(leftTip string, rightTip string) *BasePanel[T] {
+	flexItem := tview.NewFlex()
+
+	tipcom := tview.NewTextView().SetText(" " + leftTip + " ").SetTextColor(tcell.ColorYellow)
+	flexItem.AddItem(tipcom, 0, 1, false)
+
+	tipcomRight := tview.NewTextView().SetText(" " + rightTip + " ").SetTextColor(tcell.ColorYellow).SetTextAlign(tview.AlignRight)
+	proportion := func() int {
+		if utf8.RuneCountInString(rightTip) > 0 {
+			return 1
+		}
+		return 0
+	}()
+	flexItem.AddItem(tipcomRight, 0, proportion, false)
+
+	p.AddItem(flexItem, 1, 0, false)
+	p.Tips = append(p.Tips, tipcom, tipcomRight)
 	return p
 }
 
