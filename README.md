@@ -17,9 +17,11 @@
 
 <!-- 封面区域 end -->
 
-## 看起来这德行
+## 看起来
 
 <img src="https://user-images.githubusercontent.com/9987486/206672150-24f34157-72e0-4c81-929c-ee07eb668ac8.png" width="1000">
+
+你可以用快捷键或者鼠标来操作。
 
 ## 功能
 
@@ -38,7 +40,7 @@
   - [ ] 状态、筛选
 - [ ] 详情
   - [x] 新建
-  - [x] Markdown 编辑、保存
+  - [x] Markdown 高亮、编辑、保存
 
 ## 安装
 
@@ -69,3 +71,7 @@ wget -O ttm [url]
 sudo chmod a+x ttm
 sudo mv ttm /usr/local/bin/ttm
 ```
+
+## LICENSE
+
+MIT
