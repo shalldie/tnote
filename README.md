@@ -17,7 +17,7 @@
 
 <!-- 封面区域 end -->
 
-## Example
+## 看起来这德行
 
 <img src="https://user-images.githubusercontent.com/9987486/206672150-24f34157-72e0-4c81-929c-ee07eb668ac8.png" width="1000">
 
