@@ -157,3 +157,13 @@ func FindByPattern(patterns ...string) map[string][]byte {
 
 	return m
 }
+
+func Delete(key string) {
+	dbm.Lock()
+	defer dbm.Unlock()
+
+	db := LoadDB()
+	defer db.Close()
+
+	db.Delete([]byte(key), nil)
+}

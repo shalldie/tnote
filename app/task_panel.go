@@ -17,7 +17,7 @@ func NewTaskPanel() *TaskPanel {
 		ListPanel: NewListPanel[model.Task]("任务", "新任务"),
 	}
 
-	p.LoadFromDB = func() {
+	p.LoadFromDBImpl = func() {
 		pattern := strings.Join(projectPanel.Model.TaskIds, "|")
 		tasks := []*model.Task{}
 		if len(pattern) > 0 {
@@ -34,7 +34,7 @@ func NewTaskPanel() *TaskPanel {
 		}
 	}
 
-	p.AddNewItem = func(text string) {
+	p.AddNewItemImpl = func(text string) {
 
 		if utf8.RuneCountInString(text) < 3 {
 			statusBar.ShowForSeconds("任务名长度最少3个字符", 5)
@@ -59,8 +59,13 @@ func NewTaskPanel() *TaskPanel {
 		p.SetFocus()
 	}
 
-	p.OnSelectedChange = func(item *model.Task) {
+	p.OnSelectedChangeImpl = func(item *model.Task) {
 		detailPanel.Reset()
+	}
+
+	p.DeleteModelImpl = func(item *model.Task) {
+		model.DeleteTask(item.ID)
+		p.Reset()
 	}
 
 	return p

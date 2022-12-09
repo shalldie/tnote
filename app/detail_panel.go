@@ -26,9 +26,6 @@ func NewDetailPanel() *DetailPanel {
 	p.PrepareEditor()
 	p.AddItem(p.Editor, 0, 1, false)
 	p.AddTip("编辑：E ; 保存：Esc", " ")
-	// p.AddRightTip("创建时间：2022-12-08 23:22:33")
-
-	// p.reset()
 
 	return p
 }
@@ -38,7 +35,7 @@ func (d *DetailPanel) IsReady() bool {
 }
 
 func (p *DetailPanel) Reset() {
-	// p.deactivateEditor()
+	p.DeactivateEditor()
 	p.Model = nil
 	if !p.IsReady() {
 		return

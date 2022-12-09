@@ -4,9 +4,8 @@ import (
 	"bytes"
 	"encoding/gob"
 	"fmt"
-	"strconv"
-	"time"
 
+	"github.com/shalldie/gog/gs"
 	"github.com/shalldie/ttm/app"
 	"github.com/shalldie/ttm/db"
 	"github.com/shalldie/ttm/model"
@@ -14,6 +13,7 @@ import (
 
 func main() {
 	main1()
+	// main2()
 	// main3()
 }
 
@@ -22,14 +22,10 @@ func main1() {
 }
 
 func main2() {
-	ts := time.Now()
-	prefix := "dafdsafdsafdsafda"
-	for i := 0; i < 10; i++ {
-		db.Save(prefix+strconv.Itoa(i), i)
-	}
-	db.FindByPattern(prefix)
-	fmt.Println(time.Now().Sub(ts).String())
-
+	list := model.FindTasks()
+	gs.ForEach(list, func(task *model.Task, i int) {
+		fmt.Println(task.ID, task.Name)
+	})
 }
 
 func main3() {

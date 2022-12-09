@@ -18,7 +18,7 @@ func NewProjectPanel() *ProjectPanel {
 		ListPanel: NewListPanel[model.Project]("项目", "新项目"),
 	}
 
-	p.LoadFromDB = func() {
+	p.LoadFromDBImpl = func() {
 		p.Items = gs.Sort(model.FindProjects(), func(item1, item2 *model.Project) bool {
 			return item1.CreatedTime < item2.CreatedTime
 		})
@@ -30,10 +30,10 @@ func NewProjectPanel() *ProjectPanel {
 
 	}
 
-	p.AddNewItem = func(text string) {
+	p.AddNewItemImpl = func(text string) {
 
-		if utf8.RuneCountInString(text) < 3 {
-			statusBar.ShowForSeconds("项目名长度最少3个字符", 5)
+		if utf8.RuneCountInString(text) < 2 {
+			statusBar.ShowForSeconds("项目名长度最少2个字符", 5)
 			return
 		}
 
@@ -51,15 +51,16 @@ func NewProjectPanel() *ProjectPanel {
 		p.SetFocus()
 	}
 
-	p.OnSelectedChange = func(item *model.Project) {
+	p.OnSelectedChangeImpl = func(item *model.Project) {
 		// p.SetTitle("loading...")
 		// taskPanel.setFocus()
 		p.Model = item
 		taskPanel.Reset()
+	}
 
-		// go func() {
-		// 	app.Draw()
-		// }()
+	p.DeleteModelImpl = func(item *model.Project) {
+		model.DeleteProject(item.ID)
+		p.Reset()
 	}
 
 	return p

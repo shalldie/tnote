@@ -92,11 +92,11 @@ func setKeyboardShortcuts() *tview.Application {
 			// contents.RemoveItem(taskDetailPane)
 			return nil
 
-		case 'd':
-			// 3s 内按 `Y` 确定删除
-			app.SetFocus(taskPanel)
-			// contents.RemoveItem(taskDetailPane)
-			return nil
+			// case 'd':
+			// 	// 3s 内按 `Y` 确定删除
+			// 	app.SetFocus(taskPanel)
+			// 	// contents.RemoveItem(taskDetailPane)
+			// 	return nil
 
 		}
 

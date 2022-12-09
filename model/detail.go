@@ -1,5 +1,9 @@
 package model
 
+import (
+	"github.com/shalldie/ttm/db"
+)
+
 var detailPrefix = "detail_"
 
 type Detail struct {
@@ -18,4 +22,8 @@ func NewDetail() *Detail {
 func FindDetails(patterns ...string) []*Detail {
 	patterns = append(patterns, detailPrefix)
 	return findModels(NewDetail, patterns...)
+}
+
+func DeleteDetail(key string) {
+	db.Delete(key)
 }

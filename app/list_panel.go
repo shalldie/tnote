@@ -13,10 +13,11 @@ type ListPanel[T any] struct {
 	List    *tview.List       // 列表组件
 	NewItem *tview.InputField // 新加项组件
 	Items   []*T              // 列表
-	// model            *T                // 活动项
-	LoadFromDB       func()            // 从db中获取数据
-	AddNewItem       func(text string) // 添加新项
-	OnSelectedChange func(item *T)     // 选择项改变
+	// impl
+	LoadFromDBImpl       func()            // 从db中获取数据
+	AddNewItemImpl       func(text string) // 添加新项
+	OnSelectedChangeImpl func(item *T)     // 选择项改变
+	DeleteModelImpl      func(item *T)     // 删除
 }
 
 func NewListPanel[T any](title string, newItemText string) *ListPanel[T] {
@@ -46,20 +47,10 @@ func NewListPanel[T any](title string, newItemText string) *ListPanel[T] {
 	// SetSelectedFunc
 	l.List.SetChangedFunc(func(i int, s1, s2 string, r rune) {
 		l.Model = l.Items[i]
-		if l.OnSelectedChange != nil {
-			// l.onSelectedChange(l.model)
+		if l.OnSelectedChangeImpl != nil {
 			go app.QueueUpdateDraw(func() {
-				l.Mu.Lock()
-				defer l.Mu.Unlock()
-				l.OnSelectedChange(l.Model)
-				// app.Draw()
+				l.OnSelectedChangeImpl(l.Model)
 			})
-			// go func() {
-			// 	l.mu.Lock()
-			// 	defer l.mu.Unlock()
-			// 	l.onSelectedChange(l.model)
-			// 	app.Draw()
-			// }()
 		}
 	})
 
@@ -67,7 +58,7 @@ func NewListPanel[T any](title string, newItemText string) *ListPanel[T] {
 	l.NewItem.SetDoneFunc(func(key tcell.Key) {
 		switch key {
 		case tcell.KeyEnter:
-			l.AddNewItem(strings.TrimSpace(l.NewItem.GetText()))
+			l.AddNewItemImpl(strings.TrimSpace(l.NewItem.GetText()))
 			statusBar.ShowForSeconds("添加完毕...", 3)
 		case tcell.KeyEsc:
 			l.NewItem.SetText("")
@@ -81,14 +72,11 @@ func NewListPanel[T any](title string, newItemText string) *ListPanel[T] {
 
 // 重置数据、状态
 func (l *ListPanel[T]) Reset() {
-	// l.mu.Lock()
-	// defer l.mu.Unlock()
-
 	l.List.Clear()
 	l.Items = make([]*T, 0)
 	l.Model = nil
-	if l.LoadFromDB != nil {
-		l.LoadFromDB()
+	if l.LoadFromDBImpl != nil {
+		l.LoadFromDBImpl()
 	}
 	l.NewItem.SetText("")
 }
@@ -107,7 +95,10 @@ func (l *ListPanel[T]) HandleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 		return nil
 	// 删除
 	case 'd':
-		app.SetFocus(l.NewItem)
+		// app.SetFocus(l.NewItem)
+		if l.DeleteModelImpl != nil {
+			l.DeleteModelImpl(l.Model)
+		}
 		return nil
 	}
 
