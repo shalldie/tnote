@@ -1,7 +1,7 @@
 <!-- 封面区域 -->
 <div align="center">
 
-<img src="images/ttm.png" width="320" height="136" />
+<img src="https://user-images.githubusercontent.com/9987486/206709885-02b902f3-2527-480f-8319-631271d8b304.png" width="320" height="136" />
 
 ### Task manager in terminal.
 
