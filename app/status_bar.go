@@ -3,6 +3,7 @@ package app
 // edit from https://github.com/ajaxray/geek-life
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/gdamore/tcell/v2"
@@ -44,11 +45,15 @@ func (sb *StatusBar) ShowMessage(message string) {
 
 func (sb *StatusBar) ShowForSeconds(message string, timeout int) {
 
-	sb.ShowMessage(message)
+	// sb.ShowMessage(message)
 	restorInQ++
 
 	go func() {
-		time.Sleep(time.Second * time.Duration(timeout))
+		for i := 0; i < timeout; i++ {
+			sb.ShowMessage(fmt.Sprintf("%s...%ds", message, timeout-i))
+			time.Sleep(time.Second)
+		}
+		// time.Sleep(time.Second * time.Duration(timeout))
 
 		// Apply restore only if this is the last pending restore
 		if restorInQ == 1 {
