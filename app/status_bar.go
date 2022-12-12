@@ -12,10 +12,9 @@ import (
 
 type StatusBar struct {
 	*tview.Grid
-	message *tview.TextView
+	message      *tview.TextView
+	curTimestamp int64
 }
-
-var restorInQ = 0
 
 func NewStatusBar() *StatusBar {
 	sb := &StatusBar{
@@ -35,30 +34,32 @@ func NewStatusBar() *StatusBar {
 	return sb
 }
 
-func (sb *StatusBar) Restore() {
-	sb.ShowMessage("")
-}
-
 func (sb *StatusBar) ShowMessage(message string) {
-	sb.message.SetText(message)
+	app.QueueUpdateDraw(func() {
+		sb.message.SetText(message)
+	})
 }
 
 func (sb *StatusBar) ShowForSeconds(message string, timeout int) {
 
-	// sb.ShowMessage(message)
-	restorInQ++
+	sb.curTimestamp = time.Now().Unix()
+	cts := sb.curTimestamp
+
+	shouldStop := func() bool {
+		return cts != sb.curTimestamp
+	}
 
 	go func() {
 		for i := 0; i < timeout; i++ {
+			if shouldStop() {
+				return
+			}
 			sb.ShowMessage(fmt.Sprintf("%s...%ds", message, timeout-i))
 			time.Sleep(time.Second)
 		}
-		// time.Sleep(time.Second * time.Duration(timeout))
-
-		// Apply restore only if this is the last pending restore
-		if restorInQ == 1 {
-			sb.Restore()
+		if shouldStop() {
+			return
 		}
-		restorInQ--
+		sb.ShowMessage("")
 	}()
 }

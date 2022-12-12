@@ -36,6 +36,8 @@ func (d *DetailPanel) IsReady() bool {
 
 func (p *DetailPanel) Reset() {
 	p.DeactivateEditor()
+	p.SetContent("")
+	p.Tips[1].SetText("")
 	p.Model = nil
 	if !p.IsReady() {
 		return

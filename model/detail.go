@@ -4,7 +4,7 @@ import (
 	"github.com/shalldie/ttm/db"
 )
 
-var detailPrefix = "detail_"
+const DETAIL_PREFIX = "detail_"
 
 type Detail struct {
 	*Model
@@ -15,12 +15,12 @@ func NewDetail() *Detail {
 	t := &Detail{
 		Model: NewModel(),
 	}
-	t.ID = detailPrefix + t.ID
+	t.ID = DETAIL_PREFIX + t.ID
 	return t
 }
 
 func FindDetails(patterns ...string) []*Detail {
-	patterns = append(patterns, detailPrefix)
+	patterns = append(patterns, DETAIL_PREFIX)
 	return findModels(NewDetail, patterns...)
 }
 

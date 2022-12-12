@@ -2,7 +2,7 @@ package model
 
 import "github.com/shalldie/ttm/db"
 
-var taskPrefix = "task_"
+const TASK_PREFIX = "task_"
 
 type Task struct {
 	*Model
@@ -14,12 +14,12 @@ func NewTask() *Task {
 	t := &Task{
 		Model: NewModel(),
 	}
-	t.ID = taskPrefix + t.ID
+	t.ID = TASK_PREFIX + t.ID
 	return t
 }
 
 func FindTasks(patterns ...string) []*Task {
-	patterns = append(patterns, taskPrefix)
+	patterns = append(patterns, TASK_PREFIX)
 	return findModels(NewTask, patterns...)
 }
 

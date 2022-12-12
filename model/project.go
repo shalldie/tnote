@@ -5,7 +5,7 @@ import (
 	"github.com/shalldie/ttm/db"
 )
 
-var projectPrefix = "project_"
+const PROJECT_PREFIX = "project_"
 
 type Project struct {
 	*Model
@@ -17,12 +17,12 @@ func NewProject() *Project {
 	p := &Project{
 		Model: NewModel(),
 	}
-	p.ID = projectPrefix + p.ID
+	p.ID = PROJECT_PREFIX + p.ID
 	return p
 }
 
 func FindProjects(patterns ...string) []*Project {
-	patterns = append(patterns, projectPrefix)
+	patterns = append(patterns, PROJECT_PREFIX)
 	return findModels(NewProject, patterns...)
 }
 

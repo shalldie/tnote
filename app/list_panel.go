@@ -79,6 +79,7 @@ func (l *ListPanel[T]) Reset() {
 		l.LoadFromDBImpl()
 	}
 	l.NewItem.SetText("")
+	detailPanel.Reset()
 }
 
 // 设置焦点
