@@ -8,7 +8,9 @@ import (
 )
 
 var (
+	pages           *tview.Pages
 	app             *tview.Application
+	modal           *tview.Modal
 	layout, content *tview.Flex
 	projectPanel    *ProjectPanel
 	taskPanel       *TaskPanel
@@ -39,7 +41,13 @@ func Setup() {
 	// project p.loadFromDB()
 	projectPanel.Reset()
 
-	if err := app.SetRoot(layout, true).SetFocus(projectPanel).Run(); err != nil {
+	modal = tview.NewModal().AddButtons([]string{"确定", "取消"})
+
+	pages = tview.NewPages().
+		AddPage("main", layout, true, true).
+		AddPage("modal", modal, true, false)
+
+	if err := app.SetRoot(pages, true).SetFocus(projectPanel).Run(); err != nil {
 		panic(err)
 	}
 }
@@ -54,9 +62,9 @@ func prepareLayout(col0 tview.Primitive, col1 tview.Primitive, col2 tview.Primit
 	// 容器 - 上 - 左中右
 	content = tview.NewFlex().
 		AddItem(splitItem, 1, 1, false).
-		AddItem(col0, 30, 1, false).
+		AddItem(col0, 36, 1, false).
 		AddItem(splitItem, 1, 1, false).
-		AddItem(col1, 50, 1, false).
+		AddItem(col1, 44, 1, false).
 		AddItem(splitItem, 1, 1, false).
 		AddItem(col2, 0, 1, false).
 		AddItem(splitItem, 1, 1, false)
@@ -82,22 +90,16 @@ func setKeyboardShortcuts() *tview.Application {
 
 		// Global shortcuts
 		switch unicode.ToLower(event.Rune()) {
-		case 'p':
+		case '1':
 			app.SetFocus(projectPanel)
-			// contents.RemoveItem(taskDetailPane)
 			return nil
-		// case 'q':
-		case 't':
+		case '2':
 			app.SetFocus(taskPanel)
-			// contents.RemoveItem(taskDetailPane)
 			return nil
 
-			// case 'd':
-			// 	// 3s 内按 `Y` 确定删除
-			// 	app.SetFocus(taskPanel)
-			// 	// contents.RemoveItem(taskDetailPane)
-			// 	return nil
-
+		case '3':
+			app.SetFocus(detailPanel)
+			return nil
 		}
 
 		// Handle based on current focus. Handlers may modify event

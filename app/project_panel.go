@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"unicode/utf8"
 
 	"github.com/shalldie/gog/gs"
@@ -59,8 +60,10 @@ func NewProjectPanel() *ProjectPanel {
 	}
 
 	p.DeleteModelImpl = func(item *model.Project) {
-		model.DeleteProject(item.ID)
-		p.Reset()
+		makeConfirm(fmt.Sprintf("确定要删除【%s】吗？", p.Model.Name), func() {
+			model.DeleteProject(item.ID)
+			p.Reset()
+		})
 	}
 
 	return p

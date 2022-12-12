@@ -1,6 +1,7 @@
 package app
 
 import (
+	"fmt"
 	"strings"
 	"unicode/utf8"
 
@@ -64,8 +65,10 @@ func NewTaskPanel() *TaskPanel {
 	}
 
 	p.DeleteModelImpl = func(item *model.Task) {
-		model.DeleteTask(item.ID)
-		p.Reset()
+		makeConfirm(fmt.Sprintf("确定要删除【%s】吗？", p.Model.Name), func() {
+			model.DeleteTask(item.ID)
+			p.Reset()
+		})
 	}
 
 	return p

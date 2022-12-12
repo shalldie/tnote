@@ -34,7 +34,12 @@ func NewListPanel[T any](title string, newItemText string) *ListPanel[T] {
 	// 组件
 	l.SetTitle(" " + title + " ")
 	l.AddItem(l.List, 0, 1, true).AddItem(l.NewItem, 1, 0, false)
-	l.AddTip("新建：N ; 删除：D", "")
+
+	l.AddTip(strings.Join([]string{
+		"新建：N",
+		"编辑：E",
+		"删除：D",
+	}, " ; "), "")
 
 	// 兼容 powerlevel10k
 	l.List.SetBorderPadding(0, 0, 1, 1)

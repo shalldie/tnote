@@ -50,3 +50,21 @@ func ignoreKeyEvt() bool {
 	textInputs := []string{"*tview.InputField", "*femto.View"}
 	return gs.Contains(textInputs, reflect.TypeOf(app.GetFocus()).String())
 }
+
+func makeConfirm(content string, done func()) {
+	modal.SetText(content).
+		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+			pages.HidePage("modal")
+			pages.HidePage("main")
+
+			go app.QueueUpdateDraw(func() {
+				pages.SwitchToPage("main")
+				projectPanel.SetFocus()
+				if buttonIndex == 0 {
+					done()
+				}
+			})
+		})
+
+	pages.ShowPage("modal")
+}
