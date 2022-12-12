@@ -52,6 +52,7 @@ func ignoreKeyEvt() bool {
 }
 
 func makeConfirm(content string, done func()) {
+	lastFocus := app.GetFocus()
 	modal.SetText(content).
 		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
 			pages.HidePage("modal")
@@ -59,7 +60,7 @@ func makeConfirm(content string, done func()) {
 
 			go app.QueueUpdateDraw(func() {
 				pages.SwitchToPage("main")
-				projectPanel.SetFocus()
+				app.SetFocus(lastFocus)
 				if buttonIndex == 0 {
 					done()
 				}
