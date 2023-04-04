@@ -49,6 +49,9 @@ func NewSidebarPanel() *SidebarPanel {
 	// SetSelectedFunc
 	p.List.SetChangedFunc(func(i int, s1, s2 string, r rune) {
 		// view.LoadFile(p.Files[i])
+		if note.Gist.Model == nil {
+			return
+		}
 		note.Gist.CurrentIndex = i
 		note.View.SetContent(note.Gist.GetContent())
 	})
@@ -75,6 +78,7 @@ func NewSidebarPanel() *SidebarPanel {
 }
 
 func (p *SidebarPanel) Setup() {
+	p.List.AddItem(" loading... ", "", 0, nil)
 	go func() {
 		note.Gist.Setup()
 		p.LoadFiles()

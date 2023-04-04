@@ -33,15 +33,12 @@ func NewTNote(token string) *TNote {
 		View:      NewViewPanel(),
 		StatusBar: NewStatusBar(),
 	}
-
+	note.initLayout()
+	note.setKeyboardShortcuts()
 	return note
 }
 
 func (t *TNote) Setup() {
-
-	t.initLayout()
-	t.setKeyboardShortcuts()
-
 	t.Sidebar.Setup()
 
 	if err := t.App.SetRoot(t.Pages, true).SetFocus(t.Sidebar).Run(); err != nil {
