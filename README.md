@@ -19,7 +19,7 @@
 
 <!-- 封面区域 end -->
 
-> 目前 github api v3，删除包含中文名文件时候报错
+> 目前 github api v3，删除包含中文名文件时候报错 <br>
 > 已工单沟通，待修复
 
 ## 功能
@@ -51,6 +51,10 @@
 
 你可以用快捷键或者鼠标来操作。
 
+## 前置条件
+
+应用基于 github gist 构建，需要去 [申请 access token](https://github.com/settings/tokens/new)，然后把值加入环境变量 `$TNOTE_GIST_TOKEN`
+
 ## 安装
 
 ### 1. install 方式
@@ -58,7 +62,7 @@
 需要 `go@1.19+` 环境
 
 ```bash
-go install github.com/shalldie/tnote@latest
+go install github.com/shalldie/tnote@tag
 ```
 
 ### 2. binary 方式
@@ -79,6 +83,12 @@ example:
 wget -O tnote [url]
 sudo chmod a+x tnote
 sudo mv tnote /usr/local/bin/tnote
+```
+
+### 3. docker
+
+```bash
+docker run --rm -it -e TNOTE_GIST_TOKEN=$TNOTE_GIST_TOKEN shalldie/tnote
 ```
 
 ## LICENSE

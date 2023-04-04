@@ -27,7 +27,7 @@ for os_name in ${TARGET_OS_NAMES[*]}; do
         go build \
         -gcflags "all=-trimpath=$BASE_PATH" \
         -ldflags="-s -w" \
-        -o output/tnote.${os_name} cmd/main.go
+        -o output/tnote.${os_name} main.go
 
 done
 
