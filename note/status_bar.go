@@ -1,4 +1,4 @@
-package app
+package note
 
 // edit from https://github.com/ajaxray/geek-life
 

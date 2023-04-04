@@ -1,19 +1,19 @@
 <!-- 封面区域 -->
 <div align="center">
 
-<img src="https://user-images.githubusercontent.com/9987486/206709885-02b902f3-2527-480f-8319-631271d8b304.png" width="320" height="136" />
+<img src="https://user-images.githubusercontent.com/9987486/229472271-62a5d923-f7b7-416c-913e-c842ecc2de4d.png" width="320" />
 
-### Task manager in terminal.
+### Note in terminal, based on github gist.
 
-`终端运行的任务管理工具`
+`终端运行的记事本，基于 github gist 构建。`
 
-[![Release Version](https://img.shields.io/github/v/release/shalldie/ttm?display_name=tag&logo=github&style=flat-square)](https://github.com/shalldie/ttm)
-[![Go Version](https://img.shields.io/github/go-mod/go-version/shalldie/ttm?label=go&logo=go&style=flat-square)](https://github.com/shalldie/ttm)
-[![Go Reference](https://pkg.go.dev/badge/github.com/shalldie/ttm.svg)](https://pkg.go.dev/github.com/shalldie/ttm)
-[![Build Status](https://img.shields.io/github/workflow/status/shalldie/ttm/ci?label=build&logo=github&style=flat-square)](https://github.com/shalldie/ttm/actions)
-[![License](https://img.shields.io/github/license/shalldie/ttm?logo=github&style=flat-square)](https://github.com/shalldie/ttm)
+[![Release Version](https://img.shields.io/github/v/release/shalldie/tnote?display_name=tag&logo=github&style=flat-square)](https://github.com/shalldie/tnote)
+[![Go Version](https://img.shields.io/github/go-mod/go-version/shalldie/tnote?label=go&logo=go&style=flat-square)](https://github.com/shalldie/tnote)
+[![Go Reference](https://pkg.go.dev/badge/github.com/shalldie/tnote.svg)](https://pkg.go.dev/github.com/shalldie/tnote)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/shalldie/tnote/ci.yml?branch=master&label=build&logo=github&style=flat-square)](https://github.com/shalldie/tnote/actions)
+[![License](https://img.shields.io/github/license/shalldie/tnote?logo=github&style=flat-square)](https://github.com/shalldie/tnote)
 
-<img src="https://user-images.githubusercontent.com/9987486/206672150-24f34157-72e0-4c81-929c-ee07eb668ac8.png" width="1000">
+<img src="https://user-images.githubusercontent.com/9987486/229672987-6cc48582-fed0-4537-8192-aa2780cf1316.png" width="800">
 
 </div>
 
@@ -26,18 +26,23 @@
   - [x] 存储持久化
   - [x] 快捷键
   - [x] Confirm
-- [ ] 项目
+- [ ] 文件
   - [x] 新建
   - [ ] 重命名
-  - [x] 删除
-- [ ] 任务
-  - [x] 新建
-  - [ ] 重命名
-  - [x] 删除
-  - [ ] 状态、筛选
-- [ ] 详情
-  - [x] 新建
-  - [x] Markdown 高亮、编辑、保存
+  - [ ] 删除
+    - [x] 英文
+    - [ ] 中文
+- [x] 详情
+  - [x] Markdown 高亮
+  - [x] 编辑、保存
+- [ ] 国际化
+  - [ ] 多语言切换
+  - [x] 中文文档
+  - [ ] 英文文档
+- [ ] 安装
+  - [x] go get
+  - [x] binary
+  - [ ] docker
 
 ## 操作
 
@@ -47,15 +52,15 @@
 
 ### 1. install 方式
 
-需要 `go@1.18+` 环境
+需要 `go@1.19+` 环境
 
 ```bash
-go install github.com/shalldie/ttm@latest
+go install github.com/shalldie/tnote@latest
 ```
 
 ### 2. binary 方式
 
-下载地址：[download](https://github.com/shalldie/ttm/releases)
+下载地址：[download](https://github.com/shalldie/tnote/releases)
 
 | 环境           | 适用系统                     |
 | :------------- | :--------------------------- |
@@ -68,9 +73,9 @@ go install github.com/shalldie/ttm@latest
 example:
 
 ```bash
-wget -O ttm [url]
-sudo chmod a+x ttm
-sudo mv ttm /usr/local/bin/ttm
+wget -O tnote [url]
+sudo chmod a+x tnote
+sudo mv tnote /usr/local/bin/tnote
 ```
 
 ## LICENSE

@@ -1,4 +1,4 @@
-package app
+package note
 
 import (
 	"reflect"
@@ -52,14 +52,14 @@ func ignoreKeyEvt() bool {
 }
 
 func makeConfirm(content string, done func()) {
-	lastFocus := app.GetFocus()
-	modal.SetText(content).
+	lastFocus := note.App.GetFocus()
+	note.Modal.SetText(content).
 		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-			pages.HidePage("modal")
-			pages.HidePage("main")
+			note.Pages.HidePage("modal")
+			note.Pages.HidePage("main")
 
 			go app.QueueUpdateDraw(func() {
-				pages.SwitchToPage("main")
+				note.Pages.SwitchToPage("main")
 				app.SetFocus(lastFocus)
 				if buttonIndex == 0 {
 					done()
@@ -67,5 +67,5 @@ func makeConfirm(content string, done func()) {
 			})
 		})
 
-	pages.ShowPage("modal")
+	note.Pages.ShowPage("modal")
 }

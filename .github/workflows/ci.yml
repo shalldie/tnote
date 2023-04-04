@@ -14,7 +14,7 @@ jobs:
       - name: Set up Go
         uses: actions/setup-go@v3
         with:
-          go-version: 1.18
+          go-version: 1.19
 
       - name: Build
         run: bash ./scripts/build.sh
@@ -23,7 +23,7 @@ jobs:
         uses: actions/upload-artifact@v3
         with:
           name: build-artifact
-          path: output/ttm.*
+          path: output/tnote.*
 
       - name: Release
         uses: softprops/action-gh-release@v1
@@ -31,4 +31,4 @@ jobs:
           name: lastest
           tag_name: latest
           files: |
-            output/ttm.*
+            output/tnote.*
