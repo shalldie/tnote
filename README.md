@@ -43,7 +43,7 @@
   - [x] 中文文档
   - [ ] 英文文档
 - [ ] 安装
-  - [x] go get
+  - [x] go install
   - [x] binary
   - [x] docker
 
