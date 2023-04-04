@@ -15,6 +15,9 @@
 vendor/
 
 .DS_Store
+# 产出目录
 output
+# vscode debug
 __debug_bin
+# debug env
 *.env

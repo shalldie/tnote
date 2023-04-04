@@ -4,12 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/shalldie/tnote/gist"
 	"github.com/shalldie/tnote/note"
-)
-
-var (
-	FetchOptions gist.FetchOptions
 )
 
 func main() {
