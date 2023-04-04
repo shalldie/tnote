@@ -27,7 +27,7 @@
 - [x] 面板
   - [x] 切换
   - [x] 存储持久化
-  - [x] 快捷键
+  - [x] 快捷键、鼠标
   - [x] Confirm
 - [ ] 文件
   - [x] 新建
@@ -47,11 +47,7 @@
   - [x] binary
   - [x] docker
 
-## 操作
-
-你可以用快捷键或者鼠标来操作。
-
-## 前置条件
+## 准备
 
 应用基于 github gist 构建，需要去 [申请 access token](https://github.com/settings/tokens/new)，然后把值加入环境变量 `$TNOTE_GIST_TOKEN`
 
