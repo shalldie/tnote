@@ -45,7 +45,7 @@
 - [ ] 安装
   - [x] go get
   - [x] binary
-  - [ ] docker
+  - [x] docker
 
 ## 操作
 
