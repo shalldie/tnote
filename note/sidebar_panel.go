@@ -49,8 +49,8 @@ func NewSidebarPanel() *SidebarPanel {
 	// SetSelectedFunc
 	p.List.SetChangedFunc(func(i int, s1, s2 string, r rune) {
 		// view.LoadFile(p.Files[i])
-		g.CurrentIndex = i
-		view.SetContent(g.GetContent())
+		note.Gist.CurrentIndex = i
+		note.View.SetContent(note.Gist.GetContent())
 	})
 
 	// 事件 - newproject
@@ -76,24 +76,18 @@ func NewSidebarPanel() *SidebarPanel {
 
 func (p *SidebarPanel) Setup() {
 	go func() {
-		g.Setup()
+		note.Gist.Setup()
 		p.LoadFiles()
-		app.Draw()
+		note.App.Draw()
 	}()
 }
 
 func (p *SidebarPanel) LoadFiles() {
 	p.List.Clear()
 
-	for _, f := range g.Files {
+	for _, f := range note.Gist.Files {
 		p.List.AddItem(" - "+f.FileName, "", 0, nil)
 	}
-
-	// if len(p.Files) > 0 {
-	// 	view.LoadFile(p.Files[0])
-	// }
-
-	// app.Draw()
 }
 
 func (p *SidebarPanel) AddFile() {
@@ -104,14 +98,14 @@ func (p *SidebarPanel) AddFile() {
 		return
 	}
 
-	g.UpdateFile(fileName, "To be edited.")
+	note.Gist.UpdateFile(fileName, "To be edited.")
 	p.LoadFiles()
 
-	curIndex := gs.FindIndex(g.Files, func(item *gist.FileModel, index int) bool {
+	curIndex := gs.FindIndex(note.Gist.Files, func(item *gist.FileModel, index int) bool {
 		return item.FileName == fileName
 	})
 
-	g.CurrentIndex = curIndex
+	note.Gist.CurrentIndex = curIndex
 	p.List.SetCurrentItem(curIndex)
 
 	p.NewItem.SetText("")
@@ -124,7 +118,7 @@ func (p *SidebarPanel) HandleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	switch unicode.ToLower(event.Rune()) {
 	// 新建
 	case 'n':
-		app.SetFocus(p.NewItem)
+		note.App.SetFocus(p.NewItem)
 		return nil
 	// 删除
 	case 'd':
@@ -132,9 +126,9 @@ func (p *SidebarPanel) HandleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 		// if l.DeleteModelImpl != nil {
 		// 	l.DeleteModelImpl(l.Model)
 		// }
-		file := g.Files[g.CurrentIndex]
+		file := note.Gist.Files[note.Gist.CurrentIndex]
 		makeConfirm(fmt.Sprintf("确定要删除【%s】吗？", file.FileName), func() {
-			g.UpdateFile(file.FileName, nil)
+			note.Gist.UpdateFile(file.FileName, nil)
 			p.LoadFiles()
 		})
 		return nil
@@ -148,7 +142,7 @@ func (p *SidebarPanel) HandleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	// 向右
 	if event.Key() == tcell.KeyRight {
 		// l.Next.SetFocus()
-		view.SetFocus()
+		note.View.SetFocus()
 		return nil
 	}
 

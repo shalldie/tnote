@@ -29,7 +29,7 @@ func NewViewPanel() *ViewPanel {
 func (p *ViewPanel) ActivateEditor() {
 	p.Editor.Readonly = false
 	p.Editor.SetBorderColor(tcell.ColorDarkOrange)
-	app.SetFocus(p.Editor)
+	note.App.SetFocus(p.Editor)
 }
 
 func (p *ViewPanel) DeactivateEditor() {
@@ -76,17 +76,17 @@ func (p *ViewPanel) SetContent(content string) {
 }
 
 func (p *ViewPanel) SaveContent(content string) {
-	file := g.Files[g.CurrentIndex]
+	file := note.Gist.Files[note.Gist.CurrentIndex]
 	// file.Content = content
-	go g.UpdateFile(file.FileName, content)
+	go note.Gist.UpdateFile(file.FileName, content)
 }
 
 func (p *ViewPanel) LoadFile(fileName string) {
 	p.DeactivateEditor()
 	go func() {
-		content := g.FetchFile(fileName)
+		content := note.Gist.FetchFile(fileName)
 		p.SetContent(content)
-		app.Draw()
+		note.App.Draw()
 	}()
 }
 
@@ -100,7 +100,7 @@ func (p *ViewPanel) HandleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	}
 
 	if event.Key() == tcell.KeyLeft {
-		sidebar.SetFocus()
+		note.Sidebar.SetFocus()
 		return nil
 	}
 

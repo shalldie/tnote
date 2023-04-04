@@ -28,14 +28,14 @@ func NewStatusBar() *StatusBar {
 		AddItem(tview.NewTextView().SetText("方向：↑↓←→ ；退出：Ctrl + C").SetTextAlign(tview.AlignRight), 0, 3, 1, 1, 0, 0, false) // ↑ ↓ ← →
 
 	sb.message.SetChangedFunc(func() {
-		app.Draw()
+		note.App.Draw()
 	})
 
 	return sb
 }
 
 func (sb *StatusBar) ShowMessage(message string) {
-	app.QueueUpdateDraw(func() {
+	note.App.QueueUpdateDraw(func() {
 		sb.message.SetText(message)
 	})
 }

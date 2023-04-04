@@ -21,26 +21,6 @@ func createSplitItem() *tview.Box {
 	return tview.NewBox().SetBorder(false)
 }
 
-// func confirm(text string, f func()) {
-
-// 	activePane := app.GetFocus()
-// 	modal := tview.NewModal().
-// 		SetText(text).
-// 		AddButtons([]string{"Yes", "No"}).
-// 		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-// 			if buttonLabel == "Yes" {
-// 				f()
-// 			}
-// 			app.SetRoot(layout, true).EnableMouse(true)
-// 			app.SetFocus(activePane)
-// 		})
-
-// 	pages := tview.NewPages().
-// 		AddPage("background", layout, true, true).
-// 		AddPage("modal", modal, true, true)
-// 	_ = app.SetRoot(pages, true).EnableMouse(true)
-// }
-
 // 是否焦点在输入框
 func ignoreKeyEvt() bool {
 	// if detailPanel.detailView.HasFocus() {
@@ -48,7 +28,7 @@ func ignoreKeyEvt() bool {
 	// }
 
 	textInputs := []string{"*tview.InputField", "*femto.View"}
-	return gs.Contains(textInputs, reflect.TypeOf(app.GetFocus()).String())
+	return gs.Contains(textInputs, reflect.TypeOf(note.App.GetFocus()).String())
 }
 
 func makeConfirm(content string, done func()) {
@@ -58,9 +38,9 @@ func makeConfirm(content string, done func()) {
 			note.Pages.HidePage("modal")
 			note.Pages.HidePage("main")
 
-			go app.QueueUpdateDraw(func() {
+			go note.App.QueueUpdateDraw(func() {
 				note.Pages.SwitchToPage("main")
-				app.SetFocus(lastFocus)
+				note.App.SetFocus(lastFocus)
 				if buttonIndex == 0 {
 					done()
 				}

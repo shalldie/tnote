@@ -1,8 +1,6 @@
 package note
 
 import (
-	"fmt"
-
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
 	"github.com/shalldie/tnote/gist"
@@ -10,11 +8,7 @@ import (
 
 // 放全局，方便引用，，，反正是单例
 var (
-	note    *TNote
-	app     *tview.Application
-	g       *gist.Gist
-	sidebar *SidebarPanel
-	view    *ViewPanel
+	note *TNote
 )
 
 type TNote struct {
@@ -30,15 +24,20 @@ type TNote struct {
 
 func NewTNote(token string) *TNote {
 	note = &TNote{
-		Gist: gist.NewGist(token),
+		Gist:      gist.NewGist(token),
+		App:       tview.NewApplication().EnableMouse(true),
+		Pages:     tview.NewPages(),
+		Modal:     tview.NewModal().AddButtons([]string{"确定", "取消"}),
+		Layout:    tview.NewFlex().SetDirection(tview.FlexRow),
+		Sidebar:   NewSidebarPanel(),
+		View:      NewViewPanel(),
+		StatusBar: NewStatusBar(),
 	}
-	g = note.Gist
+
 	return note
 }
 
 func (t *TNote) Setup() {
-
-	fmt.Println("loading...")
 
 	t.initLayout()
 	t.setKeyboardShortcuts()
@@ -50,26 +49,16 @@ func (t *TNote) Setup() {
 	}
 }
 
+// 初始化布局
 func (t *TNote) initLayout() {
-	// app
-	app = tview.NewApplication().EnableMouse(true)
-	t.App = app
-
 	// pages
-	t.Layout = tview.NewFlex().SetDirection(tview.FlexRow)
-	t.Modal = tview.NewModal().AddButtons([]string{"确定", "取消"})
-
-	t.Pages = tview.NewPages().
+	t.Pages.
 		AddPage("main", t.Layout, true, true).
 		AddPage("modal", t.Modal, true, false)
 
 	splitItem := createSplitItem()
 
 	// layout - 上 - 左中右
-	t.Sidebar = NewSidebarPanel()
-	sidebar = t.Sidebar
-	t.View = NewViewPanel()
-	view = t.View
 	content := tview.NewFlex().
 		AddItem(splitItem, 1, 1, false).
 		AddItem(t.Sidebar, 36, 1, false).
@@ -77,10 +66,7 @@ func (t *TNote) initLayout() {
 		AddItem(t.View, 0, 1, false).
 		AddItem(splitItem, 1, 1, false)
 
-	//
 	// layout - 下
-	t.StatusBar = NewStatusBar()
-
 	t.Layout.AddItem(content, 0, 1, false).
 		AddItem(
 			tview.NewFlex().
@@ -90,8 +76,9 @@ func (t *TNote) initLayout() {
 			1, 1, false)
 }
 
+// 设置快捷键
 func (t *TNote) setKeyboardShortcuts() *tview.Application {
-	return app.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
+	return t.App.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		if ignoreKeyEvt() {
 			return event
 		}

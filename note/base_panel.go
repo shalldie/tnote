@@ -28,7 +28,7 @@ func NewBasePanel() *BasePanel {
 }
 
 func (p *BasePanel) SetFocus() {
-	app.SetFocus(p)
+	note.App.SetFocus(p)
 }
 
 func (p *BasePanel) SetTitle(title string) *BasePanel {
