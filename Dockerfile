@@ -4,6 +4,8 @@ WORKDIR /
 
 RUN echo "Building for $TARGETPLATFORM"
 
-COPY output/tnote.linux-amd64 /app/tnote
+COPY output/ /app/output/
+
+RUN cp /app/output/tnote.${TARGETPLATFORM/\//-} /app/tnote && rm -rf /app/output
 
 CMD [ "/app/tnote" ]
