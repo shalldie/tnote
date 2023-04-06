@@ -18,7 +18,7 @@ func NewViewPanel() *ViewPanel {
 		BasePanel: NewBasePanel(),
 	}
 
-	p.SetTitle("详情").SetBorderPadding(0, 0, 1, 1)
+	p.SetTitle("内容").SetBorderPadding(0, 0, 1, 1)
 
 	p.prepareEditor()
 	p.AddItem(p.Editor, 0, 1, false)

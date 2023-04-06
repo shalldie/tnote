@@ -3,7 +3,7 @@ package gist
 type GistFile struct {
 	FileName string `json:"filename"`
 	RawUrl   string `json:"raw_url"`
-	// Content  string `json:"content"`
+	Content  string `json:"content"`
 }
 
 type GistModel struct {
