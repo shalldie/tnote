@@ -1,11 +1,25 @@
+# --- 构建 ---
+FROM golang:1.19-alpine AS builder
+
+COPY ./ /app/
+
+WORKDIR /app
+
+# 编译
+RUN CGO_ENABLED=0 \
+    go build \
+    -gcflags "all=-trimpath=/app" \
+    -ldflags="-s -w" \
+    -o /output/tnote /app/main.go
+
+# 压缩
+RUN apk add upx && upx /output/*
+
+# --- 产出 ---
 FROM alpine:latest
-ARG TARGETPLATFORM
+
 WORKDIR /
 
-RUN echo "Building for $TARGETPLATFORM"
+COPY --from=builder /output/tnote /tnote
 
-COPY output/ /app/output/
-
-RUN cp /app/output/tnote.${TARGETPLATFORM/\//-} /app/tnote && rm -rf /app/output
-
-CMD [ "/app/tnote" ]
+CMD [ "/tnote" ]
