@@ -53,7 +53,7 @@
 
 ## 安装
 
-### 1. install 方式
+### 1. go install
 
 需要 `go@1.19+` 环境
 
@@ -61,7 +61,7 @@
 go install github.com/shalldie/tnote@tag
 ```
 
-### 2. binary 方式
+### 2. binary
 
 下载地址：[download](https://github.com/shalldie/tnote/releases)
 
