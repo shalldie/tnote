@@ -78,11 +78,12 @@ func NewSidebarPanel() *SidebarPanel {
 }
 
 func (p *SidebarPanel) Setup() {
-	p.List.AddItem(" loading... ", "", 0, nil)
 	go func() {
+		note.StatusBar.ShowMessage("加载中...")
 		note.Gist.Setup()
 		p.LoadFiles()
 		note.App.Draw()
+		note.StatusBar.ShowMessage("")
 	}()
 }
 
@@ -126,26 +127,25 @@ func (p *SidebarPanel) HandleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 		return nil
 	// 删除
 	case 'd':
-		// app.SetFocus(l.NewItem)
-		// if l.DeleteModelImpl != nil {
-		// 	l.DeleteModelImpl(l.Model)
-		// }
 		file := note.Gist.Files[note.Gist.CurrentIndex]
+
 		makeConfirm(fmt.Sprintf("确定要删除【%s】吗？", file.FileName), func() {
-			note.Gist.UpdateFile(file.FileName, nil)
-			p.LoadFiles()
+			go func() {
+				note.StatusBar.ShowMessage("删除中...")
+				note.Gist.UpdateFile(file.FileName, nil)
+				p.LoadFiles()
+				note.StatusBar.ShowForSeconds("操作成功", 3)
+			}()
 		})
 		return nil
 	}
 
 	// 向左
 	if event.Key() == tcell.KeyLeft {
-		// l.Prev.SetFocus()
 		return nil
 	}
 	// 向右
 	if event.Key() == tcell.KeyRight {
-		// l.Next.SetFocus()
 		note.View.SetFocus()
 		return nil
 	}

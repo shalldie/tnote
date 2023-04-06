@@ -78,17 +78,21 @@ func (p *ViewPanel) SetContent(content string) {
 func (p *ViewPanel) SaveContent(content string) {
 	file := note.Gist.Files[note.Gist.CurrentIndex]
 	// file.Content = content
-	go note.Gist.UpdateFile(file.FileName, content)
-}
-
-func (p *ViewPanel) LoadFile(fileName string) {
-	p.DeactivateEditor()
 	go func() {
-		content := note.Gist.FetchFile(fileName)
-		p.SetContent(content)
-		note.App.Draw()
+		note.StatusBar.ShowMessage("保存中...")
+		note.Gist.UpdateFile(file.FileName, content)
+		note.StatusBar.ShowForSeconds("保存成功", 3)
 	}()
 }
+
+// func (p *ViewPanel) LoadFile(fileName string) {
+// 	p.DeactivateEditor()
+// 	go func() {
+// 		content := note.Gist.FetchFile(fileName)
+// 		p.SetContent(content)
+// 		note.App.Draw()
+// 	}()
+// }
 
 // 处理快捷键
 func (p *ViewPanel) HandleShortcuts(event *tcell.EventKey) *tcell.EventKey {

@@ -1,11 +1,8 @@
 package gist
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
 	"sort"
 	"strconv"
 
@@ -62,22 +59,22 @@ func (g *Gist) getHeaders() map[string]string {
 	}
 }
 
-func (g *Gist) Query(content string) string {
+// func (g *Gist) Query(content string) string {
 
-	client := &http.Client{}
+// 	client := &http.Client{}
 
-	paramsObj := make(map[string]string)
-	paramsObj["query"] = content
-	paramsBytes, _ := json.Marshal(paramsObj)
+// 	paramsObj := make(map[string]string)
+// 	paramsObj["query"] = content
+// 	paramsBytes, _ := json.Marshal(paramsObj)
 
-	req, _ := http.NewRequest("POST", "https://api.github.com/graphql", bytes.NewReader(paramsBytes))
-	req.Header.Add("Authorization", fmt.Sprintf("bearer %v", g.TOKEN))
+// 	req, _ := http.NewRequest("POST", "https://api.github.com/graphql", bytes.NewReader(paramsBytes))
+// 	req.Header.Add("Authorization", fmt.Sprintf("bearer %v", g.TOKEN))
 
-	res, _ := client.Do(req)
-	body, _ := io.ReadAll(res.Body)
+// 	res, _ := client.Do(req)
+// 	body, _ := io.ReadAll(res.Body)
 
-	return string(body)
-}
+// 	return string(body)
+// }
 
 // 获取 gists 列表
 func (g *Gist) FetchGists(page int, perPage int) []*GistModel {
@@ -102,17 +99,18 @@ func (g *Gist) FetchGists(page int, perPage int) []*GistModel {
 }
 
 // 获取文件内容
-func (g *Gist) FetchFile(fileName string) string {
-	fileUrl := g.Model.Files[fileName].RawUrl
+// func (g *Gist) FetchFile(fileName string) string {
+// 	fileUrl := g.Model.Files[fileName].RawUrl
 
-	body := fetch(fileUrl, &FetchOptions{
-		Method:  "GET",
-		Headers: g.getHeaders(),
-	})
+// 	body := fetch(fileUrl, &FetchOptions{
+// 		Method:  "GET",
+// 		Headers: g.getHeaders(),
+// 	})
 
-	return string(body)
-}
+// 	return string(body)
+// }
 
+// 创建 gist
 func (g *Gist) CreateGist(fileName string, content string) *GistModel {
 	body := fetch("https://api.github.com/gists", &FetchOptions{
 		Method: "POST",
