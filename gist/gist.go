@@ -15,7 +15,7 @@ type Gist struct {
 	TOKEN        string
 	Model        *GistModel
 	CurrentIndex int
-	Files        []*FileModel
+	Files        []*GistFile
 }
 
 func NewGist(token string) *Gist {
@@ -99,16 +99,20 @@ func (g *Gist) FetchGists(page int, perPage int) []*GistModel {
 }
 
 // 获取文件内容
-// func (g *Gist) FetchFile(fileName string) string {
-// 	fileUrl := g.Model.Files[fileName].RawUrl
+func (g *Gist) FetchFile(fileName string) string {
+	targetFile := g.Model.Files[fileName]
+	if targetFile == nil {
+		return fmt.Sprintf("Error! File %s not found.", fileName)
+	}
+	fileUrl := targetFile.RawUrl
 
-// 	body := fetch(fileUrl, &FetchOptions{
-// 		Method:  "GET",
-// 		Headers: g.getHeaders(),
-// 	})
+	body := fetch(fileUrl, &FetchOptions{
+		Method:  "GET",
+		Headers: g.getHeaders(),
+	})
 
-// 	return string(body)
-// }
+	return string(body)
+}
 
 // 创建 gist
 func (g *Gist) CreateGist(fileName string, content string) *GistModel {
@@ -196,20 +200,20 @@ func (g *Gist) Update() {
 }
 
 func (g *Gist) updateFiles() {
-	files := make([]*FileModel, 0)
+	files := make([]*GistFile, 0)
 	for fileName := range g.Model.Files {
 		files = append(files, g.Model.Files[fileName])
 	}
-	fileNames := gs.Map(files, func(f *FileModel, _ int) string {
+	fileNames := gs.Map(files, func(f *GistFile, _ int) string {
 		return f.FileName
 	})
 	sort.Strings(fileNames)
-	files = gs.Sort(files, func(f1 *FileModel, f2 *FileModel) bool {
+	files = gs.Sort(files, func(f1 *GistFile, f2 *GistFile) bool {
 		return gs.IndexOf(fileNames, f1.FileName) < gs.IndexOf(fileNames, f2.FileName)
 	})
 	g.Files = files
 }
 
-func (g *Gist) GetContent() string {
-	return g.Files[g.CurrentIndex].Content
+func (g *Gist) GetFile() *GistFile {
+	return g.Files[g.CurrentIndex]
 }

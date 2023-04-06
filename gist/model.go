@@ -1,17 +1,17 @@
 package gist
 
-type FileModel struct {
+type GistFile struct {
 	FileName string `json:"filename"`
 	RawUrl   string `json:"raw_url"`
-	Content  string `json:"content"`
+	// Content  string `json:"content"`
 }
 
 type GistModel struct {
-	Id          string                `json:"id"`
-	Url         string                `json:"url"`
-	Public      bool                  `json:"public"`
-	Description string                `json:"description"`
-	Files       map[string]*FileModel `json:"files"`
+	Id          string               `json:"id"`
+	Url         string               `json:"url"`
+	Public      bool                 `json:"public"`
+	Description string               `json:"description"`
+	Files       map[string]*GistFile `json:"files"`
 }
 
 type FetchOptions struct {

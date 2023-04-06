@@ -53,7 +53,8 @@ func NewSidebarPanel() *SidebarPanel {
 			return
 		}
 		note.Gist.CurrentIndex = i
-		note.View.SetContent(note.Gist.GetContent())
+		// note.View.SetContent(note.Gist.GetContent())
+		note.View.LoadFile(note.Gist.GetFile().FileName)
 	})
 
 	// 事件 - newproject
@@ -106,7 +107,7 @@ func (p *SidebarPanel) AddFile() {
 	note.Gist.UpdateFile(fileName, "To be edited.")
 	p.LoadFiles()
 
-	curIndex := gs.FindIndex(note.Gist.Files, func(item *gist.FileModel, index int) bool {
+	curIndex := gs.FindIndex(note.Gist.Files, func(item *gist.GistFile, index int) bool {
 		return item.FileName == fileName
 	})
 

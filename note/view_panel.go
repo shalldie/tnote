@@ -85,14 +85,19 @@ func (p *ViewPanel) SaveContent(content string) {
 	}()
 }
 
-// func (p *ViewPanel) LoadFile(fileName string) {
-// 	p.DeactivateEditor()
-// 	go func() {
-// 		content := note.Gist.FetchFile(fileName)
-// 		p.SetContent(content)
-// 		note.App.Draw()
-// 	}()
-// }
+func (p *ViewPanel) LoadFile(fileName string) {
+	p.DeactivateEditor()
+	go func() {
+		content := note.Gist.FetchFile(fileName)
+		curFile := note.Gist.GetFile()
+		if curFile == nil || fileName != curFile.FileName {
+			return
+		}
+
+		p.SetContent(content)
+		note.App.Draw()
+	}()
+}
 
 // 处理快捷键
 func (p *ViewPanel) HandleShortcuts(event *tcell.EventKey) *tcell.EventKey {
