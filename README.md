@@ -8,9 +8,10 @@
 `终端运行的记事本，基于 github gist 构建。`
 
 [![Release Version](https://img.shields.io/github/v/release/shalldie/tnote?display_name=tag&logo=github&style=flat-square)](https://github.com/shalldie/tnote)
+[![Docker Image Version](https://img.shields.io/docker/v/shalldie/tnote?label=docker&logo=docker&style=flat-square)](https://github.com/shalldie/tnote)
 [![Go Version](https://img.shields.io/github/go-mod/go-version/shalldie/tnote?label=go&logo=go&style=flat-square)](https://github.com/shalldie/tnote)
 [![Go Reference](https://pkg.go.dev/badge/github.com/shalldie/tnote.svg)](https://pkg.go.dev/github.com/shalldie/tnote)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/shalldie/tnote/ci.yml?branch=master&label=build&logo=github&style=flat-square)](https://github.com/shalldie/tnote/actions)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/shalldie/tnote/ci.yml?logo=github&style=flat-square)](https://github.com/shalldie/tnote/actions)
 [![License](https://img.shields.io/github/license/shalldie/tnote?logo=github&style=flat-square)](https://github.com/shalldie/tnote)
 
 <img src="https://user-images.githubusercontent.com/9987486/229672987-6cc48582-fed0-4537-8192-aa2780cf1316.png" width="800">
