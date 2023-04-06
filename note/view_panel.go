@@ -6,6 +6,7 @@ import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/pgavlin/femto"
 	"github.com/pgavlin/femto/runtime"
+	"github.com/shalldie/tnote/gist"
 )
 
 type ViewPanel struct {
@@ -85,12 +86,20 @@ func (p *ViewPanel) SaveContent(content string) {
 	}()
 }
 
-func (p *ViewPanel) LoadFile(fileName string) {
+func (p *ViewPanel) LoadFile(file *gist.GistFile) {
+
+	// 如果有完整内容，直接返回
+	if !file.Truncated {
+		p.SetContent(file.Content)
+		return
+	}
+
+	// 否则动态拉取
 	p.DeactivateEditor()
 	go func() {
-		content := note.Gist.FetchFile(fileName)
+		content := note.Gist.FetchFile(file.FileName)
 		curFile := note.Gist.GetFile()
-		if curFile == nil || fileName != curFile.FileName {
+		if curFile == nil || file.FileName != curFile.FileName {
 			return
 		}
 

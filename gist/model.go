@@ -1,9 +1,10 @@
 package gist
 
 type GistFile struct {
-	FileName string `json:"filename"`
-	RawUrl   string `json:"raw_url"`
-	Content  string `json:"content"`
+	FileName  string `json:"filename"`
+	Truncated bool   `json:"truncated"` // 是否需要使用 RawUrl 来获取内容
+	RawUrl    string `json:"raw_url"`
+	Content   string `json:"content"`
 }
 
 type GistModel struct {

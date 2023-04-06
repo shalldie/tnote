@@ -53,9 +53,7 @@ func NewSidebarPanel() *SidebarPanel {
 			return
 		}
 		note.Gist.CurrentIndex = i
-
-		// note.View.LoadFile(note.Gist.GetFile().FileName)
-		note.View.SetContent(note.Gist.GetFile().Content)
+		note.View.LoadFile(note.Gist.GetFile())
 	})
 
 	// 事件 - newproject
