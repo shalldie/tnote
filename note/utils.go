@@ -30,19 +30,3 @@ func ignoreKeyEvt() bool {
 	textInputs := []string{"*tview.InputField", "*femto.View"}
 	return gs.Contains(textInputs, reflect.TypeOf(note.App.GetFocus()).String())
 }
-
-func makeConfirm(content string, done func()) {
-	lastFocus := note.App.GetFocus()
-	note.Modal.SetText(content).
-		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
-
-			note.Pages.SwitchToPage("main")
-			note.App.SetFocus(lastFocus)
-			if buttonIndex == 0 {
-				done()
-			}
-
-		})
-
-	note.Pages.ShowPage("modal")
-}

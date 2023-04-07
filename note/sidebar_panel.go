@@ -128,8 +128,7 @@ func (p *SidebarPanel) HandleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	// 删除
 	case 'd':
 		file := note.Gist.Files[note.Gist.CurrentIndex]
-
-		makeConfirm(fmt.Sprintf("确定要删除【%s】吗？", file.FileName), func() {
+		note.Modal.Confirm(fmt.Sprintf("确定要删除【%s】吗？", file.FileName), func() {
 			go func() {
 				note.StatusBar.ShowMessage("删除中...")
 				note.Gist.UpdateFile(file.FileName, nil)

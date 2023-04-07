@@ -15,7 +15,7 @@ type TNote struct {
 	Gist      *gist.Gist
 	App       *tview.Application // 应用
 	Pages     *tview.Pages       // pages
-	Modal     *tview.Modal       // page - 弹框
+	Modal     *NoteModal         // page - 弹框
 	Layout    *tview.Flex        // page - 主容器
 	Sidebar   *SidebarPanel      // 侧边栏
 	View      *ViewPanel         // 右边视图
@@ -27,7 +27,7 @@ func NewTNote(token string) *TNote {
 		Gist:      gist.NewGist(token),
 		App:       tview.NewApplication().EnableMouse(true),
 		Pages:     tview.NewPages(),
-		Modal:     tview.NewModal().AddButtons([]string{"确定", "取消"}),
+		Modal:     NewNoteModal(),
 		Layout:    tview.NewFlex().SetDirection(tview.FlexRow),
 		Sidebar:   NewSidebarPanel(),
 		View:      NewViewPanel(),
