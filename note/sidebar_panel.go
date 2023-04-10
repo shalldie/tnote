@@ -57,6 +57,12 @@ func NewSidebarPanel() *SidebarPanel {
 	})
 
 	// 事件 - newproject
+	p.NewItem.SetFocusFunc(func() {
+		go note.StatusBar.ShowMessage("新建文件中...")
+	})
+	p.NewItem.SetBlurFunc(func() {
+		go note.StatusBar.ShowMessage("")
+	})
 	p.NewItem.SetDoneFunc(func(key tcell.Key) {
 		switch key {
 		case tcell.KeyEnter:
@@ -99,7 +105,7 @@ func (p *SidebarPanel) AddFile() {
 	fileName := strings.TrimSpace(p.NewItem.GetText())
 
 	if utf8.RuneCountInString(fileName) < 2 {
-		note.StatusBar.ShowForSeconds("文件名长度最少2个字符", 5)
+		note.StatusBar.ShowForSeconds("文件名长度最少2个字符", 3)
 		return
 	}
 

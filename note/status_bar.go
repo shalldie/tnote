@@ -35,9 +35,10 @@ func NewStatusBar() *StatusBar {
 }
 
 func (sb *StatusBar) ShowMessage(message string) {
-	note.App.QueueUpdateDraw(func() {
-		sb.message.SetText(message)
-	})
+	sb.message.SetText(message)
+	// note.App.QueueUpdateDraw(func() {
+	// 	sb.message.SetText(message)
+	// })
 }
 
 func (sb *StatusBar) ShowForSeconds(message string, timeout int) {
