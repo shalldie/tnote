@@ -30,11 +30,7 @@
 - [ ] 文件
   - [x] 新建
   - [ ] 重命名
-  - [ ] 删除
-    - [x] 英文
-    - [ ] 中文
-      - 目前 github api v3，删除包含中文名文件时候报错
-      - 已工单沟通，待修复
+  - [x] 删除
 - [x] 详情
   - [x] Markdown 高亮
   - [x] 编辑、保存
@@ -42,7 +38,7 @@
   - [ ] 多语言切换
   - [x] 中文文档
   - [ ] 英文文档
-- [ ] 安装
+- [x] 安装
   - [x] go install
   - [x] binary
   - [x] docker
@@ -55,7 +51,7 @@
 
 ### 1. go install
 
-需要 `go@1.19+` 环境
+需要 `go@1.20+` 环境
 
 ```bash
 go install github.com/shalldie/tnote@tag

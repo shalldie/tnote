@@ -1,6 +1,6 @@
 module github.com/shalldie/tnote
 
-go 1.19
+go 1.20
 
 require (
 	github.com/gdamore/tcell/v2 v2.6.0
