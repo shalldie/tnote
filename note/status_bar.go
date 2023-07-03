@@ -25,7 +25,7 @@ func NewStatusBar() *StatusBar {
 	sb.SetColumns(0, 0, 0, 0).
 		SetRows(0).
 		AddItem(sb.message, 0, 0, 1, 1, 0, 0, false).
-		AddItem(tview.NewTextView().SetText("方向：↑↓←→ ；退出：Ctrl + C").SetTextAlign(tview.AlignRight), 0, 3, 1, 1, 0, 0, false) // ↑ ↓ ← →
+		AddItem(tview.NewTextView().SetText("方向：↑ ↓ ← → ；退出：Ctrl + C").SetTextAlign(tview.AlignRight), 0, 3, 1, 1, 0, 0, false) // ↑ ↓ ← →
 
 	sb.message.SetChangedFunc(func() {
 		note.App.Draw()

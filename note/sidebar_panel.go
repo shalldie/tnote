@@ -33,7 +33,7 @@ func NewSidebarPanel() *SidebarPanel {
 	p.AddItem(p.List, 0, 1, true).AddItem(p.NewItem, 1, 0, false)
 	p.AddTip(strings.Join([]string{
 		"新建：N",
-		"编辑：E",
+		"重命名：R",
 		"删除：D",
 	}, " ; "), "")
 
@@ -58,15 +58,15 @@ func NewSidebarPanel() *SidebarPanel {
 
 	// 事件 - newproject
 	p.NewItem.SetFocusFunc(func() {
-		go note.StatusBar.ShowMessage("新建文件中...")
+		note.StatusBar.ShowMessage("新建文件中...")
 	})
 	p.NewItem.SetBlurFunc(func() {
-		go note.StatusBar.ShowMessage("")
+		note.StatusBar.ShowMessage("")
 	})
 	p.NewItem.SetDoneFunc(func(key tcell.Key) {
 		switch key {
 		case tcell.KeyEnter:
-			p.AddFile()
+			p.AddFile(p.NewItem.GetText())
 			// go func() {
 			// g.UpdateFile(strings.TrimSpace(p.NewItem.GetText()), "To be edited.")
 			// p.LoadFiles()
@@ -101,8 +101,8 @@ func (p *SidebarPanel) LoadFiles() {
 	}
 }
 
-func (p *SidebarPanel) AddFile() {
-	fileName := strings.TrimSpace(p.NewItem.GetText())
+func (p *SidebarPanel) AddFile(fileName string) {
+	fileName = strings.TrimSpace(fileName)
 
 	if utf8.RuneCountInString(fileName) < 2 {
 		note.StatusBar.ShowForSeconds("文件名长度最少2个字符", 3)
