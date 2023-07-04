@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/gdamore/tcell/v2 v2.6.0
 	github.com/pgavlin/femto v0.0.0-20201224065653-0c9d20f9cac4
-	github.com/rivo/tview v0.0.0-20230330183452-5796b0cd5c1f
+	github.com/rivo/tview v0.0.0-20230621164836-6cc0565babaf
 	github.com/shalldie/gog v1.0.2
 )
 

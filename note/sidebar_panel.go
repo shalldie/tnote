@@ -131,6 +131,21 @@ func (p *SidebarPanel) HandleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	case 'n':
 		note.App.SetFocus(p.NewItem)
 		return nil
+
+	// 重命名
+	case 'r':
+		file := note.Gist.Files[note.Gist.CurrentIndex]
+		note.Modal.Prompt(fmt.Sprintf("重命名【%s】", file.FileName), "新名称", file.FileName, func() {
+			go func() {
+				note.StatusBar.ShowMessage("重命名...")
+				// todo: to be impl
+				// note.Gist.UpdateFile(file.FileName, nil)
+				p.LoadFiles()
+				note.StatusBar.ShowForSeconds("操作成功", 3)
+			}()
+		})
+		return nil
+
 	// 删除
 	case 'd':
 		file := note.Gist.Files[note.Gist.CurrentIndex]

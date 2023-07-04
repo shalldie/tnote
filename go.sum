@@ -28,6 +28,8 @@ github.com/pmezard/go-difflib v1.0.0/go.mod h1:iKH77koFhYxTK1pcRnkKkqfTogsbg7gZN
 github.com/rivo/tview v0.0.0-20201204190810-5406288b8e4e/go.mod h1:0ha5CGekam8ZV1kxkBxSlh7gfQ7YolUj2P/VruwH0QY=
 github.com/rivo/tview v0.0.0-20230330183452-5796b0cd5c1f h1:vpjWdGBgikHYD4ruBvDINMxwdh5UWVck9yOyrwFktMo=
 github.com/rivo/tview v0.0.0-20230330183452-5796b0cd5c1f/go.mod h1:nVwGv4MP47T0jvlk7KuTTjjuSmrGO4JF0iaiNt4bufE=
+github.com/rivo/tview v0.0.0-20230621164836-6cc0565babaf h1:IchpMMtnfvzg7T3je672bP1nKWz1M4tW3kMZT6CbgoM=
+github.com/rivo/tview v0.0.0-20230621164836-6cc0565babaf/go.mod h1:nVwGv4MP47T0jvlk7KuTTjjuSmrGO4JF0iaiNt4bufE=
 github.com/rivo/uniseg v0.2.0/go.mod h1:J6wj4VEh+S6ZtnVlnTBMWIodfgj8LQOQFoIToxlJtxc=
 github.com/rivo/uniseg v0.4.3/go.mod h1:FN3SvrM+Zdj16jyLfmOkMNblXMcoc8DfTHruCPUcx88=
 github.com/rivo/uniseg v0.4.4 h1:8TfxU8dW6PdqD27gjM8MVNuicgxIjxpm4K7x4jp8sis=

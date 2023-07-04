@@ -1,14 +1,12 @@
 package note
 
-import "github.com/rivo/tview"
-
 type NoteModal struct {
-	*tview.Modal
+	*CustomModal
 }
 
 func NewNoteModal() *NoteModal {
 	return &NoteModal{
-		Modal: tview.NewModal(),
+		CustomModal: NewCustomModal(),
 	}
 }
 
@@ -21,7 +19,8 @@ func (m *NoteModal) Close() {
 }
 
 func (m *NoteModal) Clear() {
-	m.ClearButtons()
+	// m.ClearButtons()
+	m.form.Clear(true)
 }
 
 func (m *NoteModal) Confirm(title string, done func()) {
@@ -38,6 +37,27 @@ func (m *NoteModal) Confirm(title string, done func()) {
 				done()
 			}
 		})
+
+	note.Pages.ShowPage("modal")
+}
+
+func (m *NoteModal) Prompt(title string, label string, value string, done func()) {
+	lastFocus := note.App.GetFocus()
+
+	m.Clear()
+	m.SetText(title).
+		AddInputText(label, value).
+		AddButtons([]string{"确定", "取消"}).
+		SetDoneFunc(func(buttonIndex int, buttonLabel string) {
+			m.Close()
+			note.App.SetFocus(lastFocus)
+
+			if buttonIndex == 0 {
+				done()
+			}
+		})
+
+	m.form.GetFormItemByLabel(label)
 
 	note.Pages.ShowPage("modal")
 }
