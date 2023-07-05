@@ -142,22 +142,15 @@ func (g *Gist) CreateGist(fileName string, content string) *GistModel {
 	return model
 }
 
-func (g *Gist) UpdateFile(fileName string, content any) {
-
-	// nil 是删除
-	filePayload := content
-	if filePayload != nil {
-		filePayload = H{
-			"content": filePayload,
-		}
-	}
+// 更新文件，https://docs.github.com/zh/rest/gists/gists?apiVersion=2022-11-28#update-a-gist
+func (g *Gist) UpdateFile(fileName string, payload *UpdateGistPayload) {
 
 	body := fetch("https://api.github.com/gists/"+g.Model.Id, &FetchOptions{
 		Method:  "PATCH",
 		Headers: g.getHeaders(),
 		Params: H{
 			"files": H{
-				fileName: filePayload,
+				fileName: payload,
 			},
 		},
 	})

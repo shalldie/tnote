@@ -21,3 +21,8 @@ type FetchOptions struct {
 	Query   map[string]string
 	Params  map[string]any
 }
+
+type UpdateGistPayload struct {
+	Content  string `json:"content"`
+	Filename string `json:"filename,omitempty"`
+}

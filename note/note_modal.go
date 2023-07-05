@@ -1,5 +1,10 @@
 package note
 
+import (
+	"github.com/gdamore/tcell/v2"
+	"github.com/rivo/tview"
+)
+
 type NoteModal struct {
 	*CustomModal
 }
@@ -19,8 +24,8 @@ func (m *NoteModal) Close() {
 }
 
 func (m *NoteModal) Clear() {
-	// m.ClearButtons()
 	m.form.Clear(true)
+	m.SetBackgroundColor(tcell.ColorBlue)
 }
 
 func (m *NoteModal) Confirm(title string, done func()) {
@@ -41,7 +46,7 @@ func (m *NoteModal) Confirm(title string, done func()) {
 	note.Pages.ShowPage("modal")
 }
 
-func (m *NoteModal) Prompt(title string, label string, value string, done func()) {
+func (m *NoteModal) Prompt(title string, label string, value string, done func(text string)) {
 	lastFocus := note.App.GetFocus()
 
 	m.Clear()
@@ -53,11 +58,13 @@ func (m *NoteModal) Prompt(title string, label string, value string, done func()
 			note.App.SetFocus(lastFocus)
 
 			if buttonIndex == 0 {
-				done()
+				field := m.form.GetFormItemByLabel(label).(*tview.InputField)
+				done(field.GetText())
 			}
 		})
 
-	m.form.GetFormItemByLabel(label)
+	// m.SetBackgroundColor(tcell.ColorDarkSlateBlue)
+	m.SetBackgroundColor(tcell.ColorMediumSlateBlue)
 
 	note.Pages.ShowPage("modal")
 }

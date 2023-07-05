@@ -67,13 +67,6 @@ func NewSidebarPanel() *SidebarPanel {
 		switch key {
 		case tcell.KeyEnter:
 			p.AddFile(p.NewItem.GetText())
-			// go func() {
-			// g.UpdateFile(strings.TrimSpace(p.NewItem.GetText()), "To be edited.")
-			// p.LoadFiles()
-			// }()
-			// p.addFile(strings.TrimSpace(p.NewItem.GetText()))
-			// l.AddNewItemImpl(strings.TrimSpace(l.NewItem.GetText()))
-			// statusBar.ShowForSeconds("添加完毕...", 3)
 		case tcell.KeyEsc:
 			p.NewItem.SetText("")
 			p.SetFocus()
@@ -109,7 +102,7 @@ func (p *SidebarPanel) AddFile(fileName string) {
 		return
 	}
 
-	note.Gist.UpdateFile(fileName, "To be edited.")
+	note.Gist.UpdateFile(fileName, &gist.UpdateGistPayload{Content: "To be edited."})
 	p.LoadFiles()
 
 	curIndex := gs.FindIndex(note.Gist.Files, func(item *gist.GistFile, index int) bool {
@@ -121,6 +114,30 @@ func (p *SidebarPanel) AddFile(fileName string) {
 
 	p.NewItem.SetText("")
 	p.SetFocus()
+}
+
+func (p *SidebarPanel) RenameFile(fileName string, newFileName string) bool {
+	newFileName = strings.TrimSpace(newFileName)
+
+	if utf8.RuneCountInString(newFileName) < 2 {
+		note.StatusBar.ShowForSeconds("文件名长度最少2个字符", 3)
+		return false
+	}
+
+	note.Gist.UpdateFile(fileName, &gist.UpdateGistPayload{Filename: newFileName})
+	p.LoadFiles()
+
+	curIndex := gs.FindIndex(note.Gist.Files, func(item *gist.GistFile, index int) bool {
+		return item.FileName == newFileName
+	})
+
+	note.Gist.CurrentIndex = curIndex
+	p.List.SetCurrentItem(curIndex)
+
+	p.NewItem.SetText("")
+	p.SetFocus()
+
+	return true
 }
 
 // 处理快捷键
@@ -135,12 +152,16 @@ func (p *SidebarPanel) HandleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	// 重命名
 	case 'r':
 		file := note.Gist.Files[note.Gist.CurrentIndex]
-		note.Modal.Prompt(fmt.Sprintf("重命名【%s】", file.FileName), "新名称", file.FileName, func() {
+		note.Modal.Prompt(fmt.Sprintf("重命名【%s】", file.FileName), "新名称", file.FileName, func(text string) {
 			go func() {
 				note.StatusBar.ShowMessage("重命名...")
 				// todo: to be impl
-				// note.Gist.UpdateFile(file.FileName, nil)
-				p.LoadFiles()
+				// note.Gist.UpdateFile(file.FileName, &gist.UpdateGistPayload{Filename: text})
+				// p.LoadFiles()
+				ok := p.RenameFile(file.FileName, text)
+				if !ok {
+					return
+				}
 				note.StatusBar.ShowForSeconds("操作成功", 3)
 			}()
 		})

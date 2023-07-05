@@ -111,8 +111,10 @@ func (m *CustomModal) SetText(text string) *CustomModal {
 	return m
 }
 
+// 添加文本输入框
 func (m *CustomModal) AddInputText(label string, value string) *CustomModal {
-	m.form.AddInputField(label, value, 20, nil, nil)
+	m.form.AddInputField(label, value, 38, nil, nil)
+	// field := m.form.GetFormItemByLabel(label).(*tview.InputField)
 	return m
 }
 
@@ -198,7 +200,7 @@ func (m *CustomModal) Draw(screen tcell.Screen) {
 		m.frame.AddText(line, true, tview.AlignCenter, m.textColor)
 	}
 
-	// balabala
+	// 根据表单元素数量调整高度
 	lengthForm := 0
 	if m.form.GetFormItemCount() > 0 {
 		lengthForm += m.form.GetFormItemCount() + 1

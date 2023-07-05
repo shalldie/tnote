@@ -14,7 +14,7 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/shalldie/tnote/ci.yml?logo=github&style=flat-square)](https://github.com/shalldie/tnote/actions)
 [![License](https://img.shields.io/github/license/shalldie/tnote?logo=github&style=flat-square)](https://github.com/shalldie/tnote)
 
-<img src="https://user-images.githubusercontent.com/9987486/229672987-6cc48582-fed0-4537-8192-aa2780cf1316.png" width="800">
+<img src="https://github.com/shalldie/tnote/assets/9987486/bf0864e7-cb74-4757-84f1-03e9d4075fb3" width="800">
 
 </div>
 
@@ -27,9 +27,9 @@
   - [x] 存储持久化
   - [x] 快捷键、鼠标
   - [x] Confirm
-- [ ] 文件
+- [x] 文件
   - [x] 新建
-  - [ ] 重命名
+  - [x] 重命名
   - [x] 删除
 - [x] 详情
   - [x] Markdown 高亮
