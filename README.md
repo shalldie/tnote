@@ -34,27 +34,35 @@
 - [x] 详情
   - [x] Markdown 高亮
   - [x] 编辑、保存
-- [ ] 国际化
+  <!-- - [ ] 国际化
   - [ ] 多语言切换
   - [x] 中文文档
-  - [ ] 英文文档
+  - [ ] 英文文档 -->
 - [x] 安装
   - [x] go install
   - [x] binary
   - [x] docker
 
-## 准备
+## 准备&前提
 
-应用基于 github gist 构建，需要去 [申请 access token](https://github.com/settings/tokens/new)，然后把值加入环境变量 `$TNOTE_GIST_TOKEN`
+应用基于 github gist 构建，需要去 [申请 access token](https://github.com/settings/tokens/new)，然后把值加入环境变量 `TNOTE_GIST_TOKEN`
 
-## 安装
+```bash
+# ~/.bashrc
+export TNOTE_GIST_TOKEN="<your_access_token>"
+```
+
+## 安装&运行
 
 ### 1. go install
 
 需要 `go@1.20+` 环境
 
 ```bash
-go install github.com/shalldie/tnote@tag
+# install
+go install github.com/shalldie/tnote
+# run
+tnote
 ```
 
 ### 2. binary
@@ -72,9 +80,12 @@ go install github.com/shalldie/tnote@tag
 example:
 
 ```bash
+# install
 wget -O tnote [url]
 sudo chmod a+x tnote
 sudo mv tnote /usr/local/bin/tnote
+# run
+tnote
 ```
 
 ### 3. docker
