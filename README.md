@@ -14,7 +14,7 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/shalldie/tnote/ci.yml?logo=github&style=flat-square)](https://github.com/shalldie/tnote/actions)
 [![License](https://img.shields.io/github/license/shalldie/tnote?logo=github&style=flat-square)](https://github.com/shalldie/tnote)
 
-<img src="https://github.com/shalldie/tnote/assets/9987486/bf0864e7-cb74-4757-84f1-03e9d4075fb3" width="800">
+<img src="https://github.com/shalldie/tnote/assets/9987486/0e54c7e2-8834-4ca5-bfd8-26232b412e0f" width="800">
 
 </div>
 
