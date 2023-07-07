@@ -14,8 +14,8 @@ import (
 
 type SidebarPanel struct {
 	*BasePanel
-	List    *tview.List       // 列表组件
-	NewItem *tview.InputField // 新加项组件
+	List *tview.List // 列表组件
+	// NewItem *tview.InputField // 新加项组件
 }
 
 func NewSidebarPanel() *SidebarPanel {
@@ -25,12 +25,13 @@ func NewSidebarPanel() *SidebarPanel {
 			SetSelectedStyle(
 				tcell.Style{}.Background(tcell.ColorBlue),
 			),
-		NewItem: makeLightTextInput(" + [新建文件] "),
+		// NewItem: makeLightTextInput(" + [新建文件] "),
 	}
 
 	// 组件
 	p.SetTitle("文件")
-	p.AddItem(p.List, 0, 1, true).AddItem(p.NewItem, 1, 0, false)
+	p.AddItem(p.List, 0, 1, true)
+	// p.AddItem(p.List, 0, 1, true).AddItem(p.NewItem, 1, 0, false)
 	p.AddTip(strings.Join([]string{
 		"新建：N",
 		"重命名：R",
@@ -39,7 +40,7 @@ func NewSidebarPanel() *SidebarPanel {
 
 	// 兼容 powerlevel10k
 	p.List.SetBorderPadding(0, 0, 1, 1)
-	p.NewItem.SetBorderPadding(0, 0, 1, 1)
+	// p.NewItem.SetBorderPadding(0, 0, 1, 1)
 
 	// 事件 - list
 	p.SetFocusFunc(func() {
@@ -57,21 +58,21 @@ func NewSidebarPanel() *SidebarPanel {
 	})
 
 	// 事件 - newproject
-	p.NewItem.SetFocusFunc(func() {
-		note.StatusBar.ShowMessage("新建文件中...")
-	})
-	p.NewItem.SetBlurFunc(func() {
-		note.StatusBar.ShowMessage("")
-	})
-	p.NewItem.SetDoneFunc(func(key tcell.Key) {
-		switch key {
-		case tcell.KeyEnter:
-			p.AddFile(p.NewItem.GetText())
-		case tcell.KeyEsc:
-			p.NewItem.SetText("")
-			p.SetFocus()
-		}
-	})
+	// p.NewItem.SetFocusFunc(func() {
+	// 	note.StatusBar.ShowMessage("新建文件中...")
+	// })
+	// p.NewItem.SetBlurFunc(func() {
+	// 	note.StatusBar.ShowMessage("")
+	// })
+	// p.NewItem.SetDoneFunc(func(key tcell.Key) {
+	// 	switch key {
+	// 	case tcell.KeyEnter:
+	// 		p.AddFile(p.NewItem.GetText())
+	// 	case tcell.KeyEsc:
+	// 		p.NewItem.SetText("")
+	// 		p.SetFocus()
+	// 	}
+	// })
 
 	return p
 }
@@ -94,12 +95,12 @@ func (p *SidebarPanel) LoadFiles() {
 	}
 }
 
-func (p *SidebarPanel) AddFile(fileName string) {
+func (p *SidebarPanel) AddFile(fileName string) bool {
 	fileName = strings.TrimSpace(fileName)
 
 	if utf8.RuneCountInString(fileName) < 2 {
 		note.StatusBar.ShowForSeconds("文件名长度最少2个字符", 3)
-		return
+		return false
 	}
 
 	note.Gist.UpdateFile(fileName, &gist.UpdateGistPayload{Content: "To be edited."})
@@ -112,8 +113,9 @@ func (p *SidebarPanel) AddFile(fileName string) {
 	note.Gist.CurrentIndex = curIndex
 	p.List.SetCurrentItem(curIndex)
 
-	p.NewItem.SetText("")
+	// p.NewItem.SetText("")
 	p.SetFocus()
+	return true
 }
 
 func (p *SidebarPanel) RenameFile(fileName string, newFileName string) bool {
@@ -134,7 +136,7 @@ func (p *SidebarPanel) RenameFile(fileName string, newFileName string) bool {
 	note.Gist.CurrentIndex = curIndex
 	p.List.SetCurrentItem(curIndex)
 
-	p.NewItem.SetText("")
+	// p.NewItem.SetText("")
 	p.SetFocus()
 
 	return true
@@ -146,7 +148,17 @@ func (p *SidebarPanel) HandleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	switch unicode.ToLower(event.Rune()) {
 	// 新建
 	case 'n':
-		note.App.SetFocus(p.NewItem)
+		// note.App.SetFocus(p.NewItem)
+		note.Modal.Prompt("添加新文件", "文件名", "", func(text string) {
+			go func() {
+				note.StatusBar.ShowMessage("添加中...")
+				ok := p.AddFile(text)
+				if !ok {
+					return
+				}
+				note.StatusBar.ShowForSeconds("操作成功", 3)
+			}()
+		})
 		return nil
 
 	// 重命名
@@ -155,9 +167,6 @@ func (p *SidebarPanel) HandleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 		note.Modal.Prompt(fmt.Sprintf("重命名【%s】", file.FileName), "新名称", file.FileName, func(text string) {
 			go func() {
 				note.StatusBar.ShowMessage("重命名...")
-				// todo: to be impl
-				// note.Gist.UpdateFile(file.FileName, &gist.UpdateGistPayload{Filename: text})
-				// p.LoadFiles()
 				ok := p.RenameFile(file.FileName, text)
 				if !ok {
 					return
