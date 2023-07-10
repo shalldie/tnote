@@ -58,6 +58,10 @@ func (p *ViewPanel) prepareEditor() {
 	p.Editor.SetInputCapture(func(event *tcell.EventKey) *tcell.EventKey {
 		switch event.Key() {
 		case tcell.KeyEsc:
+			if p.Editor.Readonly {
+				return nil
+			}
+
 			p.DeactivateEditor()
 			p.SaveContent(p.Editor.Buf.String())
 			// if p.OnSave != nil {

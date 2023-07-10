@@ -34,7 +34,7 @@ func NewSidebarPanel() *SidebarPanel {
 	// p.AddItem(p.List, 0, 1, true).AddItem(p.NewItem, 1, 0, false)
 	p.AddTip(strings.Join([]string{
 		"新建：N",
-		"重命名：R",
+		"编辑：E",
 		"删除：D",
 	}, " ; "), "")
 
@@ -162,11 +162,11 @@ func (p *SidebarPanel) HandleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 		return nil
 
 	// 重命名
-	case 'r':
+	case 'e':
 		file := note.Gist.Files[note.Gist.CurrentIndex]
-		note.Modal.Prompt(fmt.Sprintf("重命名【%s】", file.FileName), "新名称", file.FileName, func(text string) {
+		note.Modal.Prompt(fmt.Sprintf("编辑文件「%s」", file.FileName), "文件名", file.FileName, func(text string) {
 			go func() {
-				note.StatusBar.ShowMessage("重命名...")
+				note.StatusBar.ShowMessage("保存中...")
 				ok := p.RenameFile(file.FileName, text)
 				if !ok {
 					return
@@ -179,7 +179,7 @@ func (p *SidebarPanel) HandleShortcuts(event *tcell.EventKey) *tcell.EventKey {
 	// 删除
 	case 'd':
 		file := note.Gist.Files[note.Gist.CurrentIndex]
-		note.Modal.Confirm(fmt.Sprintf("确定要删除【%s】吗？", file.FileName), func() {
+		note.Modal.Confirm(fmt.Sprintf("确定要删除「%s」吗？", file.FileName), func() {
 			go func() {
 				note.StatusBar.ShowMessage("删除中...")
 				note.Gist.UpdateFile(file.FileName, nil)

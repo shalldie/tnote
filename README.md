@@ -14,7 +14,7 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/shalldie/tnote/ci.yml?logo=github&style=flat-square)](https://github.com/shalldie/tnote/actions)
 [![License](https://img.shields.io/github/license/shalldie/tnote?logo=github&style=flat-square)](https://github.com/shalldie/tnote)
 
-<img src="https://github.com/shalldie/tnote/assets/9987486/0e54c7e2-8834-4ca5-bfd8-26232b412e0f" width="800">
+<img src="https://github.com/shalldie/tnote/assets/9987486/05fcde85-eb08-4caf-9bd8-ef955c93cabc" width="800">
 
 </div>
 
@@ -35,13 +35,9 @@
 - [x] 详情 📝
   - [x] Markdown 高亮
   - [x] 编辑、保存
-  <!-- - [ ] 国际化
-  - [ ] 多语言切换
-  - [x] 中文文档
-  - [ ] 英文文档 -->
 - [x] 安装
-  - [x] go install
   - [x] binary
+  - [x] go install
   - [x] docker
 
 ## 准备&前提
@@ -55,18 +51,7 @@ export TNOTE_GIST_TOKEN="<your_access_token>"
 
 ## 安装&运行
 
-### 1. go install
-
-需要 `go@1.20+` 环境
-
-```bash
-# install
-go install github.com/shalldie/tnote
-# run
-tnote
-```
-
-### 2. binary
+### 1. binary
 
 下载地址：[download](https://github.com/shalldie/tnote/releases)
 
@@ -85,6 +70,17 @@ example:
 wget -O tnote [url]
 sudo chmod a+x tnote
 sudo mv tnote /usr/local/bin/tnote
+# run
+tnote
+```
+
+### 2. go install
+
+需要 `go@1.20+` 环境
+
+```bash
+# install
+go install github.com/shalldie/tnote
 # run
 tnote
 ```
