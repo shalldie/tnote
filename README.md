@@ -3,7 +3,7 @@
 
 <img src="https://user-images.githubusercontent.com/9987486/229472271-62a5d923-f7b7-416c-913e-c842ecc2de4d.png" width="320" />
 
-### Note in terminal, based on github gist.
+### Note in terminal, based on github gist. 🧑‍💻
 
 `终端运行的记事本，基于 github gist 构建。`
 
@@ -20,18 +20,19 @@
 
 <!-- 封面区域 end -->
 
-## 功能
+## 功能 🎯
 
 - [x] 面板
   - [x] 切换
   - [x] 存储持久化
   - [x] 快捷键、鼠标
   - [x] Confirm
+  - [x] Prompt
 - [x] 文件
   - [x] 新建
   - [x] 重命名
   - [x] 删除
-- [x] 详情
+- [x] 详情 📝
   - [x] Markdown 高亮
   - [x] 编辑、保存
   <!-- - [ ] 国际化
@@ -45,7 +46,7 @@
 
 ## 准备&前提
 
-应用基于 github gist 构建，需要去 [申请 access token](https://github.com/settings/tokens/new)，然后把值加入环境变量 `TNOTE_GIST_TOKEN`
+应用基于 github gist 构建，需要去 [申请 access token](https://github.com/settings/tokens/new)，然后添加到环境变量 `TNOTE_GIST_TOKEN`。
 
 ```bash
 # ~/.bashrc
