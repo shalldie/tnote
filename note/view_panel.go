@@ -84,6 +84,9 @@ func (p *ViewPanel) SaveContent(content string) {
 	file := note.Gist.Files[note.Gist.CurrentIndex]
 	// file.Content = content
 	go func() {
+		if file.Content == content {
+			return
+		}
 		note.StatusBar.ShowMessage("保存中...")
 		note.Gist.UpdateFile(file.FileName, &gist.UpdateGistPayload{Content: content})
 		note.StatusBar.ShowForSeconds("保存成功", 3)
