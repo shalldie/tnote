@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/shalldie/tnote/note"
+	"github.com/shalldie/tnote/internal/note"
 )
 
 func main() {

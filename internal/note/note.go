@@ -3,7 +3,7 @@ package note
 import (
 	"github.com/gdamore/tcell/v2"
 	"github.com/rivo/tview"
-	"github.com/shalldie/tnote/gist"
+	"github.com/shalldie/tnote/internal/gist"
 )
 
 // 放全局，方便引用，，，反正是单例
