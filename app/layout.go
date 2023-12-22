@@ -164,7 +164,9 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 func (m AppModel) View() string {
 
-	viewContainer := lipgloss.NewStyle().Height(m.Height - 1).Render(
+	viewContainer := lipgloss.NewStyle().
+		// Background(lipgloss.Color("#282a35")).
+		Height(m.Height - 1).Render(
 		lipgloss.JoinHorizontal(
 			lipgloss.Left,
 			m.FileList.View(),

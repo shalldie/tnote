@@ -45,6 +45,8 @@ func NewMarkdownModel() MarkdownModel {
 	}
 	// model.Resize(100, 30)
 	// model.Viewport.HighPerformanceRendering = true
+	// model.Viewport.Style = lipgloss.NewStyle().
+	// 	Background(lipgloss.Color("#282a35"))
 	return model
 }
 
@@ -69,9 +71,13 @@ func (m MarkdownModel) getMarkdownContent(content string) string {
 		background = "dark"
 	}
 
+	// background := "notty"
+	// background = "dracula"
+
 	r, _ := glamour.NewTermRenderer(
 		glamour.WithWordWrap(m.Width),
 		glamour.WithStandardStyle(background),
+		// glamour.WithAutoStyle(),
 	)
 
 	out, err := r.Render(content)
@@ -140,5 +146,8 @@ func (m MarkdownModel) Update(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 }
 
 func (m MarkdownModel) View() string {
+	// style := lipgloss.NewStyle().Width(m.Width).Height(m.Height).
+	// 	Background(lipgloss.Color("#282a35"))
+
 	return m.Viewport.View()
 }

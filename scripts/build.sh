@@ -31,4 +31,4 @@ for os_name in ${TARGET_OS_NAMES[*]}; do
 
 done
 
-upx output/tnote.*
+# upx output/tnote.*
