@@ -13,3 +13,6 @@ type CMD_UPDATE_FILE string
 
 // 更新 markdown 内容
 // type CMD_UPDATE_MARKDOWN string
+
+// show confirm
+type CMD_CONFIRM_SHOW string

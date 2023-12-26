@@ -2,40 +2,39 @@ package app
 
 import (
 	"errors"
+	"fmt"
+	"strings"
 
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/shalldie/tnote/gist"
+	"github.com/shalldie/tnote/utils"
 )
 
-// RenderMarkdown renders the markdown content with glamour.
-// func RenderMarkdown(width int, content string) string {
-// 	background := "light"
+var (
+// titleStyle = func() lipgloss.Style {
+// 	return lipgloss.NewStyle().Padding(0, 1)
+// 	// b := lipgloss.RoundedBorder()
+// 	// b.Right = "├"
+// 	// return lipgloss.NewStyle().BorderStyle(b).Padding(0, 1)
+// }()
 
-// 	if lipgloss.HasDarkBackground() {
-// 		background = "dark"
-// 	}
-
-// 	r, _ := glamour.NewTermRenderer(
-// 		glamour.WithWordWrap(width),
-// 		glamour.WithStandardStyle(background),
-// 	)
-
-// 	out, err := r.Render(content)
-// 	if err != nil {
-// 		// return "", errors.Unwrap(err)
-// 		return errors.Unwrap(err).Error()
-// 		// return content
-// 	}
-
-// 	return out
-// }
+//	infoStyle = func() lipgloss.Style {
+//		// b := lipgloss.RoundedBorder()
+//		// b.Left = "┤"
+//		// return titleStyle.Copy().BorderStyle(b)
+//		return lipgloss.NewStyle().Padding(0, 1)
+//	}()
+)
 
 type MarkdownModel struct {
 	*BaseModel
 
 	Viewport viewport.Model
+
+	file *gist.GistFile
 }
 
 func NewMarkdownModel() MarkdownModel {
@@ -46,7 +45,9 @@ func NewMarkdownModel() MarkdownModel {
 	// model.Resize(100, 30)
 	// model.Viewport.HighPerformanceRendering = true
 	// model.Viewport.Style = lipgloss.NewStyle().
-	// 	Background(lipgloss.Color("#282a35"))
+	// Border(lipgloss.RoundedBorder(), true).
+	// BorderForeground(lipgloss.Color("#282a35"))
+	// model.Viewport.Style = model.Viewport.Style.Padding(0)
 	return model
 }
 
@@ -56,8 +57,11 @@ func NewMarkdownModel() MarkdownModel {
 
 func (m *MarkdownModel) Resize(width int, height int) {
 	m.BaseModel.Resize(width, height)
+	headerHeight := lipgloss.Height(m.headerView())
+	footerHeight := lipgloss.Height(m.footerView())
+
 	m.Viewport.Width = width
-	m.Viewport.Height = height
+	m.Viewport.Height = height - headerHeight - footerHeight
 }
 
 func (m MarkdownModel) Init() tea.Cmd {
@@ -123,11 +127,13 @@ func (m MarkdownModel) Update(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 	case CMD_UPDATE_FILE:
 		// m.Resize(m.Width, m.Height)
 		curFile := gt.GetFile()
+		m.file = curFile
 		if curFile != nil {
 			m.Viewport.SetContent(
 				lipgloss.NewStyle().Width(m.Width).Height(m.Height).
 					Render(m.getMarkdownContent(curFile.Content)),
 			)
+			m.Viewport.SetYOffset(0)
 		}
 		return m, nil
 
@@ -149,5 +155,37 @@ func (m MarkdownModel) View() string {
 	// style := lipgloss.NewStyle().Width(m.Width).Height(m.Height).
 	// 	Background(lipgloss.Color("#282a35"))
 
-	return m.Viewport.View()
+	return fmt.Sprintf("%s\n%s\n%s", m.headerView(), m.Viewport.View(), m.footerView())
+	// return m.Viewport.View()
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+func (m MarkdownModel) withActiveStyle() lipgloss.Style {
+	return lipgloss.NewStyle().Foreground(utils.Ternary(m.Active, PRIMARY_ACTIVE_COLOR, PRIMARY_NORMAL_COLOR))
+}
+
+func (m MarkdownModel) headerView() string {
+	titleStyle := lipgloss.NewStyle().Foreground(PRIMARY_ACTIVE_COLOR).Padding(0, 1).Bold(m.Active)
+	title := func() string {
+		if m.file == nil {
+			return titleStyle.Render("")
+		}
+		return titleStyle.Render(m.file.FileName)
+	}()
+	// title := titleStyle.Render("Mr. Pager")
+	line := m.withActiveStyle().Render(strings.Repeat("─", max(0, m.Viewport.Width-lipgloss.Width(title))))
+	return lipgloss.JoinHorizontal(lipgloss.Center, title, line)
+}
+
+func (m MarkdownModel) footerView() string {
+	infoStyle := lipgloss.NewStyle().Foreground(PRIMARY_ACTIVE_COLOR).Padding(0, 1).Bold(true)
+	info := infoStyle.Render(fmt.Sprintf("%3.f%%", m.Viewport.ScrollPercent()*100))
+	line := m.withActiveStyle().Render(strings.Repeat("─", max(0, m.Viewport.Width-lipgloss.Width(info))))
+	return lipgloss.JoinHorizontal(lipgloss.Center, line, info)
 }

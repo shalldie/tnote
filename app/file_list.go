@@ -9,7 +9,6 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/shalldie/gog/gs"
 	"github.com/shalldie/tnote/gist"
-	"github.com/shalldie/tnote/utils"
 )
 
 type FileListModel struct {
@@ -79,8 +78,15 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 }
 
 func (m FileListModel) View() string {
-	style := utils.Ternary(m.Active, boxActiveStyle, boxStyle)
-	style = style.Copy().
+	style := lipgloss.NewStyle().
+		// Background(lipgloss.Color("#282a35")).
+		Border(lipgloss.RoundedBorder(), true).
+		// BorderForeground(grayColor).
+		BorderForeground(PRIMARY_NORMAL_COLOR)
+	if m.Active {
+		style = style.BorderForeground(PRIMARY_ACTIVE_COLOR)
+	}
+	style = style.
 		Width(m.Width).
 		Height(m.Height)
 

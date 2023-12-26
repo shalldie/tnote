@@ -2,7 +2,7 @@ package app
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/shalldie/tnote/utils"
+	"github.com/charmbracelet/lipgloss"
 )
 
 type FilePanelModel struct {
@@ -13,6 +13,16 @@ type FilePanelModel struct {
 func (m *FilePanelModel) Resize(width int, height int) {
 	m.BaseModel.Resize(width, height)
 	m.Markdown.Resize(width, height)
+}
+
+func (m *FilePanelModel) Focus() {
+	m.BaseModel.Focus()
+	m.Markdown.Focus()
+}
+
+func (m *FilePanelModel) Blur() {
+	m.BaseModel.Blur()
+	m.Markdown.Blur()
 }
 
 func (m FilePanelModel) Init() tea.Cmd {
@@ -59,7 +69,8 @@ func (m FilePanelModel) Update(msg tea.Msg) (FilePanelModel, tea.Cmd) {
 }
 
 func (m FilePanelModel) View() string {
-	style := utils.Ternary(m.Active, boxActiveStyle, boxStyle)
+	// style := utils.Ternary(m.Active, boxActiveStyle, boxStyle)
+	style := lipgloss.NewStyle()
 	style = style.Copy().
 		Width(m.Width).
 		Height(m.Height)

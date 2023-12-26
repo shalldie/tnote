@@ -20,17 +20,19 @@ type AppModel struct {
 	// loading bool
 
 	// components
-	FileList  FileListModel
-	FilePanel FilePanelModel
-	StatusBar StatusBarModel
+	FileList     FileListModel
+	FilePanel    FilePanelModel
+	StatusBar    StatusBarModel
+	ConfirmModel ConfirmModel
 }
 
 func newAppModel() AppModel {
 	m := AppModel{
-		BaseModel: newBaseModel(),
-		FileList:  newFileListModel(),
-		FilePanel: newFilePanelModel(),
-		StatusBar: NewStatusBar(),
+		BaseModel:    newBaseModel(),
+		FileList:     newFileListModel(),
+		FilePanel:    newFilePanelModel(),
+		StatusBar:    NewStatusBar(),
+		ConfirmModel: NewConfirmModel(),
 	}
 
 	return m
@@ -50,6 +52,7 @@ func (m AppModel) Init() tea.Cmd {
 		m.FileList.Init(),
 		m.FilePanel.Init(),
 		m.StatusBar.Init(),
+		m.ConfirmModel.Init(),
 	)
 }
 
@@ -72,9 +75,12 @@ func (m AppModel) propagate(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.FilePanel, cmd = m.FilePanel.Update(msg)
 	cmds = append(cmds, cmd)
 
+	m.ConfirmModel, cmd = m.ConfirmModel.Update(msg)
+	cmds = append(cmds, cmd)
+
 	if msg, ok := msg.(tea.WindowSizeMsg); ok {
 		m.FileList.Resize(40, msg.Height-3)
-		m.FilePanel.Resize(msg.Width-40-4, msg.Height-3)
+		m.FilePanel.Resize(msg.Width-40-4, msg.Height-1)
 
 		// msg.Height -= m.tabs.(tabs).height + m.list1.(list).height
 		// m.history, _ = m.history.Update(msg)
@@ -174,6 +180,15 @@ func (m AppModel) View() string {
 		),
 	)
 
+	// block := lipgloss.PlaceHorizontal(80, lipgloss.Center, fancyStyledParagraph)
+
+	// dialogStr := lipgloss.Place(
+	// 	m.Width, m.Height,
+	// 	lipgloss.Center, lipgloss.Center,
+	// 	m.ConfirmModel.View(),
+	// 	lipgloss.WithWhitespaceChars("x"),
+	// )
+
 	// container := lipgloss.NewStyle().
 	// 	// Background(lipgloss.AdaptiveColor{Light: "#F25D94", Dark: "#F25D94"}).
 	// 	Height(m.height - 1)
@@ -181,6 +196,7 @@ func (m AppModel) View() string {
 	return lipgloss.JoinVertical(
 		lipgloss.Top,
 		viewContainer,
+		// dialogStr,
 		// container.Render(m.filelist.View()),
 		m.StatusBar.View(),
 	)

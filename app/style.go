@@ -2,15 +2,23 @@ package app
 
 import "github.com/charmbracelet/lipgloss"
 
-var primaryColor = lipgloss.Color("#874BFD")
+const (
+	// 绿色
+	PRIMARY_NORMAL_COLOR = lipgloss.Color("#215c41")
+	// PRIMARY_NORMAL_COLOR = lipgloss.Color("#ddd")
 
-var grayColor = lipgloss.AdaptiveColor{Light: "#3c3836", Dark: "#3c3836"}
+	PRIMARY_ACTIVE_COLOR = lipgloss.Color("#42b883")
+	// PRIMARY_ACTIVE_COLOR = lipgloss.Color("#F25D94")
 
-var boxStyle = lipgloss.NewStyle().
-	// Background(lipgloss.Color("#282a35")).
-	Border(lipgloss.RoundedBorder(), true).
-	BorderForeground(grayColor).
-	Padding(0, 0)
+	// 5ff967
 
-var boxActiveStyle = boxStyle.Copy().
-	BorderForeground(primaryColor)
+	// 蓝色
+	// PRIMARY_NORMAL_COLOR = lipgloss.Color("#1546a9")
+
+	// PRIMARY_ACTIVE_COLOR = lipgloss.Color("#528eff")
+
+	// 紫色
+	// PRIMARY_NORMAL_COLOR = lipgloss.Color("#411a8f")
+
+	// PRIMARY_ACTIVE_COLOR = lipgloss.Color("#874BFD")
+)

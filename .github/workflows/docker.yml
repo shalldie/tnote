@@ -19,7 +19,7 @@ jobs:
           images: |
             shalldie/tnote
           tags: |
-            type=semver,pattern={{raw}}
+            type=semver,pattern={{version}}
             type=sha
             type=raw,value=latest,enable={{is_default_branch}}
 
