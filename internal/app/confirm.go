@@ -55,5 +55,7 @@ func (m ConfirmModel) View() string {
 }
 
 func NewConfirmModel() ConfirmModel {
-	return ConfirmModel{}
+	return ConfirmModel{
+		BaseModel: newBaseModel(),
+	}
 }

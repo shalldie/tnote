@@ -7,7 +7,8 @@ import (
 )
 
 type StatusBarModel struct {
-	Width       int
+	*BaseModel
+	// Width       int
 	LoadingText string
 	Loading     bool
 
@@ -18,7 +19,11 @@ func (m StatusBarModel) Init() tea.Cmd {
 	return m.spinner.Tick
 }
 
-func (m *StatusBarModel) propagate(msg tea.Msg) StatusBarModel {
+func (m StatusBarModel) propagate(msg tea.Msg) (StatusBarModel, tea.Cmd) {
+
+	var cmd tea.Cmd
+	var cmds []tea.Cmd
+
 	// Propagate to all children.
 	// m.tabs, _ = m.tabs.Update(msg)
 	// m.dialog, _ = m.dialog.Update(msg)
@@ -26,7 +31,8 @@ func (m *StatusBarModel) propagate(msg tea.Msg) StatusBarModel {
 	// m.list2, _ = m.list2.Update(msg)
 	// m.LoadingText = "lalala"
 
-	m.spinner, _ = m.spinner.Update(msg)
+	m.spinner, cmd = m.spinner.Update(msg)
+	cmds = append(cmds, cmd)
 
 	// switch msg := msg.(type) {
 	// case spinner.TickMsg:
@@ -42,31 +48,35 @@ func (m *StatusBarModel) propagate(msg tea.Msg) StatusBarModel {
 	// }
 
 	// m.history, _ = m.history.Update(msg)
-	return *m
+	return m, tea.Batch(cmds...)
 }
 
 func (m StatusBarModel) Update(msg tea.Msg) (StatusBarModel, tea.Cmd) {
 	switch msg := msg.(type) {
-	case tea.WindowSizeMsg:
-		m.Width = msg.Width
-		return m.propagate(msg), nil
+	// case tea.WindowSizeMsg:
+	// 	m.Width = msg.Width
+	// 	return m.propagate(msg), nil
 
 	case CMD_APP_LOADING:
 		m.Loading = len(msg) > 0
 		m.LoadingText = string(msg)
 
-		return m.propagate(msg), nil
+		return m, nil
+
+	}
 
 	// case errMsg:
 	// 	m.err = msg
 	// 	return m, nil
 
-	default:
-		var cmd tea.Cmd
-		m.spinner, cmd = m.spinner.Update(msg)
-		return m, cmd
-		// return m.propagate(msg), nil
-	}
+	// default:
+	// 	var cmd tea.Cmd
+	// 	m.spinner, cmd = m.spinner.Update(msg)
+	// 	return m, cmd
+	// 	// return m.propagate(msg), nil
+	// }
+
+	return m.propagate(msg)
 }
 
 func (m StatusBarModel) View() string {
@@ -118,6 +128,7 @@ func NewStatusBar() StatusBarModel {
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#ffffff"))
 
 	return StatusBarModel{
-		spinner: s,
+		BaseModel: newBaseModel(),
+		spinner:   s,
 	}
 }

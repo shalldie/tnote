@@ -17,6 +17,7 @@ var (
 type AppModel struct {
 	*BaseModel
 	// state
+	ModalMode bool // 模态模式
 	// loading bool
 
 	// components
@@ -28,7 +29,8 @@ type AppModel struct {
 
 func newAppModel() AppModel {
 	m := AppModel{
-		BaseModel:    newBaseModel(),
+		BaseModel: newBaseModel(),
+
 		FileList:     newFileListModel(),
 		FilePanel:    newFilePanelModel(),
 		StatusBar:    NewStatusBar(),
@@ -36,6 +38,24 @@ func newAppModel() AppModel {
 	}
 
 	return m
+}
+
+func (m *AppModel) Resize(width int, height int) {
+	m.BaseModel.Resize(width, height)
+
+	m.FileList.Resize(40, height-3)
+	m.FilePanel.Resize(width-40-4, height-1)
+	m.StatusBar.Resize(width, 1)
+	m.ConfirmModel.Resize(width, height)
+}
+
+func (m *AppModel) Blur() {
+	m.BaseModel.Blur()
+
+	m.FileList.Blur()
+	m.FilePanel.Blur()
+	m.StatusBar.Blur()
+	m.ConfirmModel.Blur()
 }
 
 func (m AppModel) Init() tea.Cmd {
@@ -47,6 +67,10 @@ func (m AppModel) Init() tea.Cmd {
 		app.Send(CMD_REFRESH_FILES(""))
 		app.Send(CMD_UPDATE_FILE(""))
 	}()
+
+	// batches := gs.Map[IBaseModel](m.getComponents(),func (item IBaseModel)  {
+
+	// })
 
 	return tea.Batch(
 		m.FileList.Init(),
@@ -78,14 +102,15 @@ func (m AppModel) propagate(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.ConfirmModel, cmd = m.ConfirmModel.Update(msg)
 	cmds = append(cmds, cmd)
 
-	if msg, ok := msg.(tea.WindowSizeMsg); ok {
-		m.FileList.Resize(40, msg.Height-3)
-		m.FilePanel.Resize(msg.Width-40-4, msg.Height-1)
+	// if msg, ok := msg.(tea.WindowSizeMsg); ok {
+	// 	// m.FileList.Resize(40, msg.Height-3)
+	// 	// m.FilePanel.Resize(msg.Width-40-4, msg.Height-1)
+	// 	m.Resize(msg.Width, msg.Height)
 
-		// msg.Height -= m.tabs.(tabs).height + m.list1.(list).height
-		// m.history, _ = m.history.Update(msg)
-		return m, nil
-	}
+	// 	// msg.Height -= m.tabs.(tabs).height + m.list1.(list).height
+	// 	// m.history, _ = m.history.Update(msg)
+	// 	return m, nil
+	// }
 
 	// m.history, _ = m.history.Update(msg)
 	return m, tea.Batch(cmds...)
@@ -101,11 +126,11 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.Resize(msg.Width, msg.Height)
 		// msg.Height -= 2
 		// msg.Width -= 4
-		return m.propagate(msg)
+		return m, nil
 
-	case CMD_APP_LOADING:
-		// m.loading = len(msg) > 0
-		return m.propagate(msg)
+	// case CMD_APP_LOADING:
+	// 	// m.loading = len(msg) > 0
+	// 	return m.propagate(msg)
 
 	// case spinner.TickMsg:
 	// 	var cmd tea.Cmd
@@ -119,13 +144,18 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 
 		case "left":
-			m.FileList.Focus()
-			m.FilePanel.Blur()
-			return m, nil
+			if !m.ModalMode {
+				m.Blur()
+				m.FileList.Focus()
+				return m, nil
+			}
+
 		case "right":
-			m.FileList.Blur()
-			m.FilePanel.Focus()
-			return m, nil
+			if !m.ModalMode {
+				m.Blur()
+				m.FilePanel.Focus()
+				return m, nil
+			}
 
 		case "e":
 			// if !m.textarea.Focused() {

@@ -1,5 +1,15 @@
 package app
 
+type IBaseModel interface {
+	// Init() tea.Cmd
+	// Update(msg tea.Msg) (any, tea.Cmd)
+	// View() string
+
+	Resize(width int, height int)
+	Focus()
+	Blur()
+}
+
 type BaseModel struct {
 	Width  int
 	Height int

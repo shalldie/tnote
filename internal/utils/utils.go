@@ -8,3 +8,8 @@ func Ternary[T any](condition bool, item1 T, item2 T) T {
 
 	return item2
 }
+
+// 获取较大的数
+func MathMax(a int, b int) int {
+	return Ternary(a > b, a, b)
+}

@@ -44,11 +44,15 @@ func (m FileListModel) propagate(msg tea.Msg) (FileListModel, tea.Cmd) {
 		// }
 		m.list, cmd = m.list.Update(msg)
 		cmds = append(cmds, cmd)
-		if m.list.Index() != gt.CurrentIndex {
-			go func() {
-				gt.CurrentIndex = m.list.Index()
-				app.Send(CMD_UPDATE_FILE(""))
-			}()
+		if item, ok := m.list.SelectedItem().(FileListItem); ok {
+			m.selectFile(item.gistfile.FileName)
+			// curIndex := gs.IndexOf(gt.Files, item.gistfile)
+			// if curIndex != gt.CurrentIndex {
+			// 	go func() {
+			// 		gt.CurrentIndex = curIndex
+			// 		app.Send(CMD_UPDATE_FILE(""))
+			// 	}()
+			// }
 		}
 	}
 	return m, tea.Batch(cmds...)
@@ -108,13 +112,29 @@ func (m *FileListModel) refreshFiles() tea.Cmd {
 }
 
 func (m *FileListModel) selectFile(filename string) {
-	targetIndex := gs.FindIndex[list.Item](m.list.Items(), func(item list.Item, i int) bool {
+	// list
+	targetIndex := gs.FindIndex[list.Item](m.list.VisibleItems(), func(item list.Item, i int) bool {
 		if fli, ok := item.(FileListItem); ok {
 			return fli.gistfile.FileName == filename
 		}
 		return false
 	})
-	m.list.Select(targetIndex)
+	if m.list.Index() != targetIndex {
+		m.list.Select(targetIndex)
+	}
+
+	// m.list.VisibleItems()
+
+	// gist
+	targetIndex = gs.FindIndex(gt.Files, func(item *gist.GistFile, i int) bool {
+		return item.FileName == filename
+	})
+	if targetIndex != gt.CurrentIndex {
+		go func() {
+			gt.CurrentIndex = targetIndex
+			app.Send(CMD_UPDATE_FILE(""))
+		}()
+	}
 }
 
 func newFileListModel() FileListModel {

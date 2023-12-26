@@ -99,9 +99,10 @@ func (m MarkdownModel) propagate(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 	var cmds []tea.Cmd
 	var cmd tea.Cmd
 
-	m.Viewport, cmd = m.Viewport.Update(msg)
-	cmds = append(cmds, cmd)
 	if m.Active {
+		m.Viewport, cmd = m.Viewport.Update(msg)
+		cmds = append(cmds, cmd)
+
 		// curItem := m.list.SelectedItem()
 		// if fli, ok := curItem.(FileListItem); ok {
 		// 	curFilename := fli.gistfile.FileName
@@ -160,13 +161,6 @@ func (m MarkdownModel) View() string {
 	// return m.Viewport.View()
 }
 
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
 func (m MarkdownModel) withActiveStyle() lipgloss.Style {
 	return lipgloss.NewStyle().Foreground(utils.Ternary(m.Active, PRIMARY_ACTIVE_COLOR, PRIMARY_NORMAL_COLOR))
 }
@@ -180,13 +174,13 @@ func (m MarkdownModel) headerView() string {
 		return titleStyle.Render(m.file.FileName)
 	}()
 	// title := titleStyle.Render("Mr. Pager")
-	line := m.withActiveStyle().Render(strings.Repeat("─", max(0, m.Viewport.Width-lipgloss.Width(title))))
+	line := m.withActiveStyle().Render(strings.Repeat("─", utils.MathMax(0, m.Viewport.Width-lipgloss.Width(title))))
 	return lipgloss.JoinHorizontal(lipgloss.Center, title, line)
 }
 
 func (m MarkdownModel) footerView() string {
 	infoStyle := lipgloss.NewStyle().Foreground(PRIMARY_ACTIVE_COLOR).Padding(0, 1).Bold(true)
 	info := infoStyle.Render(fmt.Sprintf("%3.f%%", m.Viewport.ScrollPercent()*100))
-	line := m.withActiveStyle().Render(strings.Repeat("─", max(0, m.Viewport.Width-lipgloss.Width(info))))
+	line := m.withActiveStyle().Render(strings.Repeat("─", utils.MathMax(0, m.Viewport.Width-lipgloss.Width(info))))
 	return lipgloss.JoinHorizontal(lipgloss.Center, line, info)
 }
