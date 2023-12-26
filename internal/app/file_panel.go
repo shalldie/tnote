@@ -74,6 +74,7 @@ func (m FilePanelModel) View() string {
 	style = style.Copy().
 		Width(m.Width).
 		Height(m.Height)
+		// Padding(0, 1)
 
 	return style.Render(m.Markdown.View())
 }

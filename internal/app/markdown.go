@@ -9,8 +9,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/shalldie/tnote/gist"
-	"github.com/shalldie/tnote/utils"
+	"github.com/shalldie/tnote/internal/gist"
+	"github.com/shalldie/tnote/internal/utils"
 )
 
 var (
@@ -91,6 +91,7 @@ func (m MarkdownModel) getMarkdownContent(content string) string {
 		// return content
 	}
 
+	// return content
 	return out
 }
 

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	_ "github.com/shalldie/tnote/conf"
+	_ "github.com/shalldie/tnote/internal/conf"
 
-	"github.com/shalldie/tnote/app"
+	"github.com/shalldie/tnote/internal/app"
 )
 
 func main() {
