@@ -1,6 +1,6 @@
 // edit from https://github.com/charmbracelet/lipgloss/blob/master/whitespace.go
 
-package utils
+package dialog
 
 import (
 	"strings"

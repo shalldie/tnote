@@ -1,6 +1,6 @@
 // edit from https://github.com/charmbracelet/lipgloss/pull/102/files
 
-package utils
+package dialog
 
 import (
 	"bytes"
@@ -9,6 +9,7 @@ import (
 	"github.com/mattn/go-runewidth"
 	"github.com/muesli/ansi"
 	"github.com/muesli/reflow/truncate"
+	"github.com/shalldie/tnote/internal/utils"
 )
 
 // PlaceOverlay places fg on top of bg.
@@ -112,7 +113,7 @@ func cutLeft(s string, cutWidth int) string {
 }
 
 func clamp(v, lower, upper int) int {
-	return MathMin(MathMax(v, lower), upper)
+	return utils.MathMin(utils.MathMax(v, lower), upper)
 }
 
 // Split a string into lines, additionally returning the size of the widest

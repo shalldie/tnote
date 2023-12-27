@@ -17,6 +17,8 @@ type DialogModel struct {
 
 	// components
 	TextInput textinput.Model
+
+	//todo: add OnClose
 }
 
 func (m *DialogModel) isPrompt() bool {
@@ -53,6 +55,10 @@ func (m *DialogModel) Show(payload *DialogPayload) {
 	}
 }
 
+func (m *DialogModel) Close() {
+	m.Active = false
+}
+
 func (m DialogModel) Init() tea.Cmd {
 	return tea.Batch(textinput.Blink)
 }
@@ -80,16 +86,21 @@ func (m DialogModel) Update(msg tea.Msg) (DialogModel, tea.Cmd) {
 		// enter
 		case "enter":
 			if m.TabIndex == 1 {
-				m.Active = false
+				m.Close()
 				return m, nil
 			}
 			if m.TabIndex == 2 {
-				m.Active = false
+				m.Close()
 				if m.Payload.FnOK != nil {
 					m.Payload.FnOK(m.Payload.PromptValue)
 				}
 				return m, nil
 			}
+
+		case "esc":
+			m.Close()
+			return m, nil
+
 		}
 
 	}

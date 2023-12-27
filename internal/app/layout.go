@@ -3,13 +3,13 @@ package app
 import (
 	"fmt"
 	"os"
+	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/gist"
-	"github.com/shalldie/tnote/internal/utils"
 )
 
 var (
@@ -72,6 +72,7 @@ func (m AppModel) Init() tea.Cmd {
 		app.Send(CMD_REFRESH_FILES(""))
 		app.Send(CMD_UPDATE_FILE(""))
 
+		time.Sleep(time.Second * 3)
 		app.Send(dialog.DialogPayload{
 			Message:     "hello world",
 			Mode:        1,
@@ -230,7 +231,7 @@ func (m AppModel) View() string {
 
 	// block := lipgloss.PlaceHorizontal(80, lipgloss.Center, fancyStyledParagraph)
 	dialogView := m.DialogModel.View()
-	viewContainer = utils.PlaceOverlay(
+	viewContainer = dialog.PlaceOverlay(
 		m.Width/2-lipgloss.Width(dialogView)/2, m.Height/2-lipgloss.Height(dialogView)/2-3,
 		// (m.Width-m.ConfirmModel.Width)/2, (m.Height-m.ConfirmModel.Height)/2,
 		dialogView,
