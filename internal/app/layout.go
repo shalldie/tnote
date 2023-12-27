@@ -110,8 +110,10 @@ func (m AppModel) propagate(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.FilePanel, cmd = m.FilePanel.Update(msg)
 	cmds = append(cmds, cmd)
 
-	m.DialogModel, cmd = m.DialogModel.Update(msg)
-	cmds = append(cmds, cmd)
+	if m.DialogModel.Active {
+		m.DialogModel, cmd = m.DialogModel.Update(msg)
+		cmds = append(cmds, cmd)
+	}
 
 	// if msg, ok := msg.(tea.WindowSizeMsg); ok {
 	// 	// m.FileList.Resize(40, msg.Height-3)
