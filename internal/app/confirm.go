@@ -5,6 +5,8 @@ import (
 	"github.com/charmbracelet/lipgloss"
 )
 
+// https://github.com/charmbracelet/lipgloss/pull/102/files
+
 type ConfirmModel struct {
 	*BaseModel
 	Content string
@@ -27,7 +29,7 @@ func (m ConfirmModel) View() string {
 	dialogBoxStyle := lipgloss.NewStyle().
 		Border(lipgloss.RoundedBorder()).
 		BorderForeground(lipgloss.Color("#874BFD")).
-		Padding(1, 0).
+		Padding(1, 3).
 		BorderTop(true).
 		BorderLeft(true).
 		BorderRight(true).
@@ -37,20 +39,21 @@ func (m ConfirmModel) View() string {
 		Foreground(lipgloss.Color("#FFF7DB")).
 		Background(lipgloss.Color("#888B7E")).
 		Padding(0, 3).
-		MarginTop(1)
+		MarginTop(1).
+		MarginLeft(2)
 
 	activeButtonStyle := buttonStyle.Copy().
 		Foreground(lipgloss.Color("#FFF7DB")).
 		Background(lipgloss.Color("#F25D94")).
-		MarginRight(2).
+		// MarginRight(2).
 		Underline(true)
 
-	okButton := activeButtonStyle.Render("Yes")
-	cancelButton := buttonStyle.Render("Maybe")
+	okButton := activeButtonStyle.Render("确定")
+	cancelButton := buttonStyle.Render("取消")
 
-	question := lipgloss.NewStyle().Width(50).Align(lipgloss.Center).Render("Are you sure you want to eat marmalade?")
-	buttons := lipgloss.JoinHorizontal(lipgloss.Top, okButton, cancelButton)
-	ui := lipgloss.JoinVertical(lipgloss.Center, question, buttons)
+	question := lipgloss.NewStyle().Width(42).Align(lipgloss.Left).Render("确定要删除吗？")
+	buttons := lipgloss.JoinHorizontal(lipgloss.Top, cancelButton, okButton)
+	ui := lipgloss.JoinVertical(lipgloss.Right, question, buttons)
 	return dialogBoxStyle.Render(ui)
 }
 

@@ -7,6 +7,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/shalldie/tnote/internal/gist"
+	"github.com/shalldie/tnote/internal/utils"
 )
 
 var (
@@ -211,6 +212,14 @@ func (m AppModel) View() string {
 	)
 
 	// block := lipgloss.PlaceHorizontal(80, lipgloss.Center, fancyStyledParagraph)
+	confirmView := m.ConfirmModel.View()
+	viewContainer = utils.PlaceOverlay(
+		m.Width/2-lipgloss.Width(confirmView)/2, m.Height/2-lipgloss.Height(confirmView)/2-3,
+		// (m.Width-m.ConfirmModel.Width)/2, (m.Height-m.ConfirmModel.Height)/2,
+		confirmView,
+		// fmt.Sprintf("%v,%v,%v,%v", m.Width/2, m.ConfirmModel.Width/2, m.Height/2, m.ConfirmModel.Height/2),
+		viewContainer,
+	)
 
 	// dialogStr := lipgloss.Place(
 	// 	m.Width, m.Height,

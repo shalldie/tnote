@@ -13,3 +13,8 @@ func Ternary[T any](condition bool, item1 T, item2 T) T {
 func MathMax(a int, b int) int {
 	return Ternary(a > b, a, b)
 }
+
+// 获取较小的数
+func MathMin(a int, b int) int {
+	return Ternary(a < b, a, b)
+}
