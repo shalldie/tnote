@@ -6,6 +6,8 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
+	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/gist"
 	"github.com/shalldie/tnote/internal/utils"
 )
@@ -16,26 +18,28 @@ var (
 )
 
 type AppModel struct {
-	*BaseModel
+	*model.BaseModel
 	// state
 	ModalMode bool // 模态模式
 	// loading bool
 
 	// components
-	FileList     FileListModel
-	FilePanel    FilePanelModel
-	StatusBar    StatusBarModel
-	ConfirmModel ConfirmModel
+	FileList  FileListModel
+	FilePanel FilePanelModel
+	StatusBar StatusBarModel
+	// ConfirmModel ConfirmModel
+	DialogModel dialog.DialogModel
 }
 
 func newAppModel() AppModel {
 	m := AppModel{
-		BaseModel: newBaseModel(),
+		BaseModel: model.NewBaseModel(),
 
-		FileList:     newFileListModel(),
-		FilePanel:    newFilePanelModel(),
-		StatusBar:    NewStatusBar(),
-		ConfirmModel: NewConfirmModel(),
+		FileList:  newFileListModel(),
+		FilePanel: newFilePanelModel(),
+		StatusBar: NewStatusBar(),
+		// ConfirmModel: NewConfirmModel(),
+		DialogModel: dialog.New(),
 	}
 
 	return m
@@ -47,7 +51,7 @@ func (m *AppModel) Resize(width int, height int) {
 	m.FileList.Resize(40, height-3)
 	m.FilePanel.Resize(width-40-4, height-1)
 	m.StatusBar.Resize(width, 1)
-	m.ConfirmModel.Resize(width, height)
+	m.DialogModel.Resize(width, height)
 }
 
 func (m *AppModel) Blur() {
@@ -56,7 +60,7 @@ func (m *AppModel) Blur() {
 	m.FileList.Blur()
 	m.FilePanel.Blur()
 	m.StatusBar.Blur()
-	m.ConfirmModel.Blur()
+	m.DialogModel.Blur()
 }
 
 func (m AppModel) Init() tea.Cmd {
@@ -67,6 +71,12 @@ func (m AppModel) Init() tea.Cmd {
 		app.Send(CMD_APP_LOADING(""))
 		app.Send(CMD_REFRESH_FILES(""))
 		app.Send(CMD_UPDATE_FILE(""))
+
+		app.Send(dialog.DialogPayload{
+			Message:     "hello world",
+			Mode:        1,
+			PromptValue: "这个是默认值",
+		})
 	}()
 
 	// batches := gs.Map[IBaseModel](m.getComponents(),func (item IBaseModel)  {
@@ -77,7 +87,7 @@ func (m AppModel) Init() tea.Cmd {
 		m.FileList.Init(),
 		m.FilePanel.Init(),
 		m.StatusBar.Init(),
-		m.ConfirmModel.Init(),
+		m.DialogModel.Init(),
 	)
 }
 
@@ -100,7 +110,7 @@ func (m AppModel) propagate(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.FilePanel, cmd = m.FilePanel.Update(msg)
 	cmds = append(cmds, cmd)
 
-	m.ConfirmModel, cmd = m.ConfirmModel.Update(msg)
+	m.DialogModel, cmd = m.DialogModel.Update(msg)
 	cmds = append(cmds, cmd)
 
 	// if msg, ok := msg.(tea.WindowSizeMsg); ok {
@@ -129,6 +139,11 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		// msg.Width -= 4
 		return m, nil
 
+	case dialog.DialogPayload:
+		m.Blur()
+		m.DialogModel.Show(&msg)
+		return m, nil
+
 	// case CMD_APP_LOADING:
 	// 	// m.loading = len(msg) > 0
 	// 	return m.propagate(msg)
@@ -145,14 +160,14 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 
 		case "left":
-			if !m.ModalMode {
+			if !m.DialogModel.Active {
 				m.Blur()
 				m.FileList.Focus()
 				return m, nil
 			}
 
 		case "right":
-			if !m.ModalMode {
+			if !m.DialogModel.Active {
 				m.Blur()
 				m.FilePanel.Focus()
 				return m, nil
@@ -212,11 +227,11 @@ func (m AppModel) View() string {
 	)
 
 	// block := lipgloss.PlaceHorizontal(80, lipgloss.Center, fancyStyledParagraph)
-	confirmView := m.ConfirmModel.View()
+	dialogView := m.DialogModel.View()
 	viewContainer = utils.PlaceOverlay(
-		m.Width/2-lipgloss.Width(confirmView)/2, m.Height/2-lipgloss.Height(confirmView)/2-3,
+		m.Width/2-lipgloss.Width(dialogView)/2, m.Height/2-lipgloss.Height(dialogView)/2-3,
 		// (m.Width-m.ConfirmModel.Width)/2, (m.Height-m.ConfirmModel.Height)/2,
-		confirmView,
+		dialogView,
 		// fmt.Sprintf("%v,%v,%v,%v", m.Width/2, m.ConfirmModel.Width/2, m.Height/2, m.ConfirmModel.Height/2),
 		viewContainer,
 	)

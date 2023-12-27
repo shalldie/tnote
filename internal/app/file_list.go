@@ -8,11 +8,12 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/shalldie/gog/gs"
+	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/gist"
 )
 
 type FileListModel struct {
-	*BaseModel
+	*model.BaseModel
 
 	spinner spinner.Model
 	list    list.Model
@@ -143,7 +144,7 @@ func newFileListModel() FileListModel {
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#fff"))
 
 	model := FileListModel{
-		BaseModel: newBaseModel(),
+		BaseModel: model.NewBaseModel(),
 		spinner:   s,
 		list:      list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0),
 	}

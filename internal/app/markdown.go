@@ -9,6 +9,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/gist"
 	"github.com/shalldie/tnote/internal/utils"
 )
@@ -30,7 +31,7 @@ var (
 )
 
 type MarkdownModel struct {
-	*BaseModel
+	*model.BaseModel
 
 	Viewport viewport.Model
 
@@ -39,7 +40,7 @@ type MarkdownModel struct {
 
 func NewMarkdownModel() MarkdownModel {
 	model := MarkdownModel{
-		BaseModel: newBaseModel(),
+		BaseModel: model.NewBaseModel(),
 		Viewport:  viewport.New(0, 0),
 	}
 	// model.Resize(100, 30)

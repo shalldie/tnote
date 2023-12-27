@@ -1,4 +1,4 @@
-package app
+package model
 
 type IBaseModel interface {
 	// Init() tea.Cmd
@@ -32,6 +32,6 @@ func (m *BaseModel) Blur() {
 	m.Active = false
 }
 
-func newBaseModel() *BaseModel {
+func NewBaseModel() *BaseModel {
 	return &BaseModel{}
 }

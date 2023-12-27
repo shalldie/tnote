@@ -4,10 +4,11 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/shalldie/tnote/internal/app/pkgs/model"
 )
 
 type StatusBarModel struct {
-	*BaseModel
+	*model.BaseModel
 	// Width       int
 	LoadingText string
 	Loading     bool
@@ -128,7 +129,7 @@ func NewStatusBar() StatusBarModel {
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#ffffff"))
 
 	return StatusBarModel{
-		BaseModel: newBaseModel(),
+		BaseModel: model.NewBaseModel(),
 		spinner:   s,
 	}
 }

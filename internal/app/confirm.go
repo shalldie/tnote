@@ -3,12 +3,13 @@ package app
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/shalldie/tnote/internal/app/pkgs/model"
 )
 
 // https://github.com/charmbracelet/lipgloss/pull/102/files
 
 type ConfirmModel struct {
-	*BaseModel
+	*model.BaseModel
 	Content string
 }
 
@@ -59,6 +60,6 @@ func (m ConfirmModel) View() string {
 
 func NewConfirmModel() ConfirmModel {
 	return ConfirmModel{
-		BaseModel: newBaseModel(),
+		BaseModel: model.NewBaseModel(),
 	}
 }

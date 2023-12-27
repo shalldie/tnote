@@ -3,10 +3,11 @@ package app
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/shalldie/tnote/internal/app/pkgs/model"
 )
 
 type FilePanelModel struct {
-	*BaseModel
+	*model.BaseModel
 	Markdown MarkdownModel
 }
 
@@ -81,7 +82,7 @@ func (m FilePanelModel) View() string {
 
 func newFilePanelModel() FilePanelModel {
 	return FilePanelModel{
-		BaseModel: newBaseModel(),
+		BaseModel: model.NewBaseModel(),
 		Markdown:  NewMarkdownModel(),
 	}
 }
