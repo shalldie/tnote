@@ -65,10 +65,14 @@ func (m *AppModel) Blur() {
 
 func (m AppModel) Init() tea.Cmd {
 	go func() {
-		app.Send(CMD_APP_LOADING("loading..."))
+		app.Send(StatusPayload{
+			Loading: true,
+			Message: "loading...",
+		})
+
 		gt.Setup()
-		// time.Sleep(time.Second * 3)
-		app.Send(CMD_APP_LOADING(""))
+
+		app.Send(StatusPayload{Loading: false})
 		app.Send(CMD_REFRESH_FILES(""))
 		app.Send(CMD_UPDATE_FILE(""))
 

@@ -1,6 +1,8 @@
 package app
 
 import (
+	"time"
+
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -9,9 +11,8 @@ import (
 
 type StatusBarModel struct {
 	*model.BaseModel
-	// Width       int
-	LoadingText string
-	Loading     bool
+
+	payload StatusPayload
 
 	spinner spinner.Model
 }
@@ -58,12 +59,29 @@ func (m StatusBarModel) Update(msg tea.Msg) (StatusBarModel, tea.Cmd) {
 	// 	m.Width = msg.Width
 	// 	return m.propagate(msg), nil
 
-	case CMD_APP_LOADING:
-		m.Loading = len(msg) > 0
-		m.LoadingText = string(msg)
+	// case CMD_APP_LOADING:
+	// 	m.Loading = len(msg) > 0
+	// 	m.LoadingText = string(msg)
 
+	// 	return m, nil
+
+	case StatusPayload:
+		msg.Id = time.Now().Unix()
+		m.payload = msg
+		if m.payload.Duration > 0 {
+			go func() {
+				curId := msg.Id
+				time.Sleep(time.Second * time.Duration(m.payload.Duration))
+				if m.payload.Id != curId {
+					return
+				}
+				app.Send(StatusPayload{
+					Loading: false,
+					Message: "",
+				})
+			}()
+		}
 		return m, nil
-
 	}
 
 	// case errMsg:
@@ -93,7 +111,7 @@ func (m StatusBarModel) View() string {
 		// Foreground(lipgloss.AdaptiveColor{Light: "#343433", Dark: "#C1C6B2"}).
 		Background(lipgloss.AdaptiveColor{Light: "#F25D94", Dark: "#F25D94"})
 	statusCol := statusStyle.Render(m.spinner.View())
-	if !m.Loading {
+	if !m.payload.Loading {
 		statusStyle = statusStyle.Copy().Background(lipgloss.Color("#42b883"))
 		statusCol = statusStyle.Render("✔") // √,✓,✔
 	}
@@ -112,7 +130,7 @@ func (m StatusBarModel) View() string {
 		// Foreground(lipgloss.Color("#FFFDF5")).
 		// Background(lipgloss.Color("#6124DF")).
 		Width(m.Width - w(statusCol) - w(versionCol) - w(helpCol)).
-		Render(m.LoadingText)
+		Render(m.payload.Message)
 
 	return lipgloss.JoinHorizontal(lipgloss.Top,
 		statusCol,
@@ -131,5 +149,15 @@ func NewStatusBar() StatusBarModel {
 	return StatusBarModel{
 		BaseModel: model.NewBaseModel(),
 		spinner:   s,
+		payload:   StatusPayload{},
 	}
+}
+
+// --- status payload
+
+type StatusPayload struct {
+	Id       int64
+	Loading  bool
+	Message  string
+	Duration int
 }

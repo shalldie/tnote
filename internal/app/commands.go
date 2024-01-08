@@ -1,8 +1,5 @@
 package app
 
-// loading 全局
-type CMD_APP_LOADING string
-
 type CMD_PANEL_ACTIVE string
 
 // 更新全部文件
