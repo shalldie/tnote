@@ -1,4 +1,4 @@
-package app
+package commands
 
 type CMD_PANEL_ACTIVE string
 

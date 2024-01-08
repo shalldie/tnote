@@ -80,7 +80,7 @@ func (m FilePanelModel) View() string {
 	return style.Render(m.Markdown.View())
 }
 
-func newFilePanelModel() FilePanelModel {
+func NewFilePanelModel() FilePanelModel {
 	return FilePanelModel{
 		BaseModel: model.NewBaseModel(),
 		Markdown:  NewMarkdownModel(),

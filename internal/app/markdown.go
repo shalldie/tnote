@@ -9,6 +9,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/shalldie/tnote/internal/app/astyles"
+	"github.com/shalldie/tnote/internal/app/commands"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/gist"
 	"github.com/shalldie/tnote/internal/utils"
@@ -127,7 +129,7 @@ func (m MarkdownModel) Update(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 		// cmds = append(cmds, viewport.Sync(m.Viewport))
 		// return m, nil
 
-	case CMD_UPDATE_FILE:
+	case commands.CMD_UPDATE_FILE:
 		// m.Resize(m.Width, m.Height)
 		curFile := gt.GetFile()
 		m.file = curFile
@@ -163,11 +165,11 @@ func (m MarkdownModel) View() string {
 }
 
 func (m MarkdownModel) withActiveStyle() lipgloss.Style {
-	return lipgloss.NewStyle().Foreground(utils.Ternary(m.Active, PRIMARY_ACTIVE_COLOR, PRIMARY_NORMAL_COLOR))
+	return lipgloss.NewStyle().Foreground(utils.Ternary(m.Active, astyles.PRIMARY_ACTIVE_COLOR, astyles.PRIMARY_NORMAL_COLOR))
 }
 
 func (m MarkdownModel) headerView() string {
-	titleStyle := lipgloss.NewStyle().Foreground(PRIMARY_ACTIVE_COLOR).Padding(0, 1).Bold(m.Active)
+	titleStyle := lipgloss.NewStyle().Foreground(astyles.PRIMARY_ACTIVE_COLOR).Padding(0, 1).Bold(m.Active)
 	title := func() string {
 		if m.file == nil {
 			return titleStyle.Render("")
@@ -180,7 +182,7 @@ func (m MarkdownModel) headerView() string {
 }
 
 func (m MarkdownModel) footerView() string {
-	infoStyle := lipgloss.NewStyle().Foreground(PRIMARY_ACTIVE_COLOR).Padding(0, 1).Bold(true)
+	infoStyle := lipgloss.NewStyle().Foreground(astyles.PRIMARY_ACTIVE_COLOR).Padding(0, 1).Bold(true)
 	info := infoStyle.Render(fmt.Sprintf("%3.f%%", m.Viewport.ScrollPercent()*100))
 	line := m.withActiveStyle().Render(strings.Repeat("─", utils.MathMax(0, m.Viewport.Width-lipgloss.Width(info))))
 	return lipgloss.JoinHorizontal(lipgloss.Center, line, info)

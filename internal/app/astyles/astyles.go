@@ -1,4 +1,4 @@
-package app
+package astyles
 
 import "github.com/charmbracelet/lipgloss"
 

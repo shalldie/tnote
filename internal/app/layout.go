@@ -6,6 +6,8 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/shalldie/tnote/internal/app/commands"
+	"github.com/shalldie/tnote/internal/app/file_list"
 	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/gist"
@@ -18,24 +20,32 @@ var (
 
 type AppModel struct {
 	*model.BaseModel
+
+	gist *gist.Gist
+
 	// state
 	ModalMode bool // 模态模式
 	// loading bool
 
 	// components
-	FileList  FileListModel
+	FileList  file_list.FileListModel
 	FilePanel FilePanelModel
 	StatusBar StatusBarModel
 	// ConfirmModel ConfirmModel
 	DialogModel dialog.DialogModel
 }
 
-func newAppModel() AppModel {
+func newAppModel(g *gist.Gist) AppModel {
+	commands.Notify = func(cmd any) {
+		app.Send(cmd)
+	}
 	m := AppModel{
 		BaseModel: model.NewBaseModel(),
 
-		FileList:  newFileListModel(),
-		FilePanel: newFilePanelModel(),
+		gist: g,
+
+		FileList:  file_list.New(g),
+		FilePanel: NewFilePanelModel(),
 		StatusBar: NewStatusBar(),
 		// ConfirmModel: NewConfirmModel(),
 		DialogModel: dialog.New(),
@@ -73,8 +83,8 @@ func (m AppModel) Init() tea.Cmd {
 		gt.Setup()
 
 		app.Send(StatusPayload{Loading: false})
-		app.Send(CMD_REFRESH_FILES(""))
-		app.Send(CMD_UPDATE_FILE(""))
+		app.Send(commands.CMD_REFRESH_FILES(""))
+		app.Send(commands.CMD_UPDATE_FILE(""))
 
 		// time.Sleep(time.Second * 3)
 		// app.Send(dialog.DialogPayload{
@@ -267,7 +277,7 @@ func (m AppModel) View() string {
 func RunAppModel(token string) {
 
 	gt = gist.NewGist(token)
-	app = tea.NewProgram(newAppModel(), tea.WithAltScreen())
+	app = tea.NewProgram(newAppModel(gt), tea.WithAltScreen())
 
 	if _, err := app.Run(); err != nil {
 		fmt.Printf("Alas, there's been an error: %v", err)

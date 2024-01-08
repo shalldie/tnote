@@ -1,4 +1,4 @@
-package app
+package file_list
 
 import (
 	"fmt"
@@ -9,6 +9,8 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/shalldie/gog/gs"
+	"github.com/shalldie/tnote/internal/app/astyles"
+	"github.com/shalldie/tnote/internal/app/commands"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/gist"
 )
@@ -16,6 +18,7 @@ import (
 type FileListModel struct {
 	*model.BaseModel
 
+	gist    *gist.Gist
 	spinner spinner.Model
 	list    list.Model
 }
@@ -67,7 +70,7 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 	// 	m.Resize(msg.Width, msg.Height)
 	// 	return m, nil
 
-	case CMD_REFRESH_FILES:
+	case commands.CMD_REFRESH_FILES:
 		return m, m.refreshFiles()
 
 	case tea.KeyMsg:
@@ -88,9 +91,9 @@ func (m FileListModel) View() string {
 		// Background(lipgloss.Color("#282a35")).
 		Border(lipgloss.RoundedBorder(), true).
 		// BorderForeground(grayColor).
-		BorderForeground(PRIMARY_NORMAL_COLOR)
+		BorderForeground(astyles.PRIMARY_NORMAL_COLOR)
 	if m.Active {
-		style = style.BorderForeground(PRIMARY_ACTIVE_COLOR)
+		style = style.BorderForeground(astyles.PRIMARY_ACTIVE_COLOR)
 	}
 	style = style.
 		Width(m.Width).
@@ -107,7 +110,7 @@ func (m FileListModel) View() string {
 }
 
 func (m *FileListModel) refreshFiles() tea.Cmd {
-	items := gs.Map(gt.Files, func(f *gist.GistFile, i int) list.Item {
+	items := gs.Map(m.gist.Files, func(f *gist.GistFile, i int) list.Item {
 		return FileListItem{gistfile: f}
 	})
 	return m.list.SetItems(items)
@@ -128,24 +131,27 @@ func (m *FileListModel) selectFile(filename string) {
 	// m.list.VisibleItems()
 
 	// gist
-	targetIndex = gs.FindIndex(gt.Files, func(item *gist.GistFile, i int) bool {
+	targetIndex = gs.FindIndex(m.gist.Files, func(item *gist.GistFile, i int) bool {
 		return item.FileName == filename
 	})
-	if targetIndex != gt.CurrentIndex {
+
+	if targetIndex != m.gist.CurrentIndex {
 		go func() {
-			gt.CurrentIndex = targetIndex
-			app.Send(CMD_UPDATE_FILE(""))
+			m.gist.CurrentIndex = targetIndex
+
+			commands.Notify(commands.CMD_UPDATE_FILE(""))
 		}()
 	}
 }
 
-func newFileListModel() FileListModel {
+func New(g *gist.Gist) FileListModel {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#fff"))
 
 	model := FileListModel{
 		BaseModel: model.NewBaseModel(),
+		gist:      g,
 		spinner:   s,
 		list:      list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0),
 	}
@@ -162,124 +168,4 @@ func newFileListModel() FileListModel {
 	// }
 	// model.list.SetShowPagination(false)
 	return model
-}
-
-// --------- FileListItem ---------
-
-type FileListItem struct {
-	gistfile *gist.GistFile
-}
-
-func (item FileListItem) Title() string       { return item.gistfile.FileName }
-func (item FileListItem) Description() string { return item.gistfile.Content }
-func (item FileListItem) FilterValue() string { return item.Title() }
-
-// --------- KeyMap ---------
-
-func newListKeyMap() list.KeyMap {
-	return list.KeyMap{
-		// Browsing.
-		CursorUp: key.NewBinding(
-			key.WithKeys("up", "k"),
-			key.WithHelp("↑/k", "上"),
-		),
-		CursorDown: key.NewBinding(
-			key.WithKeys("down", "j"),
-			key.WithHelp("↓/j", "下"),
-		),
-		PrevPage: key.NewBinding(
-			// key.WithKeys("left", "h", "pgup", "b", "u"),
-			key.WithKeys("h", "pgup"),
-			// key.WithHelp("←/h/pgup", "prev page"),
-			key.WithHelp("h/pgup", "上一页"),
-		),
-		NextPage: key.NewBinding(
-			// key.WithKeys("right", "l", "pgdown", "f", "d"),
-			key.WithKeys("l", "pgdown"),
-			// key.WithHelp("→/l/pgdn", "next page"),
-			key.WithHelp("l/pgdn", "下一页"),
-		),
-		// GoToStart: key.NewBinding(
-		// 	key.WithKeys("home", "g"),
-		// 	key.WithHelp("g/home", "开头"),
-		// ),
-		// GoToEnd: key.NewBinding(
-		// 	key.WithKeys("end"),
-		// 	key.WithHelp("end", "尾部"),
-		// ),
-		Filter: key.NewBinding(
-			key.WithKeys("/"),
-			key.WithHelp("/", "过滤"),
-		),
-		ClearFilter: key.NewBinding(
-			key.WithKeys("esc"),
-			// key.WithHelp("esc", "clear filter"),
-			key.WithHelp("esc", "清空过滤条件"),
-		),
-
-		// Filtering.
-		CancelWhileFiltering: key.NewBinding(
-			key.WithKeys("esc"),
-			// key.WithHelp("esc", "cancel"),
-			key.WithHelp("esc", "取消"),
-		),
-		AcceptWhileFiltering: key.NewBinding(
-			key.WithKeys("enter", "tab", "shift+tab", "ctrl+k", "up", "ctrl+j", "down"),
-			// key.WithHelp("enter", "apply filter"),
-			key.WithHelp("enter", "应用过滤"),
-		),
-
-		// Toggle help.
-		ShowFullHelp: key.NewBinding(
-			key.WithKeys("?"),
-			key.WithHelp("?", "更多"),
-		),
-		CloseFullHelp: key.NewBinding(
-			key.WithKeys("?"),
-			key.WithHelp("?", "折叠"),
-		),
-
-		// Quitting.
-		// Quit: key.NewBinding(
-		// 	key.WithKeys("q", "esc"),
-		// 	key.WithHelp("q", "quit"),
-		// ),
-		// ForceQuit: key.NewBinding(key.WithKeys("ctrl+c")),
-	}
-}
-
-func additionalKeyMap() []key.Binding {
-	return []key.Binding{
-		key.NewBinding(
-			key.WithKeys("n"),
-			key.WithHelp("n", "新建"),
-		),
-		key.NewBinding(
-			key.WithKeys("r"),
-			key.WithHelp("r", "重命名"),
-		),
-		key.NewBinding(
-			key.WithKeys("e"),
-			key.WithHelp("e", "编辑"),
-		),
-		key.NewBinding(
-			key.WithKeys("d"),
-			key.WithHelp("d", "删除"),
-		),
-		// openDirectoryKey,
-		// createFileKey,
-		// createDirectoryKey,
-		// deleteItemKey,
-		// copyItemKey,
-		// zipItemKey,
-		// unzipItemKey,
-		// toggleHiddenKey,
-		// homeShortcutKey,
-		// copyToClipboardKey,
-		// escapeKey,
-		// renameItemKey,
-		// openInEditorKey,
-		// submitInputKey,
-		// moveItemKey,
-	}
 }
