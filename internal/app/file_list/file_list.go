@@ -139,7 +139,7 @@ func (m *FileListModel) selectFile(filename string) {
 		go func() {
 			m.gist.CurrentIndex = targetIndex
 
-			commands.Notify(commands.CMD_UPDATE_FILE(""))
+			commands.Send(commands.CMD_UPDATE_FILE(""))
 		}()
 	}
 }

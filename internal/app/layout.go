@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/shalldie/tnote/internal/app/commands"
 	"github.com/shalldie/tnote/internal/app/file_list"
+	"github.com/shalldie/tnote/internal/app/file_panel"
 	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/gist"
@@ -15,7 +16,7 @@ import (
 
 var (
 	app *tea.Program
-	gt  *gist.Gist
+	// gt  *gist.Gist
 )
 
 type AppModel struct {
@@ -29,14 +30,14 @@ type AppModel struct {
 
 	// components
 	FileList  file_list.FileListModel
-	FilePanel FilePanelModel
+	FilePanel file_panel.FilePanelModel
 	StatusBar StatusBarModel
 	// ConfirmModel ConfirmModel
 	DialogModel dialog.DialogModel
 }
 
 func newAppModel(g *gist.Gist) AppModel {
-	commands.Notify = func(cmd any) {
+	commands.Send = func(cmd any) {
 		app.Send(cmd)
 	}
 	m := AppModel{
@@ -45,7 +46,7 @@ func newAppModel(g *gist.Gist) AppModel {
 		gist: g,
 
 		FileList:  file_list.New(g),
-		FilePanel: NewFilePanelModel(),
+		FilePanel: file_panel.New(g),
 		StatusBar: NewStatusBar(),
 		// ConfirmModel: NewConfirmModel(),
 		DialogModel: dialog.New(),
@@ -75,16 +76,16 @@ func (m *AppModel) Blur() {
 
 func (m AppModel) Init() tea.Cmd {
 	go func() {
-		app.Send(StatusPayload{
+		commands.Send(StatusPayload{
 			Loading: true,
 			Message: "loading...",
 		})
 
-		gt.Setup()
+		m.gist.Setup()
 
-		app.Send(StatusPayload{Loading: false})
-		app.Send(commands.CMD_REFRESH_FILES(""))
-		app.Send(commands.CMD_UPDATE_FILE(""))
+		commands.Send(StatusPayload{Loading: false})
+		commands.Send(commands.CMD_REFRESH_FILES(""))
+		commands.Send(commands.CMD_UPDATE_FILE(""))
 
 		// time.Sleep(time.Second * 3)
 		// app.Send(dialog.DialogPayload{
@@ -276,8 +277,8 @@ func (m AppModel) View() string {
 
 func RunAppModel(token string) {
 
-	gt = gist.NewGist(token)
-	app = tea.NewProgram(newAppModel(gt), tea.WithAltScreen())
+	// gt = gist.NewGist(token)
+	app = tea.NewProgram(newAppModel(gist.NewGist(token)), tea.WithAltScreen())
 
 	if _, err := app.Run(); err != nil {
 		fmt.Printf("Alas, there's been an error: %v", err)

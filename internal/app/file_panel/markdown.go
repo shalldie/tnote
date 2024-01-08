@@ -1,4 +1,4 @@
-package app
+package file_panel
 
 import (
 	"errors"
@@ -37,13 +37,15 @@ type MarkdownModel struct {
 
 	Viewport viewport.Model
 
+	gist *gist.Gist
 	file *gist.GistFile
 }
 
-func NewMarkdownModel() MarkdownModel {
+func NewMarkdownModel(gist *gist.Gist) MarkdownModel {
 	model := MarkdownModel{
 		BaseModel: model.NewBaseModel(),
 		Viewport:  viewport.New(0, 0),
+		gist:      gist,
 	}
 	// model.Resize(100, 30)
 	// model.Viewport.HighPerformanceRendering = true
@@ -131,7 +133,7 @@ func (m MarkdownModel) Update(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 
 	case commands.CMD_UPDATE_FILE:
 		// m.Resize(m.Width, m.Height)
-		curFile := gt.GetFile()
+		curFile := m.gist.GetFile()
 		m.file = curFile
 		if curFile != nil {
 			m.Viewport.SetContent(

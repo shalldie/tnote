@@ -1,4 +1,4 @@
 package commands
 
 // 通知
-var Notify func(cmd any)
+var Send func(cmd any)

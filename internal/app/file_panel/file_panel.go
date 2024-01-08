@@ -1,9 +1,10 @@
-package app
+package file_panel
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
+	"github.com/shalldie/tnote/internal/gist"
 )
 
 type FilePanelModel struct {
@@ -80,9 +81,9 @@ func (m FilePanelModel) View() string {
 	return style.Render(m.Markdown.View())
 }
 
-func NewFilePanelModel() FilePanelModel {
+func New(gist *gist.Gist) FilePanelModel {
 	return FilePanelModel{
 		BaseModel: model.NewBaseModel(),
-		Markdown:  NewMarkdownModel(),
+		Markdown:  NewMarkdownModel(gist),
 	}
 }
