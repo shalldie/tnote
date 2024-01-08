@@ -74,7 +74,7 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 		return m, m.refreshFiles()
 
 	case tea.KeyMsg:
-		// 输入框没有焦点，正在输入过滤项
+		// 输入框没有焦点，且不是正在输入过滤项
 		if !store.State.InputFocus && m.list.FilterState() != list.Filtering {
 			switch msg.String() {
 			// case "left":
