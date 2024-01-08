@@ -6,8 +6,8 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/shalldie/tnote/internal/app/commands"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
+	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/utils"
 )
 
@@ -60,7 +60,7 @@ func (m *DialogModel) Show(payload *DialogPayload) {
 
 func (m *DialogModel) Close() {
 	m.Active = false
-	go commands.Send(commands.CMD_APP_FOCUS(""))
+	go store.Send(store.CMD_APP_FOCUS(""))
 }
 
 func (m DialogModel) Init() tea.Cmd {

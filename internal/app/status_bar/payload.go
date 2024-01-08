@@ -1,6 +1,6 @@
 package status_bar
 
-var ID = 1
+var S_ID = 1
 
 type StatusPayload struct {
 	Loading  bool

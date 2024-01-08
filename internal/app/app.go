@@ -6,12 +6,12 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/shalldie/tnote/internal/app/commands"
 	"github.com/shalldie/tnote/internal/app/file_list"
 	"github.com/shalldie/tnote/internal/app/file_panel"
 	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/status_bar"
+	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/gist"
 )
 
@@ -38,7 +38,7 @@ type AppModel struct {
 }
 
 func newAppModel(g *gist.Gist) AppModel {
-	commands.Send = func(cmd any) {
+	store.Send = func(cmd any) {
 		app.Send(cmd)
 	}
 	m := AppModel{
@@ -77,16 +77,16 @@ func (m *AppModel) Blur() {
 
 func (m AppModel) Init() tea.Cmd {
 	go func() {
-		commands.Send(status_bar.StatusPayload{
+		store.Send(status_bar.StatusPayload{
 			Loading: true,
 			Message: "loading...",
 		})
 
 		m.gist.Setup()
 
-		commands.Send(status_bar.StatusPayload{Loading: false})
-		commands.Send(commands.CMD_REFRESH_FILES(""))
-		commands.Send(commands.CMD_UPDATE_FILE(""))
+		store.Send(status_bar.StatusPayload{Loading: false})
+		store.Send(store.CMD_REFRESH_FILES(""))
+		store.Send(store.CMD_UPDATE_FILE(""))
 
 		// time.Sleep(time.Second * 3)
 		// app.Send(dialog.DialogPayload{
@@ -163,7 +163,7 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.DialogModel.Show(&msg)
 		return m, nil
 
-	case commands.CMD_APP_FOCUS:
+	case store.CMD_APP_FOCUS:
 		m.Blur()
 		m.FileList.Focus()
 		return m, nil

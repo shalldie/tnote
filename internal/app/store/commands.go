@@ -1,4 +1,4 @@
-package commands
+package store
 
 type CMD_APP_FOCUS string
 

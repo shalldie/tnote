@@ -6,8 +6,8 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/shalldie/tnote/internal/app/commands"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
+	"github.com/shalldie/tnote/internal/app/store"
 )
 
 type StatusBarModel struct {
@@ -71,13 +71,13 @@ func (m StatusBarModel) Update(msg tea.Msg) (StatusBarModel, tea.Cmd) {
 		m.payload = msg
 		if m.payload.Duration > 0 {
 			go func() {
-				ID++
-				curId := ID
+				S_ID++
+				curId := S_ID
 				time.Sleep(time.Second * time.Duration(m.payload.Duration))
-				if ID != curId {
+				if S_ID != curId {
 					return
 				}
-				commands.Send(StatusPayload{
+				store.Send(StatusPayload{
 					Loading: false,
 					Message: "",
 				})

@@ -11,10 +11,10 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/shalldie/gog/gs"
 	"github.com/shalldie/tnote/internal/app/astyles"
-	"github.com/shalldie/tnote/internal/app/commands"
 	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/status_bar"
+	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/gist"
 )
 
@@ -73,7 +73,7 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 	// 	m.Resize(msg.Width, msg.Height)
 	// 	return m, nil
 
-	case commands.CMD_REFRESH_FILES:
+	case store.CMD_REFRESH_FILES:
 		return m, m.refreshFiles()
 
 	case tea.KeyMsg:
@@ -84,7 +84,7 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 		// 	m.Active = false
 
 		case "n":
-			go commands.Send(dialog.DialogPayload{
+			go store.Send(dialog.DialogPayload{
 				Mode:    1,
 				Message: "新建文件，请输入文件名",
 				FnOK: func(args ...string) bool {
@@ -92,12 +92,17 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 
 					if utf8.RuneCountInString(filename) < 3 {
 
-						go commands.Send(status_bar.StatusPayload{
+						go store.Send(status_bar.StatusPayload{
 							Message:  "文件名长度需要大于3",
 							Duration: 3,
 						})
 						return false
 					}
+
+					go func() {
+						m.gist.UpdateFile(filename, &gist.UpdateGistPayload{Content: "To be edited."})
+						store.Send(store.CMD_REFRESH_FILES(""))
+					}()
 
 					return true
 				},
@@ -163,7 +168,7 @@ func (m *FileListModel) selectFile(filename string) {
 		go func() {
 			m.gist.CurrentIndex = targetIndex
 
-			commands.Send(commands.CMD_UPDATE_FILE(""))
+			store.Send(store.CMD_UPDATE_FILE(""))
 		}()
 	}
 }

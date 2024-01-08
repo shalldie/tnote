@@ -10,8 +10,8 @@ import (
 	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/shalldie/tnote/internal/app/astyles"
-	"github.com/shalldie/tnote/internal/app/commands"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
+	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/gist"
 	"github.com/shalldie/tnote/internal/utils"
 )
@@ -131,7 +131,7 @@ func (m MarkdownModel) Update(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 		// cmds = append(cmds, viewport.Sync(m.Viewport))
 		// return m, nil
 
-	case commands.CMD_UPDATE_FILE:
+	case store.CMD_UPDATE_FILE:
 		// m.Resize(m.Width, m.Height)
 		curFile := m.gist.GetFile()
 		m.file = curFile
