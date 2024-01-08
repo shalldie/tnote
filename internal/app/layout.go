@@ -3,7 +3,6 @@ package app
 import (
 	"fmt"
 	"os"
-	"time"
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
@@ -48,8 +47,9 @@ func newAppModel() AppModel {
 func (m *AppModel) Resize(width int, height int) {
 	m.BaseModel.Resize(width, height)
 
-	m.FileList.Resize(40, height-3)
-	m.FilePanel.Resize(width-40-4, height-1)
+	lWidth := 42
+	m.FileList.Resize(lWidth, height-3)
+	m.FilePanel.Resize(width-lWidth-4, height-1)
 	m.StatusBar.Resize(width, 1)
 	m.DialogModel.Resize(width, height)
 }
@@ -76,12 +76,12 @@ func (m AppModel) Init() tea.Cmd {
 		app.Send(CMD_REFRESH_FILES(""))
 		app.Send(CMD_UPDATE_FILE(""))
 
-		time.Sleep(time.Second * 3)
-		app.Send(dialog.DialogPayload{
-			Message:     "hello world",
-			Mode:        1,
-			PromptValue: "这个是默认值",
-		})
+		// time.Sleep(time.Second * 3)
+		// app.Send(dialog.DialogPayload{
+		// 	Message:     "hello world",
+		// 	Mode:        1,
+		// 	PromptValue: "这个是默认值",
+		// })
 	}()
 
 	// batches := gs.Map[IBaseModel](m.getComponents(),func (item IBaseModel)  {
