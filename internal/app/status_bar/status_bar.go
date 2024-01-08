@@ -1,4 +1,4 @@
-package app
+package status_bar
 
 import (
 	"time"
@@ -6,6 +6,7 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/shalldie/tnote/internal/app/commands"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 )
 
@@ -66,16 +67,17 @@ func (m StatusBarModel) Update(msg tea.Msg) (StatusBarModel, tea.Cmd) {
 	// 	return m, nil
 
 	case StatusPayload:
-		msg.Id = time.Now().Unix()
+		// msg.Id = time.Now().Unix()
 		m.payload = msg
 		if m.payload.Duration > 0 {
 			go func() {
-				curId := msg.Id
+				ID++
+				curId := ID
 				time.Sleep(time.Second * time.Duration(m.payload.Duration))
-				if m.payload.Id != curId {
+				if ID != curId {
 					return
 				}
-				app.Send(StatusPayload{
+				commands.Send(StatusPayload{
 					Loading: false,
 					Message: "",
 				})
@@ -141,7 +143,7 @@ func (m StatusBarModel) View() string {
 
 }
 
-func NewStatusBar() StatusBarModel {
+func New() StatusBarModel {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#ffffff"))
@@ -151,13 +153,4 @@ func NewStatusBar() StatusBarModel {
 		spinner:   s,
 		payload:   StatusPayload{},
 	}
-}
-
-// --- status payload
-
-type StatusPayload struct {
-	Id       int64
-	Loading  bool
-	Message  string
-	Duration int
 }

@@ -11,6 +11,7 @@ import (
 	"github.com/shalldie/tnote/internal/app/file_panel"
 	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
+	"github.com/shalldie/tnote/internal/app/status_bar"
 	"github.com/shalldie/tnote/internal/gist"
 )
 
@@ -31,7 +32,7 @@ type AppModel struct {
 	// components
 	FileList  file_list.FileListModel
 	FilePanel file_panel.FilePanelModel
-	StatusBar StatusBarModel
+	StatusBar status_bar.StatusBarModel
 	// ConfirmModel ConfirmModel
 	DialogModel dialog.DialogModel
 }
@@ -47,7 +48,7 @@ func newAppModel(g *gist.Gist) AppModel {
 
 		FileList:  file_list.New(g),
 		FilePanel: file_panel.New(g),
-		StatusBar: NewStatusBar(),
+		StatusBar: status_bar.New(),
 		// ConfirmModel: NewConfirmModel(),
 		DialogModel: dialog.New(),
 	}
@@ -76,14 +77,14 @@ func (m *AppModel) Blur() {
 
 func (m AppModel) Init() tea.Cmd {
 	go func() {
-		commands.Send(StatusPayload{
+		commands.Send(status_bar.StatusPayload{
 			Loading: true,
 			Message: "loading...",
 		})
 
 		m.gist.Setup()
 
-		commands.Send(StatusPayload{Loading: false})
+		commands.Send(status_bar.StatusPayload{Loading: false})
 		commands.Send(commands.CMD_REFRESH_FILES(""))
 		commands.Send(commands.CMD_UPDATE_FILE(""))
 
@@ -160,6 +161,11 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	case dialog.DialogPayload:
 		m.Blur()
 		m.DialogModel.Show(&msg)
+		return m, nil
+
+	case commands.CMD_APP_FOCUS:
+		m.Blur()
+		m.FileList.Focus()
 		return m, nil
 
 	// case CMD_APP_LOADING:
@@ -275,7 +281,7 @@ func (m AppModel) View() string {
 
 }
 
-func RunAppModel(token string) {
+func Run(token string) {
 
 	// gt = gist.NewGist(token)
 	app = tea.NewProgram(newAppModel(gist.NewGist(token)), tea.WithAltScreen())

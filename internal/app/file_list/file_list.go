@@ -2,6 +2,7 @@ package file_list
 
 import (
 	"fmt"
+	"unicode/utf8"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
@@ -11,7 +12,9 @@ import (
 	"github.com/shalldie/gog/gs"
 	"github.com/shalldie/tnote/internal/app/astyles"
 	"github.com/shalldie/tnote/internal/app/commands"
+	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
+	"github.com/shalldie/tnote/internal/app/status_bar"
 	"github.com/shalldie/tnote/internal/gist"
 )
 
@@ -79,6 +82,27 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 		// 	m.Active = true
 		// case "right":
 		// 	m.Active = false
+
+		case "n":
+			go commands.Send(dialog.DialogPayload{
+				Mode:    1,
+				Message: "新建文件，请输入文件名",
+				FnOK: func(args ...string) bool {
+					filename := args[0]
+
+					if utf8.RuneCountInString(filename) < 3 {
+
+						go commands.Send(status_bar.StatusPayload{
+							Message:  "文件名长度需要大于3",
+							Duration: 3,
+						})
+						return false
+					}
+
+					return true
+				},
+			})
+			return m, nil
 		}
 
 	}

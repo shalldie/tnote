@@ -18,6 +18,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	app.RunAppModel(token)
+	app.Run(token)
 
 }

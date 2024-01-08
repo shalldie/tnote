@@ -1,9 +1,12 @@
 package dialog
 
 import (
+	"strings"
+
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/shalldie/tnote/internal/app/commands"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/utils"
 )
@@ -57,6 +60,7 @@ func (m *DialogModel) Show(payload *DialogPayload) {
 
 func (m *DialogModel) Close() {
 	m.Active = false
+	go commands.Send(commands.CMD_APP_FOCUS(""))
 }
 
 func (m DialogModel) Init() tea.Cmd {
@@ -90,9 +94,12 @@ func (m DialogModel) Update(msg tea.Msg) (DialogModel, tea.Cmd) {
 				return m, nil
 			}
 			if m.TabIndex == 2 {
-				m.Close()
+				ok := true
 				if m.Payload.FnOK != nil {
-					m.Payload.FnOK(m.Payload.PromptValue)
+					ok = m.Payload.FnOK(strings.TrimSpace(m.TextInput.Value()))
+				}
+				if ok {
+					m.Close()
 				}
 				return m, nil
 			}

@@ -1,5 +1,7 @@
 package commands
 
+type CMD_APP_FOCUS string
+
 type CMD_PANEL_ACTIVE string
 
 // 更新全部文件
