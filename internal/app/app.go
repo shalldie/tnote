@@ -13,6 +13,7 @@ import (
 	"github.com/shalldie/tnote/internal/app/status_bar"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/gist"
+	"github.com/shalldie/tnote/internal/utils"
 )
 
 var (
@@ -77,6 +78,7 @@ func (m *AppModel) Blur() {
 
 func (m AppModel) Init() tea.Cmd {
 	go func() {
+		utils.Log("init...")
 		store.Send(status_bar.StatusPayload{
 			Loading: true,
 			Message: "loading...",

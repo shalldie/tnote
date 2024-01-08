@@ -208,5 +208,8 @@ func (g *Gist) updateFiles() {
 }
 
 func (g *Gist) GetFile() *GistFile {
+	if g.CurrentIndex >= len(g.Files) {
+		return nil
+	}
 	return g.Files[g.CurrentIndex]
 }

@@ -2,7 +2,6 @@ package file_list
 
 import (
 	"fmt"
-	"unicode/utf8"
 
 	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
@@ -11,9 +10,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/shalldie/gog/gs"
 	"github.com/shalldie/tnote/internal/app/astyles"
-	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
-	"github.com/shalldie/tnote/internal/app/status_bar"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/gist"
 )
@@ -77,37 +74,26 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 		return m, m.refreshFiles()
 
 	case tea.KeyMsg:
-		switch msg.String() {
-		// case "left":
-		// 	m.Active = true
-		// case "right":
-		// 	m.Active = false
+		// 输入框没有焦点，正在输入过滤项
+		if !store.State.InputFocus && m.list.FilterState() != list.Filtering {
+			switch msg.String() {
+			// case "left":
+			// 	m.Active = true
+			// case "right":
+			// 	m.Active = false
 
-		case "n":
-			go store.Send(dialog.DialogPayload{
-				Mode:    1,
-				Message: "新建文件，请输入文件名",
-				FnOK: func(args ...string) bool {
-					filename := args[0]
+			case "n":
+				go m.newFile()
+				return m, nil
 
-					if utf8.RuneCountInString(filename) < 3 {
+			case "d":
+				file := m.gist.GetFile()
+				if file != nil {
+					go m.delFile(file.FileName)
+				}
+				return m, nil
 
-						go store.Send(status_bar.StatusPayload{
-							Message:  "文件名长度需要大于3",
-							Duration: 3,
-						})
-						return false
-					}
-
-					go func() {
-						m.gist.UpdateFile(filename, &gist.UpdateGistPayload{Content: "To be edited."})
-						store.Send(store.CMD_REFRESH_FILES(""))
-					}()
-
-					return true
-				},
-			})
-			return m, nil
+			}
 		}
 
 	}
@@ -192,6 +178,7 @@ func New(g *gist.Gist) FileListModel {
 	model.list.AdditionalFullHelpKeys = func() []key.Binding {
 		return additionalKeyMap()
 	}
+
 	// model.list.AdditionalShortHelpKeys = func() []key.Binding {
 	// 	return additionalKeyMap()
 	// }

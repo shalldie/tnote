@@ -42,8 +42,10 @@ func (m *DialogModel) nextTab() {
 	// focus
 	if m.TabIndex == 0 {
 		m.TextInput.Focus()
+		store.State.InputFocus = true
 	} else {
 		m.TextInput.Blur()
+		store.State.InputFocus = false
 	}
 }
 
@@ -60,6 +62,7 @@ func (m *DialogModel) Show(payload *DialogPayload) {
 
 func (m *DialogModel) Close() {
 	m.Active = false
+	store.State.InputFocus = false
 	go store.Send(store.CMD_APP_FOCUS(""))
 }
 
@@ -131,7 +134,7 @@ func (m DialogModel) View() string {
 
 	ui = lipgloss.JoinVertical(lipgloss.Top,
 		message,
-		prompt,
+		utils.Ternary(m.Payload.Mode == 1, prompt, ""),
 	)
 
 	// btn
