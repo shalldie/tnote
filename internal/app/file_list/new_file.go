@@ -9,6 +9,18 @@ import (
 	"github.com/shalldie/tnote/internal/gist"
 )
 
+func validateFilename(filename string) bool {
+	if utf8.RuneCountInString(filename) < 3 {
+
+		go store.Send(status_bar.StatusPayload{
+			Message:  "文件名长度需要大于3",
+			Duration: 3,
+		})
+		return false
+	}
+	return true
+}
+
 func (m *FileListModel) newFile() {
 	store.Send(dialog.DialogPayload{
 		Mode:    1,
@@ -16,12 +28,8 @@ func (m *FileListModel) newFile() {
 		FnOK: func(args ...string) bool {
 			filename := args[0]
 
-			if utf8.RuneCountInString(filename) < 3 {
-
-				go store.Send(status_bar.StatusPayload{
-					Message:  "文件名长度需要大于3",
-					Duration: 3,
-				})
+			valid := validateFilename(filename)
+			if !valid {
 				return false
 			}
 
@@ -31,7 +39,7 @@ func (m *FileListModel) newFile() {
 					Message: "新建中...",
 				})
 				m.gist.UpdateFile(filename, &gist.UpdateGistPayload{Content: "To be edited."})
-				store.Send(store.CMD_REFRESH_FILES(""))
+				store.Send(store.CMD_REFRESH_FILES(filename))
 				go store.Send(status_bar.StatusPayload{
 					Loading: false,
 					Message: "",

@@ -66,12 +66,16 @@ func (m FileListModel) propagate(msg tea.Msg) (FileListModel, tea.Cmd) {
 func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 
 	switch msg := msg.(type) {
-	// case tea.WindowSizeMsg:
-	// 	m.Resize(msg.Width, msg.Height)
-	// 	return m, nil
 
 	case store.CMD_REFRESH_FILES:
+		if len(string(msg)) > 0 {
+			go store.Send(store.CMD_SELECT_FILE(string(msg)))
+		}
 		return m, m.refreshFiles()
+
+	case store.CMD_SELECT_FILE:
+		m.selectFile(string(msg))
+		return m, nil
 
 	case tea.KeyMsg:
 		// 输入框没有焦点，且不是正在输入过滤项
@@ -90,6 +94,13 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 				file := m.gist.GetFile()
 				if file != nil {
 					go m.delFile(file.FileName)
+				}
+				return m, nil
+
+			case "r":
+				file := m.gist.GetFile()
+				if file != nil {
+					go m.renameFile(file.FileName)
 				}
 				return m, nil
 
