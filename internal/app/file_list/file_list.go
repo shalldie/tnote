@@ -18,7 +18,6 @@ import (
 type FileListModel struct {
 	*model.BaseModel
 
-	gist    *gist.Gist
 	spinner spinner.Model
 	list    list.Model
 }
@@ -91,14 +90,14 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 				return m, nil
 
 			case "d":
-				file := m.gist.GetFile()
+				file := store.Gist.GetFile()
 				if file != nil {
 					go m.delFile(file.FileName)
 				}
 				return m, nil
 
 			case "r":
-				file := m.gist.GetFile()
+				file := store.Gist.GetFile()
 				if file != nil {
 					go m.renameFile(file.FileName)
 				}
@@ -136,7 +135,7 @@ func (m FileListModel) View() string {
 }
 
 func (m *FileListModel) refreshFiles() tea.Cmd {
-	items := gs.Map(m.gist.Files, func(f *gist.GistFile, i int) list.Item {
+	items := gs.Map(store.Gist.Files, func(f *gist.GistFile, i int) list.Item {
 		return FileListItem{gistfile: f}
 	})
 	return m.list.SetItems(items)
@@ -157,27 +156,26 @@ func (m *FileListModel) selectFile(filename string) {
 	// m.list.VisibleItems()
 
 	// gist
-	targetIndex = gs.FindIndex(m.gist.Files, func(item *gist.GistFile, i int) bool {
+	targetIndex = gs.FindIndex(store.Gist.Files, func(item *gist.GistFile, i int) bool {
 		return item.FileName == filename
 	})
 
-	if targetIndex != m.gist.CurrentIndex {
+	if targetIndex != store.Gist.CurrentIndex {
 		go func() {
-			m.gist.CurrentIndex = targetIndex
+			store.Gist.CurrentIndex = targetIndex
 
 			store.Send(store.CMD_UPDATE_FILE(""))
 		}()
 	}
 }
 
-func New(g *gist.Gist) FileListModel {
+func New() FileListModel {
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#fff"))
 
 	model := FileListModel{
 		BaseModel: model.NewBaseModel(),
-		gist:      g,
 		spinner:   s,
 		list:      list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0),
 	}

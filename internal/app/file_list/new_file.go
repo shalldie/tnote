@@ -1,10 +1,10 @@
 package file_list
 
 import (
+	"fmt"
 	"unicode/utf8"
 
 	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
-	"github.com/shalldie/tnote/internal/app/status_bar"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/gist"
 )
@@ -12,7 +12,7 @@ import (
 func validateFilename(filename string) bool {
 	if utf8.RuneCountInString(filename) < 3 {
 
-		go store.Send(status_bar.StatusPayload{
+		go store.Send(store.StatusPayload{
 			Message:  "文件名长度需要大于3",
 			Duration: 3,
 		})
@@ -34,15 +34,16 @@ func (m *FileListModel) newFile() {
 			}
 
 			go func() {
-				go store.Send(status_bar.StatusPayload{
+				go store.Send(store.StatusPayload{
 					Loading: true,
 					Message: "新建中...",
 				})
-				m.gist.UpdateFile(filename, &gist.UpdateGistPayload{Content: "To be edited."})
+				store.Gist.UpdateFile(filename, &gist.UpdateGistPayload{Content: "To be edited."})
 				store.Send(store.CMD_REFRESH_FILES(filename))
-				go store.Send(status_bar.StatusPayload{
-					Loading: false,
-					Message: "",
+				go store.Send(store.StatusPayload{
+					Loading:  false,
+					Message:  fmt.Sprintf("「%v」完成新建", filename),
+					Duration: 5,
 				})
 			}()
 

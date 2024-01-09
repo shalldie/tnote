@@ -4,7 +4,6 @@ import (
 	"fmt"
 
 	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
-	"github.com/shalldie/tnote/internal/app/status_bar"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/gist"
 )
@@ -23,16 +22,17 @@ func (m *FileListModel) renameFile(filename string) {
 			}
 
 			go func() {
-				go store.Send(status_bar.StatusPayload{
+				go store.Send(store.StatusPayload{
 					Loading: true,
 					Message: "重命名中...",
 				})
 
-				m.gist.UpdateFile(filename, &gist.UpdateGistPayload{Filename: newname})
+				store.Gist.UpdateFile(filename, &gist.UpdateGistPayload{Filename: newname})
 
-				go store.Send(status_bar.StatusPayload{
-					Loading: false,
-					Message: "",
+				go store.Send(store.StatusPayload{
+					Loading:  false,
+					Message:  fmt.Sprintf("「%v」->「%v」完成重命名", filename, newname),
+					Duration: 5,
 				})
 				go store.Send(store.CMD_REFRESH_FILES(newname))
 			}()

@@ -1,7 +1,6 @@
-package status_bar
+package store
 
-var S_ID = 1
-
+// status 状态
 type StatusPayload struct {
 	Loading  bool
 	Message  string

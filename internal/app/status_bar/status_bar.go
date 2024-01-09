@@ -10,10 +10,10 @@ import (
 	"github.com/shalldie/tnote/internal/app/store"
 )
 
+var S_ID = 1
+
 type StatusBarModel struct {
 	*model.BaseModel
-
-	payload StatusPayload
 
 	spinner spinner.Model
 }
@@ -55,7 +55,7 @@ func (m StatusBarModel) propagate(msg tea.Msg) (StatusBarModel, tea.Cmd) {
 }
 
 func (m StatusBarModel) Update(msg tea.Msg) (StatusBarModel, tea.Cmd) {
-	switch msg := msg.(type) {
+	switch msg.(type) {
 	// case tea.WindowSizeMsg:
 	// 	m.Width = msg.Width
 	// 	return m.propagate(msg), nil
@@ -66,18 +66,18 @@ func (m StatusBarModel) Update(msg tea.Msg) (StatusBarModel, tea.Cmd) {
 
 	// 	return m, nil
 
-	case StatusPayload:
+	case store.StatusPayload:
 		// msg.Id = time.Now().Unix()
-		m.payload = msg
-		if m.payload.Duration > 0 {
+		// m.payload = msg
+		if store.State.Status.Duration > 0 {
 			go func() {
 				S_ID++
 				curId := S_ID
-				time.Sleep(time.Second * time.Duration(m.payload.Duration))
+				time.Sleep(time.Second * time.Duration(store.State.Status.Duration))
 				if S_ID != curId {
 					return
 				}
-				store.Send(StatusPayload{
+				store.Send(store.StatusPayload{
 					Loading: false,
 					Message: "",
 				})
@@ -113,7 +113,7 @@ func (m StatusBarModel) View() string {
 		// Foreground(lipgloss.AdaptiveColor{Light: "#343433", Dark: "#C1C6B2"}).
 		Background(lipgloss.AdaptiveColor{Light: "#F25D94", Dark: "#F25D94"})
 	statusCol := statusStyle.Render(m.spinner.View())
-	if !m.payload.Loading {
+	if !store.State.Status.Loading {
 		statusStyle = statusStyle.Copy().Background(lipgloss.Color("#42b883"))
 		statusCol = statusStyle.Render("✔") // √,✓,✔
 	}
@@ -132,7 +132,7 @@ func (m StatusBarModel) View() string {
 		// Foreground(lipgloss.Color("#FFFDF5")).
 		// Background(lipgloss.Color("#6124DF")).
 		Width(m.Width - w(statusCol) - w(versionCol) - w(helpCol)).
-		Render(m.payload.Message)
+		Render(store.State.Status.Message)
 
 	return lipgloss.JoinHorizontal(lipgloss.Top,
 		statusCol,
@@ -151,6 +151,5 @@ func New() StatusBarModel {
 	return StatusBarModel{
 		BaseModel: model.NewBaseModel(),
 		spinner:   s,
-		payload:   StatusPayload{},
 	}
 }

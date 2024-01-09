@@ -4,7 +4,6 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
-	"github.com/shalldie/tnote/internal/gist"
 )
 
 type FilePanelModel struct {
@@ -81,9 +80,9 @@ func (m FilePanelModel) View() string {
 	return style.Render(m.Markdown.View())
 }
 
-func New(gist *gist.Gist) FilePanelModel {
+func New() FilePanelModel {
 	return FilePanelModel{
 		BaseModel: model.NewBaseModel(),
-		Markdown:  NewMarkdownModel(gist),
+		Markdown:  NewMarkdownModel(),
 	}
 }

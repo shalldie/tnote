@@ -12,7 +12,6 @@ import (
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/status_bar"
 	"github.com/shalldie/tnote/internal/app/store"
-	"github.com/shalldie/tnote/internal/gist"
 	"github.com/shalldie/tnote/internal/utils"
 )
 
@@ -24,31 +23,20 @@ var (
 type AppModel struct {
 	*model.BaseModel
 
-	gist *gist.Gist
-
-	// state
-	ModalMode bool // 模态模式
-	// loading bool
-
 	// components
-	FileList  file_list.FileListModel
-	FilePanel file_panel.FilePanelModel
-	StatusBar status_bar.StatusBarModel
-	// ConfirmModel ConfirmModel
+	FileList    file_list.FileListModel
+	FilePanel   file_panel.FilePanelModel
+	StatusBar   status_bar.StatusBarModel
 	DialogModel dialog.DialogModel
 }
 
-func newAppModel(g *gist.Gist) AppModel {
-	store.Send = func(cmd any) {
-		app.Send(cmd)
-	}
+func newAppModel() AppModel {
+
 	m := AppModel{
 		BaseModel: model.NewBaseModel(),
 
-		gist: g,
-
-		FileList:  file_list.New(g),
-		FilePanel: file_panel.New(g),
+		FileList:  file_list.New(),
+		FilePanel: file_panel.New(),
 		StatusBar: status_bar.New(),
 		// ConfirmModel: NewConfirmModel(),
 		DialogModel: dialog.New(),
@@ -77,26 +65,6 @@ func (m *AppModel) Blur() {
 }
 
 func (m AppModel) Init() tea.Cmd {
-	go func() {
-		utils.Log("init...")
-		store.Send(status_bar.StatusPayload{
-			Loading: true,
-			Message: "loading...",
-		})
-
-		m.gist.Setup()
-
-		store.Send(status_bar.StatusPayload{Loading: false})
-		store.Send(store.CMD_REFRESH_FILES(""))
-		store.Send(store.CMD_UPDATE_FILE(""))
-
-		// time.Sleep(time.Second * 3)
-		// app.Send(dialog.DialogPayload{
-		// 	Message:     "hello world",
-		// 	Mode:        1,
-		// 	PromptValue: "这个是默认值",
-		// })
-	}()
 
 	// batches := gs.Map[IBaseModel](m.getComponents(),func (item IBaseModel)  {
 
@@ -286,7 +254,33 @@ func (m AppModel) View() string {
 func Run(token string) {
 
 	// gt = gist.NewGist(token)
-	app = tea.NewProgram(newAppModel(gist.NewGist(token)), tea.WithAltScreen())
+	app = tea.NewProgram(newAppModel(), tea.WithAltScreen())
+
+	go func() {
+		utils.Log("init...")
+
+		store.SendImpl = func(cmd any) {
+			app.Send(cmd)
+		}
+
+		store.Send(store.StatusPayload{
+			Loading: true,
+			Message: "loading...",
+		})
+
+		store.Setup(token)
+
+		store.Send(store.StatusPayload{Loading: false})
+		store.Send(store.CMD_REFRESH_FILES(""))
+		store.Send(store.CMD_UPDATE_FILE(""))
+
+		// time.Sleep(time.Second * 3)
+		// app.Send(dialog.DialogPayload{
+		// 	Message:     "hello world",
+		// 	Mode:        1,
+		// 	PromptValue: "这个是默认值",
+		// })
+	}()
 
 	if _, err := app.Run(); err != nil {
 		fmt.Printf("Alas, there's been an error: %v", err)
