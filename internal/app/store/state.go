@@ -14,11 +14,13 @@ type storeState struct {
 
 	// 输入框是否焦点
 	InputFocus bool
+
+	// 编辑中
+	Editing bool
 }
 
 func Setup(token string) {
-	Gist = gist.NewGist(token)
-	Gist.Setup()
+	Gist = gist.NewGist(token).Setup()
 }
 
 var State = &storeState{

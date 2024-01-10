@@ -10,3 +10,6 @@ type CMD_UPDATE_FILE string
 
 // 选择文件
 type CMD_SELECT_FILE string
+
+// 触发编辑模式
+type CMD_INVOKE_EDIT bool

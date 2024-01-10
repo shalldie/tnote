@@ -76,8 +76,16 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 		m.selectFile(string(msg))
 		return m, nil
 
+	case store.CMD_INVOKE_EDIT:
+		if store.State.Editing {
+			m.Blur()
+		} else {
+			m.Focus()
+		}
+		return m, nil
+
 	case tea.KeyMsg:
-		// 输入框没有焦点，且不是正在输入过滤项
+		// active，输入框没有焦点，且不是正在输入过滤项
 		if !store.State.InputFocus && m.list.FilterState() != list.Filtering {
 			switch msg.String() {
 			// case "left":
@@ -89,13 +97,6 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 				go m.newFile()
 				return m, nil
 
-			case "d":
-				file := store.Gist.GetFile()
-				if file != nil {
-					go m.delFile(file.FileName)
-				}
-				return m, nil
-
 			case "r":
 				file := store.Gist.GetFile()
 				if file != nil {
@@ -103,6 +104,16 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 				}
 				return m, nil
 
+			case "e":
+				go store.Send(store.CMD_INVOKE_EDIT(true))
+				return m, nil
+
+			case "d":
+				file := store.Gist.GetFile()
+				if file != nil {
+					go m.delFile(file.FileName)
+				}
+				return m, nil
 			}
 		}
 

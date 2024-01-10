@@ -10,6 +10,9 @@ func Send(cmd any) {
 	case StatusPayload:
 		State.Status = msg
 
+	case CMD_INVOKE_EDIT:
+		State.Editing = bool(msg)
+
 	}
 
 	if SendImpl != nil {

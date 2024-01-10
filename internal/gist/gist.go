@@ -24,7 +24,7 @@ func NewGist(token string) *Gist {
 	}
 }
 
-func (g *Gist) Setup() {
+func (g *Gist) Setup() *Gist {
 	// 1. 找到 gist
 	list := g.FetchGists(1, 100)
 
@@ -49,6 +49,8 @@ func (g *Gist) Setup() {
 
 	// 4. 有 gist id 后，update 获取所有内容
 	g.Update()
+
+	return g
 }
 
 func (g *Gist) getHeaders() map[string]string {

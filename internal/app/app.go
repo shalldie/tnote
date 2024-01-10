@@ -154,14 +154,14 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 
 		case "left":
-			if !m.DialogModel.Active {
+			if !m.DialogModel.Active && !store.State.InputFocus {
 				m.Blur()
 				m.FileList.Focus()
 				return m, nil
 			}
 
 		case "right":
-			if !m.DialogModel.Active {
+			if !m.DialogModel.Active && !store.State.InputFocus {
 				m.Blur()
 				m.FilePanel.Focus()
 				return m, nil
@@ -178,7 +178,7 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 			// }
 
 		// These keys should exit the program.
-		case "ctrl+c", "q":
+		case "ctrl+c":
 			return m, tea.Quit
 
 		// The "up" and "k" keys move the cursor up
