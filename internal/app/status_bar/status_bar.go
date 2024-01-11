@@ -1,6 +1,7 @@
 package status_bar
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/charmbracelet/bubbles/spinner"
@@ -8,6 +9,7 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
+	"github.com/shalldie/tnote/internal/conf"
 )
 
 var S_ID = 1
@@ -124,7 +126,7 @@ func (m StatusBarModel) View() string {
 
 	// version
 	versionStyle := baseStyle.Copy().Background(lipgloss.Color("#6124DF"))
-	versionCol := versionStyle.Render("TNOTE - V1.0.0")
+	versionCol := versionStyle.Render(fmt.Sprintf("TNOTE %s", conf.VERSION))
 
 	// SPACE
 	w := lipgloss.Width

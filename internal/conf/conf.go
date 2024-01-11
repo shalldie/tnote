@@ -4,6 +4,10 @@ import (
 	"os"
 )
 
+var (
+	VERSION = "v1.0.0"
+)
+
 // https://github.com/charmbracelet/lipgloss/issues/40
 
 // LC_CTYPE="en_US.UTF-8" go run ./full-lipgloss
