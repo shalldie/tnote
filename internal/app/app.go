@@ -12,7 +12,6 @@ import (
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/status_bar"
 	"github.com/shalldie/tnote/internal/app/store"
-	"github.com/shalldie/tnote/internal/utils"
 )
 
 var (
@@ -267,7 +266,7 @@ func Run(token string) {
 	app = tea.NewProgram(newAppModel(), tea.WithAltScreen())
 
 	go func() {
-		utils.Log("init...")
+		// utils.Log("init...")
 
 		store.SendImpl = func(cmd any) {
 			app.Send(cmd)
