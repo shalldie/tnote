@@ -21,8 +21,12 @@ func (m *FilePanelModel) Resize(width int, height int) {
 
 func (m *FilePanelModel) Focus() {
 	m.BaseModel.Focus()
-	m.Markdown.Focus()
-	// m.Editor.Focus()
+	// m.Markdown.Focus()
+	if !store.State.Editing {
+		m.Markdown.Focus()
+	} else {
+		m.Editor.Focus()
+	}
 }
 
 func (m *FilePanelModel) Blur() {
@@ -64,15 +68,17 @@ func (m FilePanelModel) Update(msg tea.Msg) (FilePanelModel, tea.Cmd) {
 	// 	m.Resize(msg.Width, msg.Height)
 	// 	return m, nil
 	// }
-	case store.CMD_INVOKE_EDIT:
-		if store.State.Editing {
-			m.Markdown.Blur()
-			m.Editor.Focus()
-		} else {
-			m.Blur()
-			m.Focus()
-		}
-		return m, nil
+
+	// case store.CMD_INVOKE_EDIT:
+	// 	if store.State.Editing {
+	// 		m.Markdown.Blur()
+	// 		m.Editor.Focus()
+	// 	} else {
+	// 		m.Blur()
+	// 		m.Focus()
+	// 	}
+	// 	return m, nil
+
 	case tea.KeyMsg:
 		switch msg.String() {
 		// case "left":

@@ -42,6 +42,7 @@ func (m *DialogModel) nextTab() {
 	// focus
 	if m.TabIndex == 0 {
 		m.TextInput.Focus()
+		m.TextInput.CursorEnd()
 		store.State.InputFocus = true
 	} else {
 		m.TextInput.Blur()
@@ -52,9 +53,9 @@ func (m *DialogModel) nextTab() {
 func (m *DialogModel) Show(payload *DialogPayload) {
 	m.Payload = payload
 	m.Focus()
+	m.TextInput.SetValue(payload.PromptValue)
 	m.TabIndex = -1
 	m.nextTab()
-	m.TextInput.SetValue(payload.PromptValue)
 	if m.isPrompt() {
 		m.TextInput.Focus()
 	}
@@ -150,7 +151,7 @@ func (m DialogModel) View() string {
 func New() DialogModel {
 	input := textinput.New()
 	input.Placeholder = "请输入..."
-	input.Width = 20
+	input.Width = 30
 	input.PromptStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
 	input.TextStyle = input.PromptStyle
 	return DialogModel{

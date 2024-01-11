@@ -10,6 +10,7 @@ import (
 	"github.com/shalldie/tnote/internal/app/astyles"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
+	"github.com/shalldie/tnote/internal/gist"
 	"github.com/shalldie/tnote/internal/utils"
 )
 
@@ -35,6 +36,29 @@ func (m *EditorModel) Blur() {
 	m.BaseModel.Blur()
 	m.TextArea.Blur()
 	store.State.InputFocus = false
+}
+
+func (m *EditorModel) Save() {
+	file := store.Gist.GetFile()
+	content := m.TextArea.Value()
+
+	m.Blur()
+
+	if file.Content == content {
+		return
+	}
+
+	go store.Send(store.StatusPayload{
+		Loading: true,
+		Message: "保存中...",
+	})
+	store.Gist.UpdateFile(file.FileName, &gist.UpdateGistPayload{Content: content})
+	go store.Send(store.CMD_UPDATE_FILE(""))
+	go store.Send(store.StatusPayload{
+		Loading:  false,
+		Message:  fmt.Sprintf("「%v」保存完毕", file.FileName),
+		Duration: 5,
+	})
 }
 
 func (m EditorModel) Init() tea.Cmd {
@@ -89,8 +113,10 @@ func (m EditorModel) Update(msg tea.Msg) (EditorModel, tea.Cmd) {
 		switch msg.String() {
 		case "esc":
 			if m.TextArea.Focused() {
-				m.Blur()
 				go store.Send(store.CMD_INVOKE_EDIT(false))
+				go m.Save()
+				// m.Blur()
+				// go store.Send(store.CMD_INVOKE_EDIT(false))
 				// todo: 更新gist文件
 
 				return m, nil

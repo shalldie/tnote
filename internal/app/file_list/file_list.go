@@ -76,13 +76,13 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 		m.selectFile(string(msg))
 		return m, nil
 
-	case store.CMD_INVOKE_EDIT:
-		if store.State.Editing {
-			m.Blur()
-		} else {
-			m.Focus()
-		}
-		return m, nil
+	// case store.CMD_INVOKE_EDIT:
+	// 	if store.State.Editing {
+	// 		m.Blur()
+	// 	} else {
+	// 		m.Focus()
+	// 	}
+	// 	return m, nil
 
 	case tea.KeyMsg:
 		// active，输入框没有焦点，且不是正在输入过滤项

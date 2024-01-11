@@ -138,6 +138,16 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		m.FileList.Focus()
 		return m, nil
 
+	case store.CMD_INVOKE_EDIT:
+		if store.State.Editing {
+			m.FileList.Blur()
+			m.FilePanel.Focus()
+		} else {
+			m.FilePanel.Blur()
+			m.FileList.Focus()
+		}
+		return m, nil
+
 	// case CMD_APP_LOADING:
 	// 	// m.loading = len(msg) > 0
 	// 	return m.propagate(msg)
