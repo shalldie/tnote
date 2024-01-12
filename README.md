@@ -14,7 +14,7 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/shalldie/tnote/ci.yml?logo=github&style=flat-square)](https://github.com/shalldie/tnote/actions)
 [![License](https://img.shields.io/github/license/shalldie/tnote?logo=github&style=flat-square)](https://github.com/shalldie/tnote)
 
-<img src="https://github.com/shalldie/tnote/assets/9987486/05fcde85-eb08-4caf-9bd8-ef955c93cabc" width="800">
+<img src="https://github.com/shalldie/tnote/assets/9987486/62e32ac6-e838-4b9d-9245-6781fdc13593" width="800">
 
 </div>
 
@@ -53,15 +53,13 @@ export TNOTE_GIST_TOKEN="<your_access_token>"
 
 ### 1. binary
 
-下载地址：[download](https://github.com/shalldie/tnote/releases)
+[Download](https://github.com/shalldie/tnote/releases)，下载后直接执行即可，加入 `PATH` 更佳。
 
 | 环境           | 适用系统                     |
 | :------------- | :--------------------------- |
 | `darwin-amd64` | `Mac amd64`、`Mac arm64(M1)` |
 | `linux-amd64`  | `Linux amd64`                |
 | `linux-arm64`  | `Linux arm64`                |
-
-下载后直接执行即可，加入 `PATH` 更佳。
 
 example:
 
