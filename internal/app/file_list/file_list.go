@@ -2,8 +2,8 @@ package file_list
 
 import (
 	"fmt"
+	"strings"
 
-	"github.com/charmbracelet/bubbles/key"
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
@@ -13,7 +13,10 @@ import (
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/gist"
+	"github.com/shalldie/tnote/internal/utils"
 )
+
+var listBorderStyle = lipgloss.NewStyle().Border(lipgloss.ThickBorder())
 
 type FileListModel struct {
 	*model.BaseModel
@@ -27,6 +30,10 @@ func (m *FileListModel) Resize(width int, height int) {
 
 	m.list.SetWidth(width - 2)
 	m.list.SetHeight(height)
+}
+
+func (m *FileListModel) curForeground() lipgloss.Color {
+	return utils.Ternary(m.Active, astyles.PRIMARY_ACTIVE_COLOR, astyles.PRIMARY_NORMAL_COLOR)
 }
 
 func (m FileListModel) Init() tea.Cmd {
@@ -123,14 +130,11 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 }
 
 func (m FileListModel) View() string {
-	style := lipgloss.NewStyle().
-		// Background(lipgloss.Color("#282a35")).
-		Border(lipgloss.RoundedBorder(), true).
-		// BorderForeground(grayColor).
-		BorderForeground(astyles.PRIMARY_NORMAL_COLOR)
-	if m.Active {
-		style = style.BorderForeground(astyles.PRIMARY_ACTIVE_COLOR)
-	}
+	// lipgloss.ThickBorder()
+	style := listBorderStyle.Copy().
+		BorderTop(false).
+		BorderForeground(m.curForeground())
+
 	style = style.
 		Width(m.Width).
 		Height(m.Height)
@@ -142,7 +146,24 @@ func (m FileListModel) View() string {
 		return fmt.Sprintf(" %vloading...", m.spinner.View())
 	}()
 	// content := utils.Ternary(len(m.list.Items()) > 0, m.list.View(), m.spinner.View())
-	return style.Render(content)
+	header := m.headerView()
+	body := style.Render(content)
+	return lipgloss.JoinVertical(lipgloss.Left,
+		header,
+		body,
+	)
+	// return header + "\n" + body
+}
+
+func (m FileListModel) headerView() string {
+	topRight := listBorderStyle.GetBorderStyle().TopRight
+
+	titleStyle := lipgloss.NewStyle().Foreground(astyles.PRIMARY_ACTIVE_COLOR).Padding(0, 1).Bold(m.Active)
+	title := titleStyle.Render("文件列表")
+	// title := titleStyle.Render("Mr. Pager")
+	// ━┓
+	line := lipgloss.NewStyle().Foreground(m.curForeground()).Render(strings.Repeat("━", utils.MathMax(0, m.Width-lipgloss.Width(title)+1)) + topRight)
+	return lipgloss.JoinHorizontal(lipgloss.Center, title, line)
 }
 
 func (m *FileListModel) refreshFiles() tea.Cmd {
@@ -191,13 +212,11 @@ func New() FileListModel {
 		list:      list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0),
 	}
 	model.Focus()
-	model.list.Title = "文件列表"
+	model.list.SetShowTitle(false)
 	// model.list.SetShowHelp(false)
 	model.list.DisableQuitKeybindings()
 	model.list.KeyMap = newListKeyMap()
-	model.list.AdditionalFullHelpKeys = func() []key.Binding {
-		return additionalKeyMap()
-	}
+	model.list.AdditionalFullHelpKeys = additionalKeyMap
 
 	// model.list.AdditionalShortHelpKeys = func() []key.Binding {
 	// 	return additionalKeyMap()

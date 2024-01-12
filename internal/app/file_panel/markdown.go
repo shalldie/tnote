@@ -177,13 +177,13 @@ func (m MarkdownModel) headerView() string {
 		return titleStyle.Render(m.file.FileName)
 	}()
 	// title := titleStyle.Render("Mr. Pager")
-	line := m.withActiveStyle().Render(strings.Repeat("─", utils.MathMax(0, m.Viewport.Width-lipgloss.Width(title))))
+	line := m.withActiveStyle().Render(strings.Repeat("━", utils.MathMax(0, m.Viewport.Width-lipgloss.Width(title))))
 	return lipgloss.JoinHorizontal(lipgloss.Center, title, line)
 }
 
 func (m MarkdownModel) footerView() string {
 	infoStyle := lipgloss.NewStyle().Foreground(astyles.PRIMARY_ACTIVE_COLOR).Padding(0, 1).Bold(true)
 	info := infoStyle.Render(fmt.Sprintf("%3.f%%", m.Viewport.ScrollPercent()*100))
-	line := m.withActiveStyle().Render(strings.Repeat("─", utils.MathMax(0, m.Viewport.Width-lipgloss.Width(info))))
+	line := m.withActiveStyle().Render(strings.Repeat("━", utils.MathMax(0, m.Viewport.Width-lipgloss.Width(info))))
 	return lipgloss.JoinHorizontal(lipgloss.Center, line, info)
 }
