@@ -185,8 +185,6 @@ func (m *FileListModel) selectFile(filename string) {
 		m.list.Select(targetIndex)
 	}
 
-	// m.list.VisibleItems()
-
 	// gist
 	targetIndex = gs.FindIndex(store.Gist.Files, func(item *gist.GistFile, i int) bool {
 		return item.FileName == filename
@@ -202,25 +200,34 @@ func (m *FileListModel) selectFile(filename string) {
 }
 
 func New() FileListModel {
+	// loading
 	s := spinner.New()
 	s.Spinner = spinner.Dot
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#fff"))
 
+	// list item 选中色
+	listDelegate := list.NewDefaultDelegate()
+	listDelegate.Styles.SelectedTitle = listDelegate.Styles.SelectedTitle.Copy().
+		Foreground(lipgloss.AdaptiveColor{Light: "#000000", Dark: "#00acf8"}).
+		BorderLeftForeground(lipgloss.AdaptiveColor{Light: "#000000", Dark: "#00acf8"}).
+		Bold(true)
+
+	listDelegate.Styles.SelectedDesc = listDelegate.Styles.SelectedDesc.Copy().
+		Foreground(listDelegate.Styles.NormalDesc.GetForeground()).
+		BorderLeftForeground(lipgloss.AdaptiveColor{Light: "#000000", Dark: "#00acf8"})
+
+	// model
 	model := FileListModel{
 		BaseModel: model.NewBaseModel(),
 		spinner:   s,
-		list:      list.New([]list.Item{}, list.NewDefaultDelegate(), 0, 0),
+		list:      list.New([]list.Item{}, listDelegate, 0, 0),
 	}
+
 	model.Focus()
 	model.list.SetShowTitle(false)
-	// model.list.SetShowHelp(false)
 	model.list.DisableQuitKeybindings()
 	model.list.KeyMap = newListKeyMap()
 	model.list.AdditionalFullHelpKeys = additionalKeyMap
 
-	// model.list.AdditionalShortHelpKeys = func() []key.Binding {
-	// 	return additionalKeyMap()
-	// }
-	// model.list.SetShowPagination(false)
 	return model
 }
