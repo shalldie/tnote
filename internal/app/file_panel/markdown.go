@@ -1,13 +1,11 @@
 package file_panel
 
 import (
-	"errors"
 	"fmt"
 	"strings"
 
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/glamour"
 	"github.com/charmbracelet/lipgloss"
 	"github.com/shalldie/tnote/internal/app/astyles"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
@@ -71,33 +69,6 @@ func (m MarkdownModel) Init() tea.Cmd {
 	return nil
 }
 
-func (m MarkdownModel) getMarkdownContent(content string) string {
-	background := "light"
-
-	if lipgloss.HasDarkBackground() {
-		background = "dark"
-	}
-
-	// background := "notty"
-	// background = "dracula"
-
-	r, _ := glamour.NewTermRenderer(
-		glamour.WithWordWrap(m.Width),
-		glamour.WithStandardStyle(background),
-		// glamour.WithAutoStyle(),
-	)
-
-	out, err := r.Render(content)
-	if err != nil {
-		// return "", errors.Unwrap(err)
-		return errors.Unwrap(err).Error()
-		// return content
-	}
-
-	// return content
-	return out
-}
-
 func (m MarkdownModel) propagate(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 	var cmds []tea.Cmd
 	var cmd tea.Cmd
@@ -136,7 +107,7 @@ func (m MarkdownModel) Update(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 		if curFile != nil {
 			m.Viewport.SetContent(
 				lipgloss.NewStyle().Width(m.Width).Height(m.Height).
-					Render(m.getMarkdownContent(curFile.Content)),
+					Render(utils.RenderMarkdown(curFile.Content, m.Width)),
 			)
 			m.Viewport.SetYOffset(0)
 		}

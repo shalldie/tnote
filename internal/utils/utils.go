@@ -1,5 +1,12 @@
 package utils
 
+import (
+	"errors"
+
+	"github.com/charmbracelet/glamour"
+	"github.com/charmbracelet/lipgloss"
+)
+
 // 三元运算
 func Ternary[T any](condition bool, item1 T, item2 T) T {
 	if condition {
@@ -17,6 +24,27 @@ func MathMax(a int, b int) int {
 // 获取较小的数
 func MathMin(a int, b int) int {
 	return Ternary(a < b, a, b)
+}
+
+// 渲染 markdown
+func RenderMarkdown(content string, width int) string {
+	background := "light"
+
+	if lipgloss.HasDarkBackground() {
+		background = "dark"
+	}
+
+	r, _ := glamour.NewTermRenderer(
+		glamour.WithWordWrap(width),
+		glamour.WithStandardStyle(background),
+		// glamour.WithAutoStyle(),
+	)
+
+	markdown, err := r.Render(content)
+	if err != nil {
+		return errors.Unwrap(err).Error()
+	}
+	return markdown
 }
 
 // func Log(msg string) {

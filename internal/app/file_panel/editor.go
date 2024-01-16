@@ -53,6 +53,7 @@ func (m *EditorModel) Save() {
 		Message: "保存中...",
 	})
 	store.Gist.UpdateFile(file.FileName, &gist.UpdateGistPayload{Content: content})
+	go store.Send(store.CMD_REFRESH_FILES(""))
 	go store.Send(store.CMD_UPDATE_FILE(""))
 	go store.Send(store.StatusPayload{
 		Loading:  false,

@@ -2,14 +2,17 @@ package status_bar
 
 import (
 	"fmt"
+	"strings"
 	"time"
 
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/conf"
+	"github.com/shalldie/tnote/internal/utils"
 )
 
 var S_ID = 1
@@ -57,7 +60,7 @@ func (m StatusBarModel) propagate(msg tea.Msg) (StatusBarModel, tea.Cmd) {
 }
 
 func (m StatusBarModel) Update(msg tea.Msg) (StatusBarModel, tea.Cmd) {
-	switch msg.(type) {
+	switch msg := msg.(type) {
 	// case tea.WindowSizeMsg:
 	// 	m.Width = msg.Width
 	// 	return m.propagate(msg), nil
@@ -67,6 +70,31 @@ func (m StatusBarModel) Update(msg tea.Msg) (StatusBarModel, tea.Cmd) {
 	// 	m.LoadingText = string(msg)
 
 	// 	return m, nil
+	case tea.KeyMsg:
+		switch msg.String() {
+
+		case "f12":
+			go func() {
+				content := fmt.Sprintf(`
+# tnote
+
+Note in terminal. 终端运行的记事本。
+
+> 版本 %v
+> [Github](https://github.com/shalldie/tnote)
+				`, "`"+conf.VERSION+"`")
+
+				message := utils.RenderMarkdown(strings.TrimSpace(content), 50)
+
+				store.Send(dialog.DialogPayload{
+					Mode:    dialog.ModeAlert,
+					Message: message,
+					Width:   50,
+				})
+			}()
+			return m, nil
+
+		}
 
 	case store.StatusPayload:
 		// msg.Id = time.Now().Unix()
@@ -121,25 +149,26 @@ func (m StatusBarModel) View() string {
 	}
 
 	// help
-	helpStyle := baseStyle.Copy().Background(lipgloss.Color("#A550DF"))
-	helpCol := helpStyle.Render("🛎️  Help - F12")
+	// helpStyle := baseStyle.Copy().Background(lipgloss.Color("#A550DF"))
+	// helpCol := helpStyle.Render("🛎️  Help - F12")
 
 	// version
 	versionStyle := baseStyle.Copy().Background(lipgloss.Color("#6124DF"))
-	versionCol := versionStyle.Render(fmt.Sprintf("TNOTE %s", conf.VERSION))
+	versionCol := versionStyle.Render("🛎️  关于 - F12")
 
 	// SPACE
 	w := lipgloss.Width
 	spaceCol := baseStyle.Copy().
 		// Foreground(lipgloss.Color("#FFFDF5")).
 		// Background(lipgloss.Color("#6124DF")).
-		Width(m.Width - w(statusCol) - w(versionCol) - w(helpCol)).
+		// Width(m.Width - w(statusCol) - w(versionCol) - w(helpCol)).
+		Width(m.Width - w(statusCol) - w(versionCol)).
 		Render(store.State.Status.Message)
 
 	return lipgloss.JoinHorizontal(lipgloss.Top,
 		statusCol,
 		spaceCol,
-		helpCol,
+		// helpCol,
 		versionCol,
 	)
 

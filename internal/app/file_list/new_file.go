@@ -23,7 +23,7 @@ func validateFilename(filename string) bool {
 
 func (m *FileListModel) newFile() {
 	store.Send(dialog.DialogPayload{
-		Mode:    1,
+		Mode:    dialog.ModePrompt,
 		Message: "新建文件，请输入文件名",
 		FnOK: func(args ...string) bool {
 			filename := args[0]

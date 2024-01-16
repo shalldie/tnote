@@ -9,7 +9,7 @@ import (
 
 func (m *FileListModel) delFile(filename string) {
 	store.Send(dialog.DialogPayload{
-		Mode:    0,
+		Mode:    dialog.ModeConfirm,
 		Message: fmt.Sprintf("确定要删除文件「%v」吗？", filename),
 		FnOK: func(args ...string) bool {
 			go func() {

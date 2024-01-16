@@ -35,7 +35,12 @@ func (m *DialogModel) nextTab() {
 	if m.TabIndex > 2 {
 		m.TabIndex = 0
 	}
+	// 非 prompt 没有 textarea
 	if m.TabIndex == 0 && !m.isPrompt() {
+		m.TabIndex++
+	}
+	// alert 没有 cancel
+	if m.TabIndex == 1 && m.Payload.Mode == ModeAlert {
 		m.TabIndex++
 	}
 
@@ -127,6 +132,11 @@ func (m DialogModel) View() string {
 	diaWidth := 42
 	ui := ""
 
+	// width
+	if m.Payload.Width > 0 {
+		diaWidth = m.Payload.Width
+	}
+
 	// message
 	message := lipgloss.NewStyle().Width(diaWidth).Align(lipgloss.Left).Render(m.Payload.Message)
 
@@ -135,13 +145,16 @@ func (m DialogModel) View() string {
 
 	ui = lipgloss.JoinVertical(lipgloss.Top,
 		message,
-		utils.Ternary(m.Payload.Mode == 1, prompt, ""),
+		utils.Ternary(m.Payload.Mode == ModePrompt, prompt, ""),
 	)
 
 	// btn
 	btnCancel := utils.Ternary(m.TabIndex == 1, activeButtonStyle, buttonStyle).Render("取消")
 	btnOK := utils.Ternary(m.TabIndex == 2, activeButtonStyle, buttonStyle).Render("确定")
-	buttons := lipgloss.JoinHorizontal(lipgloss.Top, btnCancel, btnOK)
+	buttons := lipgloss.JoinHorizontal(lipgloss.Top,
+		utils.Ternary(m.Payload.Mode != ModeAlert, btnCancel, ""),
+		btnOK,
+	)
 
 	ui = lipgloss.JoinVertical(lipgloss.Right, ui, buttons)
 

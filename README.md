@@ -23,15 +23,11 @@
 ## 功能 🎯
 
 - [x] 面板
-  - [x] 切换
+  - [x] 快捷键操作
   - [x] 存储持久化
-  - [x] 快捷键、鼠标
-  - [x] Confirm
-  - [x] Prompt
+  - [x] Confirm、Prompt
 - [x] 文件
-  - [x] 新建
-  - [x] 重命名
-  - [x] 删除
+  - [x] 增删查改
 - [x] 详情 📝
   - [x] Markdown 高亮
   - [x] 编辑、保存
@@ -55,11 +51,11 @@ export TNOTE_GIST_TOKEN="<your_access_token>"
 
 [Download](https://github.com/shalldie/tnote/releases)，下载后直接执行即可，加入 `PATH` 更佳。
 
-| 环境           | 适用系统                     |
-| :------------- | :--------------------------- |
-| `darwin-amd64` | `Mac amd64`、`Mac arm64(M1)` |
-| `linux-amd64`  | `Linux amd64`                |
-| `linux-arm64`  | `Linux arm64`                |
+| 文件                 | 适用系统                 |
+| :------------------- | :----------------------- |
+| `tnote.darwin-amd64` | `Mac amd64`、`Mac arm64` |
+| `tnote.linux-amd64`  | `Linux amd64`            |
+| `tnote.linux-arm64`  | `Linux arm64`            |
 
 example:
 
@@ -86,7 +82,7 @@ tnote
 ### 3. docker
 
 ```bash
-docker run --rm -it -e TNOTE_GIST_TOKEN=$TNOTE_GIST_TOKEN shalldie/tnote
+docker run -it -e TNOTE_GIST_TOKEN=$TNOTE_GIST_TOKEN shalldie/tnote
 ```
 
 ## LICENSE

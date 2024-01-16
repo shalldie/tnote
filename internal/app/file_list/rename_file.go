@@ -10,7 +10,7 @@ import (
 
 func (m *FileListModel) renameFile(filename string) {
 	store.Send(dialog.DialogPayload{
-		Mode:        1,
+		Mode:        dialog.ModePrompt,
 		Message:     fmt.Sprintf("重命名文件「%v」", filename),
 		PromptValue: filename,
 		FnOK: func(args ...string) bool {

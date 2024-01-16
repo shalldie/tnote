@@ -1,19 +1,15 @@
 package dialog
 
 var (
-	ModeConfirm = 0 // confirm 模式
-	ModePrompt  = 1 // prompt 模式
+	ModeAlert   = 0 // alert 模式
+	ModeConfirm = 1 // confirm 模式
+	ModePrompt  = 2 // prompt 模式
 )
 
 type DialogPayload struct {
-	Mode        int // 0 - confirm 模式 1 - prompt 模式
+	Mode        int // 0 - alert模式，1 - confirm模式，2 - prompt模式
 	Message     string
 	PromptValue string
 	FnOK        func(args ...string) bool
-}
-
-func NewDialogPayload() *DialogPayload {
-	return &DialogPayload{
-		Mode: ModeConfirm,
-	}
+	Width       int // 宽度，默认 42
 }
