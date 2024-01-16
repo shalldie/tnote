@@ -25,7 +25,7 @@
 - [x] 面板
   - [x] 快捷键操作
   - [x] 存储持久化
-  - [x] Confirm、Prompt
+  - [x] Confirm、Prompt、Alert
 - [x] 文件
   - [x] 增删查改
 - [x] 详情 📝
