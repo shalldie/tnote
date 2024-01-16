@@ -80,9 +80,9 @@ func (m StatusBarModel) Update(msg tea.Msg) (StatusBarModel, tea.Cmd) {
 
 Note in terminal. 终端运行的记事本。
 
-> 版本 %v
+> 版本 `+"`%v`"+`
 > [Github](https://github.com/shalldie/tnote)
-				`, "`"+conf.VERSION+"`")
+				`, conf.VERSION)
 
 				message := utils.RenderMarkdown(strings.TrimSpace(content), 50)
 

@@ -63,10 +63,27 @@ func (m *MarkdownModel) Resize(width int, height int) {
 
 	m.Viewport.Width = width
 	m.Viewport.Height = height - headerHeight - footerHeight
+
+	m.renderFile()
 }
 
 func (m MarkdownModel) Init() tea.Cmd {
 	return nil
+}
+
+func (m *MarkdownModel) renderFile() {
+	if store.Gist == nil {
+		return
+	}
+	curFile := store.Gist.GetFile()
+	m.file = curFile
+	if curFile != nil {
+		m.Viewport.SetContent(
+			lipgloss.NewStyle().Width(m.Width).Height(m.Height).
+				Render(utils.RenderMarkdown(curFile.Content, m.Width)),
+		)
+		m.Viewport.SetYOffset(0)
+	}
 }
 
 func (m MarkdownModel) propagate(msg tea.Msg) (MarkdownModel, tea.Cmd) {
@@ -102,15 +119,7 @@ func (m MarkdownModel) Update(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 
 	case store.CMD_UPDATE_FILE:
 		// m.Resize(m.Width, m.Height)
-		curFile := store.Gist.GetFile()
-		m.file = curFile
-		if curFile != nil {
-			m.Viewport.SetContent(
-				lipgloss.NewStyle().Width(m.Width).Height(m.Height).
-					Render(utils.RenderMarkdown(curFile.Content, m.Width)),
-			)
-			m.Viewport.SetYOffset(0)
-		}
+		m.renderFile()
 		return m, nil
 
 	case tea.KeyMsg:
