@@ -21,7 +21,7 @@ jobs:
           tags: |
             type=semver,pattern={{version}}
             type=sha
-            type=raw,value=latest,enable={{is_default_branch}}
+            type=raw,value=latest
 
       # Add support for more platforms with QEMU (optional)
       - name: Set up QEMU 🐳

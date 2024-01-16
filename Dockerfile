@@ -22,4 +22,7 @@ WORKDIR /
 
 COPY --from=builder /output/tnote /tnote
 
+# https://github.com/charmbracelet/lipgloss/issues/31
+ENV COLORTERM="truecolor"
+
 CMD [ "/tnote" ]
