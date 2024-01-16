@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/shalldie/tnote/internal/note"
+	_ "github.com/shalldie/tnote/internal/conf"
+
+	"github.com/shalldie/tnote/internal/app"
 )
 
 func main() {
@@ -16,5 +18,6 @@ func main() {
 		os.Exit(1)
 	}
 
-	note.NewTNote(token).Setup()
+	app.Run(token)
+
 }
