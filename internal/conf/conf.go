@@ -5,7 +5,7 @@ import (
 )
 
 var (
-	VERSION = "v1.0.0"
+	VERSION = "v1.0.1"
 )
 
 // https://github.com/charmbracelet/lipgloss/issues/40
