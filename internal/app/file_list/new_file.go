@@ -40,6 +40,7 @@ func (m *FileListModel) newFile() {
 				})
 				store.Gist.UpdateFile(filename, &gist.UpdateGistPayload{Content: "To be edited."})
 				store.Send(store.CMD_REFRESH_FILES(filename))
+				store.Send(store.CMD_UPDATE_FILE(""))
 				go store.Send(store.StatusPayload{
 					Loading:  false,
 					Message:  fmt.Sprintf("「%v」完成新建", filename),

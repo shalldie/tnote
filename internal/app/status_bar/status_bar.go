@@ -176,7 +176,7 @@ func (m StatusBarModel) View() string {
 
 func New() StatusBarModel {
 	s := spinner.New()
-	s.Spinner = spinner.Dot
+	s.Spinner = spinner.Line
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#ffffff"))
 
 	return StatusBarModel{

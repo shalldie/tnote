@@ -17,16 +17,16 @@ func (m *FileListModel) delFile(filename string) {
 					Loading: true,
 					Message: "删除中...",
 				})
-				// note.StatusBar.ShowMessage("删除中...")
+
 				store.Gist.UpdateFile(filename, nil)
-				// p.LoadFiles()
-				// note.StatusBar.ShowForSeconds("操作成功", 3)
+
 				go store.Send(store.StatusPayload{
 					Loading:  false,
 					Message:  fmt.Sprintf("「%v」完成删除", filename),
 					Duration: 5,
 				})
-				go store.Send(store.CMD_REFRESH_FILES(""))
+				store.Send(store.CMD_REFRESH_FILES(""))
+				store.Send(store.CMD_UPDATE_FILE(""))
 			}()
 
 			return true

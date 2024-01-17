@@ -48,22 +48,13 @@ func (m FileListModel) propagate(msg tea.Msg) (FileListModel, tea.Cmd) {
 	cmds = append(cmds, cmd)
 
 	if m.Active {
-		// curItem := m.list.SelectedItem()
-		// if fli, ok := curItem.(FileListItem); ok {
-		// 	curFilename := fli.gistfile.FileName
-		// 	defer m.selectFile(curFilename)
-		// }
+		// list 默认的操作只有active时才能使用
 		m.list, cmd = m.list.Update(msg)
 		cmds = append(cmds, cmd)
+
+		// 所有的操作，选择、过滤等，同时同步到list、gist
 		if item, ok := m.list.SelectedItem().(FileListItem); ok {
 			m.selectFile(item.gistfile.FileName)
-			// curIndex := gs.IndexOf(gt.Files, item.gistfile)
-			// if curIndex != gt.CurrentIndex {
-			// 	go func() {
-			// 		gt.CurrentIndex = curIndex
-			// 		app.Send(CMD_UPDATE_FILE(""))
-			// 	}()
-			// }
 		}
 	}
 	return m, tea.Batch(cmds...)
@@ -83,22 +74,16 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 		m.selectFile(string(msg))
 		return m, nil
 
-	// case store.CMD_INVOKE_EDIT:
-	// 	if store.State.Editing {
-	// 		m.Blur()
-	// 	} else {
-	// 		m.Focus()
-	// 	}
-	// 	return m, nil
-
 	case tea.KeyMsg:
+
+		// ready 了才能操作
+		if len(m.list.Items()) <= 0 {
+			return m, nil
+		}
+
 		// active，输入框没有焦点，且不是正在输入过滤项
 		if !store.State.InputFocus && m.list.FilterState() != list.Filtering {
 			switch msg.String() {
-			// case "left":
-			// 	m.Active = true
-			// case "right":
-			// 	m.Active = false
 
 			case "n":
 				go m.newFile()
@@ -143,16 +128,15 @@ func (m FileListModel) View() string {
 		if len(m.list.Items()) > 0 {
 			return m.list.View()
 		}
-		return fmt.Sprintf(" %vloading...", m.spinner.View())
+		return fmt.Sprintf(" %v loading...", m.spinner.View())
 	}()
-	// content := utils.Ternary(len(m.list.Items()) > 0, m.list.View(), m.spinner.View())
+
 	header := m.headerView()
 	body := style.Render(content)
 	return lipgloss.JoinVertical(lipgloss.Left,
 		header,
 		body,
 	)
-	// return header + "\n" + body
 }
 
 func (m FileListModel) headerView() string {
@@ -202,10 +186,10 @@ func (m *FileListModel) selectFile(filename string) {
 func New() FileListModel {
 	// loading
 	s := spinner.New()
-	s.Spinner = spinner.Dot
+	s.Spinner = spinner.Line
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#fff"))
 
-	// list item 选中色
+	// listDelegate，list item 选中色
 	listDelegate := list.NewDefaultDelegate()
 	listDelegate.Styles.SelectedTitle = listDelegate.Styles.SelectedTitle.Copy().
 		Foreground(lipgloss.AdaptiveColor{Light: "#000000", Dark: "#00acf8"}).
@@ -216,18 +200,22 @@ func New() FileListModel {
 		Foreground(listDelegate.Styles.NormalDesc.GetForeground()).
 		BorderLeftForeground(lipgloss.AdaptiveColor{Light: "#000000", Dark: "#00acf8"})
 
+	// list
+	list := list.New([]list.Item{}, listDelegate, 0, 0)
+	list.SetShowTitle(false)
+	list.DisableQuitKeybindings()
+	list.KeyMap = newListKeyMap()
+	list.AdditionalFullHelpKeys = additionalKeyMap
+	list.FilterInput.Prompt = "过滤："
+
 	// model
 	model := FileListModel{
 		BaseModel: model.NewBaseModel(),
 		spinner:   s,
-		list:      list.New([]list.Item{}, listDelegate, 0, 0),
+		list:      list,
 	}
 
 	model.Focus()
-	model.list.SetShowTitle(false)
-	model.list.DisableQuitKeybindings()
-	model.list.KeyMap = newListKeyMap()
-	model.list.AdditionalFullHelpKeys = additionalKeyMap
 
 	return model
 }
