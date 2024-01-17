@@ -32,42 +32,14 @@ func (m StatusBarModel) propagate(msg tea.Msg) (StatusBarModel, tea.Cmd) {
 	var cmd tea.Cmd
 	var cmds []tea.Cmd
 
-	// Propagate to all children.
-	// m.tabs, _ = m.tabs.Update(msg)
-	// m.dialog, _ = m.dialog.Update(msg)
-	// m.list1, _ = m.list1.Update(msg)
-	// m.list2, _ = m.list2.Update(msg)
-	// m.LoadingText = "lalala"
-
 	m.spinner, cmd = m.spinner.Update(msg)
 	cmds = append(cmds, cmd)
 
-	// switch msg := msg.(type) {
-	// case spinner.TickMsg:
-	// 	// println("lalala")
-	// 	m.LoadingText = "lalala"
-	// 	m.spinner, _ = m.spinner.Update(msg)
-	// }
-
-	// if msg, ok := msg.(tea.WindowSizeMsg); ok {
-	// 	msg.Height -= m.tabs.(tabs).height + m.list1.(list).height
-	// 	m.history, _ = m.history.Update(msg)
-	// 	return m
-	// }
-
-	// m.history, _ = m.history.Update(msg)
 	return m, tea.Batch(cmds...)
 }
 
 func (m StatusBarModel) Update(msg tea.Msg) (StatusBarModel, tea.Cmd) {
 	switch msg := msg.(type) {
-	// case tea.WindowSizeMsg:
-	// 	m.Width = msg.Width
-	// 	return m.propagate(msg), nil
-
-	// case CMD_APP_LOADING:
-	// 	m.Loading = len(msg) > 0
-	// 	m.LoadingText = string(msg)
 
 	// 	return m, nil
 	case tea.KeyMsg:
@@ -97,8 +69,6 @@ Note in terminal. 终端运行的记事本。
 		}
 
 	case store.StatusPayload:
-		// msg.Id = time.Now().Unix()
-		// m.payload = msg
 		if store.State.Status.Duration > 0 {
 			go func() {
 				S_ID++
@@ -115,17 +85,6 @@ Note in terminal. 终端运行的记事本。
 		}
 		return m, nil
 	}
-
-	// case errMsg:
-	// 	m.err = msg
-	// 	return m, nil
-
-	// default:
-	// 	var cmd tea.Cmd
-	// 	m.spinner, cmd = m.spinner.Update(msg)
-	// 	return m, cmd
-	// 	// return m.propagate(msg), nil
-	// }
 
 	return m.propagate(msg)
 }

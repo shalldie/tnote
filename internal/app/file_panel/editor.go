@@ -70,33 +70,18 @@ func (m EditorModel) propagate(msg tea.Msg) (EditorModel, tea.Cmd) {
 	var cmds []tea.Cmd
 	var cmd tea.Cmd
 
-	// m.Markdown, cmd = m.Markdown.Update(msg)
-	// cmds = append(cmds, cmd)
-
 	m.TextArea, cmd = m.TextArea.Update(msg)
 	cmds = append(cmds, cmd)
 
-	if m.Active {
-		// curItem := m.list.SelectedItem()
-		// if fli, ok := curItem.(FileListItem); ok {
-		// 	curFilename := fli.gistfile.FileName
-		// 	defer m.selectFile(curFilename)
-		// }
-		// m.list, cmd = m.list.Update(msg)
-		// cmds = append(cmds, cmd)
-		// cmds = append(cmds, m.TextArea.Focus())
-	}
-	// cmds = append(cmds, m.TextArea.Focus())
+	// if m.Active {
+	// }
+
 	return m, tea.Batch(cmds...)
 }
 
 func (m EditorModel) Update(msg tea.Msg) (EditorModel, tea.Cmd) {
 
 	switch msg := msg.(type) {
-	// case tea.WindowSizeMsg:
-	// 	m.Resize(msg.Width, msg.Height)
-	// 	return m, nil
-	// }
 
 	case store.CMD_UPDATE_FILE:
 		// m.Resize(m.Width, m.Height)
@@ -116,15 +101,8 @@ func (m EditorModel) Update(msg tea.Msg) (EditorModel, tea.Cmd) {
 			if m.TextArea.Focused() {
 				go store.Send(store.CMD_INVOKE_EDIT(false))
 				go m.Save()
-				// m.Blur()
-				// go store.Send(store.CMD_INVOKE_EDIT(false))
-				// todo: 更新gist文件
-
 				return m, nil
 			}
-
-			// case "right":
-			// 	m.Active = true
 		}
 
 	}
@@ -162,9 +140,9 @@ func (m EditorModel) footerView() string {
 
 	infoStyle := lipgloss.NewStyle().Foreground(astyles.PRIMARY_ACTIVE_COLOR).Padding(0, 1).Bold(true)
 	info := infoStyle.Render(fmt.Sprintf("%3.f%%", percent))
-	// info := infoStyle.Render(fmt.Sprintf("%3.f%%", m.Viewport.ScrollPercent()*100))
-	// line := lipgloss.NewStyle().Foreground(astyles.PRIMARY_ACTIVE_COLOR).Render(strings.Repeat("─", m.Width))
+
 	line := lipgloss.NewStyle().Foreground(astyles.PRIMARY_ACTIVE_COLOR).Render(strings.Repeat("━", utils.MathMax(0, m.Width-lipgloss.Width(info))))
+
 	return lipgloss.JoinHorizontal(lipgloss.Center, line, info)
 }
 

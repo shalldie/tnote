@@ -6,9 +6,6 @@ import "github.com/shalldie/tnote/internal/gist"
 var Gist *gist.Gist
 
 type storeState struct {
-	// gist 模块
-	// Gist *gist.Gist
-
 	// 状态
 	Status StatusPayload
 

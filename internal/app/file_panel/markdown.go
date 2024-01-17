@@ -14,22 +14,6 @@ import (
 	"github.com/shalldie/tnote/internal/utils"
 )
 
-var (
-// titleStyle = func() lipgloss.Style {
-// 	return lipgloss.NewStyle().Padding(0, 1)
-// 	// b := lipgloss.RoundedBorder()
-// 	// b.Right = "├"
-// 	// return lipgloss.NewStyle().BorderStyle(b).Padding(0, 1)
-// }()
-
-//	infoStyle = func() lipgloss.Style {
-//		// b := lipgloss.RoundedBorder()
-//		// b.Left = "┤"
-//		// return titleStyle.Copy().BorderStyle(b)
-//		return lipgloss.NewStyle().Padding(0, 1)
-//	}()
-)
-
 type MarkdownModel struct {
 	*model.BaseModel
 
@@ -43,18 +27,9 @@ func NewMarkdownModel() MarkdownModel {
 		BaseModel: model.NewBaseModel(),
 		Viewport:  viewport.New(0, 0),
 	}
-	// model.Resize(100, 30)
-	// model.Viewport.HighPerformanceRendering = true
-	// model.Viewport.Style = lipgloss.NewStyle().
-	// Border(lipgloss.RoundedBorder(), true).
-	// BorderForeground(lipgloss.Color("#282a35"))
-	// model.Viewport.Style = model.Viewport.Style.Padding(0)
+
 	return model
 }
-
-// func (m *MarkdownModel) Focus() {
-// 	m.BaseModel.Focus()
-// }
 
 func (m *MarkdownModel) Resize(width int, height int) {
 	m.BaseModel.Resize(width, height)
@@ -93,14 +68,6 @@ func (m MarkdownModel) propagate(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 	if m.Active {
 		m.Viewport, cmd = m.Viewport.Update(msg)
 		cmds = append(cmds, cmd)
-
-		// curItem := m.list.SelectedItem()
-		// if fli, ok := curItem.(FileListItem); ok {
-		// 	curFilename := fli.gistfile.FileName
-		// 	defer m.selectFile(curFilename)
-		// }
-		// m.list, cmd = m.list.Update(msg)
-		// cmds = append(cmds, cmd)
 	}
 	return m, tea.Batch(cmds...)
 }
@@ -112,10 +79,6 @@ func (m MarkdownModel) Update(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 	)
 
 	switch msg := msg.(type) {
-	case tea.WindowSizeMsg:
-		// m.Resize(msg.Width, msg.Height)
-		// cmds = append(cmds, viewport.Sync(m.Viewport))
-		// return m, nil
 
 	case store.CMD_UPDATE_FILE:
 		// m.Resize(m.Width, m.Height)
@@ -124,10 +87,6 @@ func (m MarkdownModel) Update(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 
 	case tea.KeyMsg:
 		switch msg.String() {
-		// case "left":
-		// 	m.Active = false
-		// case "right":
-		// 	m.Active = true
 		}
 
 	}
