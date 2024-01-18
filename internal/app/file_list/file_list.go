@@ -140,13 +140,13 @@ func (m FileListModel) View() string {
 }
 
 func (m FileListModel) headerView() string {
-	topRight := listBorderStyle.GetBorderStyle().TopRight
+	borderStyle := listBorderStyle.GetBorderStyle()
 
 	titleStyle := lipgloss.NewStyle().Foreground(astyles.PRIMARY_ACTIVE_COLOR).Padding(0, 1).Bold(m.Active)
 	title := titleStyle.Render("文件列表")
 	// title := titleStyle.Render("Mr. Pager")
 	// ━┓
-	line := lipgloss.NewStyle().Foreground(m.curForeground()).Render(strings.Repeat("━", utils.MathMax(0, m.Width-lipgloss.Width(title)+1)) + topRight)
+	line := lipgloss.NewStyle().Foreground(m.curForeground()).Render(strings.Repeat(borderStyle.Top, utils.MathMax(0, m.Width-lipgloss.Width(title)+1)) + borderStyle.TopRight)
 	return lipgloss.JoinHorizontal(lipgloss.Center, title, line)
 }
 
@@ -193,11 +193,13 @@ func New() FileListModel {
 	listDelegate := list.NewDefaultDelegate()
 	listDelegate.Styles.SelectedTitle = listDelegate.Styles.SelectedTitle.Copy().
 		Foreground(lipgloss.AdaptiveColor{Light: "#000000", Dark: "#00acf8"}).
+		BorderStyle(lipgloss.ThickBorder()).
 		BorderLeftForeground(lipgloss.AdaptiveColor{Light: "#000000", Dark: "#00acf8"}).
 		Bold(true)
 
 	listDelegate.Styles.SelectedDesc = listDelegate.Styles.SelectedDesc.Copy().
 		Foreground(listDelegate.Styles.NormalDesc.GetForeground()).
+		BorderStyle(lipgloss.ThickBorder()).
 		BorderLeftForeground(lipgloss.AdaptiveColor{Light: "#000000", Dark: "#00acf8"})
 
 	// list

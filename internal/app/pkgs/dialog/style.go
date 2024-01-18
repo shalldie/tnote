@@ -3,7 +3,7 @@ package dialog
 import "github.com/charmbracelet/lipgloss"
 
 var dialogBoxStyle = lipgloss.NewStyle().
-	Border(lipgloss.RoundedBorder()).
+	Border(lipgloss.ThickBorder()).
 	BorderForeground(lipgloss.Color("#874BFD")).
 	Padding(1, 3).
 	BorderTop(true).
