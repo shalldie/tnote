@@ -130,7 +130,7 @@ func (m EditorModel) headerView() string {
 		return titleStyle.Render(file.FileName)
 	}()
 	// title := titleStyle.Render("Mr. Pager")
-	line := lipgloss.NewStyle().Foreground(astyles.PRIMARY_ACTIVE_COLOR).Render(strings.Repeat("━", utils.MathMax(0, m.Width-lipgloss.Width(title))))
+	line := lipgloss.NewStyle().Foreground(astyles.PRIMARY_ACTIVE_COLOR).Render(strings.Repeat(lipgloss.ThickBorder().Top, utils.MathMax(0, m.Width-lipgloss.Width(title))))
 	return lipgloss.JoinHorizontal(lipgloss.Center, title, line)
 }
 
@@ -141,7 +141,7 @@ func (m EditorModel) footerView() string {
 	infoStyle := lipgloss.NewStyle().Foreground(astyles.PRIMARY_ACTIVE_COLOR).Padding(0, 1).Bold(true)
 	info := infoStyle.Render(fmt.Sprintf("%3.f%%", percent))
 
-	line := lipgloss.NewStyle().Foreground(astyles.PRIMARY_ACTIVE_COLOR).Render(strings.Repeat("━", utils.MathMax(0, m.Width-lipgloss.Width(info))))
+	line := lipgloss.NewStyle().Foreground(astyles.PRIMARY_ACTIVE_COLOR).Render(strings.Repeat(lipgloss.ThickBorder().Top, utils.MathMax(0, m.Width-lipgloss.Width(info))))
 
 	return lipgloss.JoinHorizontal(lipgloss.Center, line, info)
 }
