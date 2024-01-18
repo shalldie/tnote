@@ -72,6 +72,16 @@ func (m *DialogModel) Close() {
 	go store.Send(store.CMD_APP_FOCUS(""))
 }
 
+func (m *DialogModel) FnOK() {
+	ok := true
+	if m.Payload.FnOK != nil {
+		ok = m.Payload.FnOK(strings.TrimSpace(m.TextInput.Value()))
+	}
+	if ok {
+		m.Close()
+	}
+}
+
 func (m DialogModel) Init() tea.Cmd {
 	return tea.Batch(textinput.Blink)
 }
@@ -103,13 +113,7 @@ func (m DialogModel) Update(msg tea.Msg) (DialogModel, tea.Cmd) {
 				return m, nil
 			}
 			if m.TabIndex == 2 {
-				ok := true
-				if m.Payload.FnOK != nil {
-					ok = m.Payload.FnOK(strings.TrimSpace(m.TextInput.Value()))
-				}
-				if ok {
-					m.Close()
-				}
+				m.FnOK()
 				return m, nil
 			}
 

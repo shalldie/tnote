@@ -6,6 +6,7 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	zone "github.com/lrstanley/bubblezone"
 	"github.com/shalldie/tnote/internal/app/file_list"
 	"github.com/shalldie/tnote/internal/app/file_panel"
 	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
@@ -250,20 +251,21 @@ func (m AppModel) View() string {
 	// 	// Background(lipgloss.AdaptiveColor{Light: "#F25D94", Dark: "#F25D94"}).
 	// 	Height(m.height - 1)
 
-	return lipgloss.JoinVertical(
+	return zone.Scan(lipgloss.JoinVertical(
 		lipgloss.Top,
 		viewContainer,
 		// dialogStr,
 		// container.Render(m.filelist.View()),
 		m.StatusBar.View(),
-	)
+	))
 
 }
 
 func Run(token string) {
 
-	// gt = gist.NewGist(token)
-	app = tea.NewProgram(newAppModel(), tea.WithAltScreen())
+	zone.NewGlobal()
+
+	app = tea.NewProgram(newAppModel(), tea.WithAltScreen(), tea.WithMouseCellMotion())
 
 	go func() {
 		// utils.Log("init...")
