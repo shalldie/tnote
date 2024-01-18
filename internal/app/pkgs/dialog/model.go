@@ -6,6 +6,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	zone "github.com/lrstanley/bubblezone"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/utils"
@@ -123,6 +124,26 @@ func (m DialogModel) Update(msg tea.Msg) (DialogModel, tea.Cmd) {
 
 		}
 
+	case tea.MouseMsg:
+		if msg.Button != tea.MouseButtonLeft {
+			return m, nil
+		}
+		if zone.Get(m.ID + "textarea").InBounds(msg) {
+			m.TabIndex = -1 // 0-1
+			m.nextTab()
+		}
+		if zone.Get(m.ID + "btn-cancel").InBounds(msg) {
+			m.TabIndex = 0 // 1-1
+			m.nextTab()
+			m.Close()
+		}
+		if zone.Get(m.ID + "btn-ok").InBounds(msg) {
+			m.TabIndex = 1 // 2-1
+			m.nextTab()
+			m.FnOK()
+		}
+		return m, nil
+
 	}
 	return m.propagate(msg)
 }
@@ -145,7 +166,7 @@ func (m DialogModel) View() string {
 	message := lipgloss.NewStyle().Width(diaWidth).Align(lipgloss.Left).Render(m.Payload.Message)
 
 	// prompt
-	prompt := lipgloss.NewStyle().Render(m.TextInput.View())
+	prompt := zone.Mark(m.ID+"textarea", lipgloss.NewStyle().Render(m.TextInput.View()))
 
 	ui = lipgloss.JoinVertical(lipgloss.Top,
 		message,
@@ -153,8 +174,8 @@ func (m DialogModel) View() string {
 	)
 
 	// btn
-	btnCancel := utils.Ternary(m.TabIndex == 1, activeButtonStyle, buttonStyle).Render("取消")
-	btnOK := utils.Ternary(m.TabIndex == 2, activeButtonStyle, buttonStyle).Render("确定")
+	btnCancel := zone.Mark(m.ID+"btn-cancel", utils.Ternary(m.TabIndex == 1, activeButtonStyle, buttonStyle).Render("取消"))
+	btnOK := zone.Mark(m.ID+"btn-ok", utils.Ternary(m.TabIndex == 2, activeButtonStyle, buttonStyle).Render("确定"))
 	buttons := lipgloss.JoinHorizontal(lipgloss.Top,
 		utils.Ternary(m.Payload.Mode != ModeAlert, btnCancel, ""),
 		btnOK,

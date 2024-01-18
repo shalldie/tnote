@@ -1,5 +1,7 @@
 package model
 
+import zone "github.com/lrstanley/bubblezone"
+
 type IBaseModel interface {
 	// Init() tea.Cmd
 	// Update(msg tea.Msg) (any, tea.Cmd)
@@ -11,6 +13,7 @@ type IBaseModel interface {
 }
 
 type BaseModel struct {
+	ID     string
 	Width  int
 	Height int
 	Active bool
@@ -33,5 +36,7 @@ func (m *BaseModel) Blur() {
 }
 
 func NewBaseModel() *BaseModel {
-	return &BaseModel{}
+	return &BaseModel{
+		ID: zone.NewPrefix(),
+	}
 }

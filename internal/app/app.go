@@ -35,10 +35,9 @@ func newAppModel() AppModel {
 	m := AppModel{
 		BaseModel: model.NewBaseModel(),
 
-		FileList:  file_list.New(),
-		FilePanel: file_panel.New(),
-		StatusBar: status_bar.New(),
-		// ConfirmModel: NewConfirmModel(),
+		FileList:    file_list.New(),
+		FilePanel:   file_panel.New(),
+		StatusBar:   status_bar.New(),
 		DialogModel: dialog.New(),
 	}
 
@@ -66,10 +65,6 @@ func (m *AppModel) Blur() {
 
 func (m AppModel) Init() tea.Cmd {
 
-	// batches := gs.Map[IBaseModel](m.getComponents(),func (item IBaseModel)  {
-
-	// })
-
 	return tea.Batch(
 		m.FileList.Init(),
 		m.FilePanel.Init(),
@@ -79,14 +74,10 @@ func (m AppModel) Init() tea.Cmd {
 }
 
 func (m AppModel) propagate(msg tea.Msg) (tea.Model, tea.Cmd) {
-	// cmds := []tea.Cmd{}
 	var cmd tea.Cmd
 	var cmds []tea.Cmd
+
 	// Propagate to all children.
-	// m.tabs, _ = m.tabs.Update(msg)
-	// m.dialog, _ = m.dialog.Update(msg)
-	// m.list1, _ = m.list1.Update(msg)
-	// m.list2, _ = m.list2.Update(msg)
 
 	m.StatusBar, cmd = m.StatusBar.Update(msg)
 	cmds = append(cmds, cmd)
@@ -102,17 +93,6 @@ func (m AppModel) propagate(msg tea.Msg) (tea.Model, tea.Cmd) {
 		cmds = append(cmds, cmd)
 	}
 
-	// if msg, ok := msg.(tea.WindowSizeMsg); ok {
-	// 	// m.FileList.Resize(40, msg.Height-3)
-	// 	// m.FilePanel.Resize(msg.Width-40-4, msg.Height-1)
-	// 	m.Resize(msg.Width, msg.Height)
-
-	// 	// msg.Height -= m.tabs.(tabs).height + m.list1.(list).height
-	// 	// m.history, _ = m.history.Update(msg)
-	// 	return m, nil
-	// }
-
-	// m.history, _ = m.history.Update(msg)
 	return m, tea.Batch(cmds...)
 }
 
@@ -221,7 +201,6 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m AppModel) View() string {
 
 	viewContainer := lipgloss.NewStyle().
-		// Background(lipgloss.Color("#282a35")).
 		Height(m.Height - 1).Render(
 		lipgloss.JoinHorizontal(
 			lipgloss.Left,
@@ -230,32 +209,16 @@ func (m AppModel) View() string {
 		),
 	)
 
-	// block := lipgloss.PlaceHorizontal(80, lipgloss.Center, fancyStyledParagraph)
 	dialogView := m.DialogModel.View()
 	viewContainer = dialog.PlaceOverlay(
 		m.Width/2-lipgloss.Width(dialogView)/2, m.Height/2-lipgloss.Height(dialogView)/2-3,
-		// (m.Width-m.ConfirmModel.Width)/2, (m.Height-m.ConfirmModel.Height)/2,
 		dialogView,
-		// fmt.Sprintf("%v,%v,%v,%v", m.Width/2, m.ConfirmModel.Width/2, m.Height/2, m.ConfirmModel.Height/2),
 		viewContainer,
 	)
-
-	// dialogStr := lipgloss.Place(
-	// 	m.Width, m.Height,
-	// 	lipgloss.Center, lipgloss.Center,
-	// 	m.ConfirmModel.View(),
-	// 	lipgloss.WithWhitespaceChars("x"),
-	// )
-
-	// container := lipgloss.NewStyle().
-	// 	// Background(lipgloss.AdaptiveColor{Light: "#F25D94", Dark: "#F25D94"}).
-	// 	Height(m.height - 1)
 
 	return zone.Scan(lipgloss.JoinVertical(
 		lipgloss.Top,
 		viewContainer,
-		// dialogStr,
-		// container.Render(m.filelist.View()),
 		m.StatusBar.View(),
 	))
 
