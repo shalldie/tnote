@@ -118,7 +118,7 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 				return m, nil
 
 			case "r":
-				file := store.Gist.GetFile()
+				file := store.State.GetFile()
 				if file != nil {
 					go m.renameFile(file.FileName)
 				}
@@ -129,7 +129,7 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 				return m, nil
 
 			case "d":
-				file := store.Gist.GetFile()
+				file := store.State.GetFile()
 				if file != nil {
 					go m.delFile(file.FileName)
 				}
@@ -201,18 +201,27 @@ func (m *FileListModel) selectFile(filename string) {
 	}
 
 	// gist
-	// m.list.SelectedItem()
-	targetIndex = gs.FindIndex(store.Gist.Files, func(item *gist.GistFile, i int) bool {
-		return item.FileName == filename
-	})
+	flItem, _ := m.list.SelectedItem().(FileListItem)
+	file := flItem.GistFile
+	curFile := store.State.GetFile()
 
-	if targetIndex != store.Gist.CurrentIndex {
+	if file != curFile {
 		go func() {
-			store.Gist.CurrentIndex = targetIndex
-
+			store.State.SetFile(file)
 			store.Send(store.CMD_UPDATE_FILE(""))
 		}()
 	}
+	// targetIndex = gs.FindIndex(store.Gist.Files, func(item *gist.GistFile, i int) bool {
+	// 	return item.FileName == filename
+	// })
+
+	// if targetIndex != store.Gist.CurrentIndex {
+	// 	go func() {
+	// 		store.Gist.CurrentIndex = targetIndex
+
+	// 		store.Send(store.CMD_UPDATE_FILE(""))
+	// 	}()
+	// }
 }
 
 func New() FileListModel {

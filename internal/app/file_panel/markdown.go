@@ -50,7 +50,7 @@ func (m *MarkdownModel) renderFile() {
 	if store.Gist == nil {
 		return
 	}
-	curFile := store.Gist.GetFile()
+	curFile := store.State.GetFile()
 	m.file = curFile
 	if curFile != nil {
 		m.Viewport.SetContent(
