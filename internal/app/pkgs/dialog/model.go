@@ -70,7 +70,7 @@ func (m *DialogModel) Show(payload *DialogPayload) {
 func (m *DialogModel) Close() {
 	m.Active = false
 	store.State.InputFocus = false
-	go store.Send(store.CMD_APP_FOCUS(""))
+	go store.Send(store.CMD_APP_FOCUS(1))
 }
 
 func (m *DialogModel) FnOK() {
@@ -114,7 +114,7 @@ func (m DialogModel) Update(msg tea.Msg) (DialogModel, tea.Cmd) {
 				return m, nil
 			}
 			if m.TabIndex == 2 {
-				m.FnOK()
+				go m.FnOK()
 				return m, nil
 			}
 

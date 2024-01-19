@@ -7,6 +7,7 @@ import (
 	"github.com/charmbracelet/bubbles/viewport"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	zone "github.com/lrstanley/bubblezone"
 	"github.com/shalldie/tnote/internal/app/astyles"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
@@ -85,6 +86,27 @@ func (m MarkdownModel) Update(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 		m.renderFile()
 		return m, nil
 
+	case tea.MouseMsg:
+		// FIXME: dialog 关闭按钮位置重合，会触发 markdown active
+		if !zone.Get(m.ID).InBounds(msg) {
+			return m, nil
+		}
+
+		// 向下滚动
+		if msg.Button == tea.MouseButtonWheelDown && msg.Action == tea.MouseActionPress {
+			m.Viewport.SetYOffset(m.Viewport.YOffset + 1)
+		}
+		// 向上 滚动
+		if msg.Button == tea.MouseButtonWheelUp && msg.Action == tea.MouseActionPress {
+			m.Viewport.SetYOffset(m.Viewport.YOffset - 1)
+		}
+		// 点击
+		if msg.Button == tea.MouseButtonLeft {
+			go store.Send(store.CMD_APP_FOCUS(2))
+		}
+
+		return m, nil
+
 	case tea.KeyMsg:
 		switch msg.String() {
 		}
@@ -99,7 +121,12 @@ func (m MarkdownModel) View() string {
 	// style := lipgloss.NewStyle().Width(m.Width).Height(m.Height).
 	// 	Background(lipgloss.Color("#282a35"))
 
-	return fmt.Sprintf("%s\n%s\n%s", m.headerView(), m.Viewport.View(), m.footerView())
+	return zone.Mark(m.ID, lipgloss.JoinVertical(lipgloss.Center,
+		m.headerView(),
+		m.Viewport.View(),
+		m.footerView(),
+	))
+	// return fmt.Sprintf("%s\n%s\n%s", m.headerView(), m.Viewport.View(), m.footerView())
 	// return m.Viewport.View()
 }
 

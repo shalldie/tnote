@@ -64,6 +64,23 @@ func (m *AppModel) Blur() {
 	m.DialogModel.Blur()
 }
 
+// index: 1-filelist 2-filepanel
+func (m *AppModel) focusPanel(index int) bool {
+	if m.DialogModel.Active || store.State.InputFocus {
+		return false
+	}
+	m.Blur()
+
+	if index == 1 {
+		m.FileList.Focus()
+	}
+	if index == 2 {
+		m.FilePanel.Focus()
+	}
+
+	return true
+}
+
 func (m AppModel) Init() tea.Cmd {
 
 	return tea.Batch(
@@ -115,17 +132,15 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		return m, nil
 
 	case store.CMD_APP_FOCUS:
-		m.Blur()
-		m.FileList.Focus()
-		return m, nil
+		if m.focusPanel(int(msg)) {
+			return m, nil
+		}
 
 	case store.CMD_INVOKE_EDIT:
 		if store.State.Editing {
-			m.FileList.Blur()
-			m.FilePanel.Focus()
+			m.focusPanel(2)
 		} else {
-			m.FilePanel.Blur()
-			m.FileList.Focus()
+			m.focusPanel(1)
 		}
 		return m, nil
 
@@ -145,16 +160,12 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 
 		case "left":
-			if !m.DialogModel.Active && !store.State.InputFocus {
-				m.Blur()
-				m.FileList.Focus()
+			if m.focusPanel(1) {
 				return m, nil
 			}
 
 		case "right":
-			if !m.DialogModel.Active && !store.State.InputFocus {
-				m.Blur()
-				m.FilePanel.Focus()
+			if m.focusPanel(2) {
 				return m, nil
 			}
 

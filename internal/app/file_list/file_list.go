@@ -66,7 +66,10 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 	switch msg := msg.(type) {
 
 	case tea.MouseMsg:
-		isHover := zone.Get(m.ID).InBounds(msg)
+		if store.State.InputFocus || !zone.Get(m.ID).InBounds(msg) {
+			return m, nil
+		}
+		isHover := m.Active && zone.Get(m.ID).InBounds(msg)
 		// 向下滚动
 		if isHover && msg.Button == tea.MouseButtonWheelDown && msg.Action == tea.MouseActionPress {
 			m.list.CursorDown()
@@ -76,9 +79,13 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 			m.list.CursorUp()
 		}
 
-		// 点击选择 list item
+		// click
 		if msg.Button == tea.MouseButtonLeft {
-
+			// active
+			if !m.Active {
+				go store.Send(store.CMD_APP_FOCUS(1))
+			}
+			// 选择
 			for _, listItem := range m.list.VisibleItems() {
 				item, _ := listItem.(FileListItem)
 				if zone.Get(item.ID+"title").InBounds(msg) || zone.Get(item.ID+"des").InBounds(msg) {
@@ -87,7 +94,6 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 					break
 				}
 			}
-
 		}
 
 		return m, nil

@@ -48,7 +48,7 @@ func (m StatusBarModel) Update(msg tea.Msg) (StatusBarModel, tea.Cmd) {
 		}
 
 	case tea.MouseMsg:
-		if msg.Button != tea.MouseButtonLeft {
+		if msg.Button != tea.MouseButtonLeft || store.State.InputFocus {
 			return m, nil
 		}
 		if zone.Get(ABOUT_ID).InBounds(msg) {

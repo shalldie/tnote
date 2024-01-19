@@ -16,7 +16,7 @@ type FileListItem struct {
 }
 
 func withEllipsis(content string) string {
-	ellipsis := "..."
+	ellipsis := "…"
 
 	content = strings.Split(content, "\n")[0]
 	runeContent := []rune(content)
