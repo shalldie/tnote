@@ -5,7 +5,10 @@ import (
 )
 
 var (
+	// 版本
 	VERSION = "v1.0.1"
+	// filelist 宽度
+	FileListWidth = 42
 )
 
 // https://github.com/charmbracelet/lipgloss/issues/40

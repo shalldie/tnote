@@ -1,7 +1,11 @@
 // 全局状态
 package store
 
-import "github.com/shalldie/tnote/internal/gist"
+import (
+	"sync"
+
+	"github.com/shalldie/tnote/internal/gist"
+)
 
 var Gist *gist.Gist
 
@@ -14,6 +18,23 @@ type storeState struct {
 
 	// 编辑中
 	Editing bool
+
+	// 当前文件
+	file *gist.GistFile
+}
+
+var fileLock sync.Mutex
+
+func (s *storeState) GetFile() *gist.GistFile {
+	fileLock.Lock()
+	defer fileLock.Unlock()
+	return s.file
+}
+
+func (s *storeState) SetFile(file *gist.GistFile) {
+	fileLock.Lock()
+	defer fileLock.Unlock()
+	s.file = file
 }
 
 func Setup(token string) {

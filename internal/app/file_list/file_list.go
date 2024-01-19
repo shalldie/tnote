@@ -8,6 +8,7 @@ import (
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	zone "github.com/lrstanley/bubblezone"
 	"github.com/shalldie/gog/gs"
 	"github.com/shalldie/tnote/internal/app/astyles"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
@@ -54,7 +55,7 @@ func (m FileListModel) propagate(msg tea.Msg) (FileListModel, tea.Cmd) {
 
 		// 所有的操作，选择、过滤等，同时同步到list、gist
 		if item, ok := m.list.SelectedItem().(FileListItem); ok {
-			m.selectFile(item.gistfile.FileName)
+			m.selectFile(item.FileName)
 		}
 	}
 	return m, tea.Batch(cmds...)
@@ -63,6 +64,33 @@ func (m FileListModel) propagate(msg tea.Msg) (FileListModel, tea.Cmd) {
 func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 
 	switch msg := msg.(type) {
+
+	case tea.MouseMsg:
+		isHover := zone.Get(m.ID).InBounds(msg)
+		// 向下滚动
+		if isHover && msg.Button == tea.MouseButtonWheelDown && msg.Action == tea.MouseActionPress {
+			m.list.CursorDown()
+		}
+		// 向上 滚动
+		if isHover && msg.Button == tea.MouseButtonWheelUp && msg.Action == tea.MouseActionPress {
+			m.list.CursorUp()
+		}
+
+		// 点击选择 list item
+		if msg.Button == tea.MouseButtonLeft {
+
+			for _, listItem := range m.list.VisibleItems() {
+				item, _ := listItem.(FileListItem)
+				if zone.Get(item.ID+"title").InBounds(msg) || zone.Get(item.ID+"des").InBounds(msg) {
+					// m.list.Select(i)
+					m.selectFile(item.FileName)
+					break
+				}
+			}
+
+		}
+
+		return m, nil
 
 	case store.CMD_REFRESH_FILES:
 		if len(string(msg)) > 0 {
@@ -133,10 +161,10 @@ func (m FileListModel) View() string {
 
 	header := m.headerView()
 	body := style.Render(content)
-	return lipgloss.JoinVertical(lipgloss.Left,
+	return zone.Mark(m.ID, lipgloss.JoinVertical(lipgloss.Left,
 		header,
 		body,
-	)
+	))
 }
 
 func (m FileListModel) headerView() string {
@@ -152,7 +180,10 @@ func (m FileListModel) headerView() string {
 
 func (m *FileListModel) refreshFiles() tea.Cmd {
 	items := gs.Map(store.Gist.Files, func(f *gist.GistFile, i int) list.Item {
-		return FileListItem{gistfile: f}
+		return FileListItem{
+			ID:       m.ID + f.FileName,
+			GistFile: f,
+		}
 	})
 	return m.list.SetItems(items)
 }
@@ -161,7 +192,7 @@ func (m *FileListModel) selectFile(filename string) {
 	// list
 	targetIndex := gs.FindIndex[list.Item](m.list.VisibleItems(), func(item list.Item, i int) bool {
 		if fli, ok := item.(FileListItem); ok {
-			return fli.gistfile.FileName == filename
+			return fli.FileName == filename
 		}
 		return false
 	})
@@ -170,6 +201,7 @@ func (m *FileListModel) selectFile(filename string) {
 	}
 
 	// gist
+	// m.list.SelectedItem()
 	targetIndex = gs.FindIndex(store.Gist.Files, func(item *gist.GistFile, i int) bool {
 		return item.FileName == filename
 	})

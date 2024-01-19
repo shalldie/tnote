@@ -13,6 +13,7 @@ import (
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/status_bar"
 	"github.com/shalldie/tnote/internal/app/store"
+	"github.com/shalldie/tnote/internal/conf"
 )
 
 var (
@@ -47,7 +48,7 @@ func newAppModel() AppModel {
 func (m *AppModel) Resize(width int, height int) {
 	m.BaseModel.Resize(width, height)
 
-	lWidth := 42
+	lWidth := conf.FileListWidth
 	m.FileList.Resize(lWidth, height-3)
 	m.FilePanel.Resize(width-lWidth-4, height-1)
 	m.StatusBar.Resize(width, 1)
