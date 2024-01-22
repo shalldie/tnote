@@ -87,8 +87,7 @@ func (m MarkdownModel) Update(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 		return m, nil
 
 	case tea.MouseMsg:
-		// FIXME: dialog 关闭按钮位置重合，会触发 markdown active
-		if !zone.Get(m.ID).InBounds(msg) {
+		if !zone.Get(m.ID).InBounds(msg) || store.State.DialogMode {
 			return m, nil
 		}
 
@@ -101,7 +100,7 @@ func (m MarkdownModel) Update(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 			m.Viewport.SetYOffset(m.Viewport.YOffset - 1)
 		}
 		// 点击
-		if msg.Button == tea.MouseButtonLeft {
+		if msg.Button == tea.MouseButtonLeft && msg.Action == tea.MouseActionPress {
 			go store.Send(store.CMD_APP_FOCUS(2))
 		}
 

@@ -15,6 +15,8 @@ type FileListItem struct {
 	*gist.GistFile
 }
 
+// 文字太长被截断的时候，zone会不生效
+// 这里动态计算下最适合的宽度，填充「…」
 func withEllipsis(content string) string {
 	ellipsis := "…"
 
@@ -40,7 +42,6 @@ func withEllipsis(content string) string {
 	return content
 }
 
-// FIXME: 文字太长被截断的时候，zone不生效
 func (item FileListItem) Title() string {
 	return zone.Mark(item.ID+"title", withEllipsis(item.GistFile.FileName))
 }

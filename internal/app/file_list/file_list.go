@@ -80,7 +80,7 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 		}
 
 		// click
-		if msg.Button == tea.MouseButtonLeft {
+		if msg.Button == tea.MouseButtonLeft && msg.Action == tea.MouseActionPress {
 			// active
 			if !m.Active {
 				go store.Send(store.CMD_APP_FOCUS(1))

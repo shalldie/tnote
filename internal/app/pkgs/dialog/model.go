@@ -25,6 +25,16 @@ type DialogModel struct {
 	//todo: add OnClose
 }
 
+func (m *DialogModel) Focus() {
+	m.BaseModel.Focus()
+	store.State.DialogMode = true
+}
+
+func (m *DialogModel) Blur() {
+	m.BaseModel.Blur()
+	store.State.DialogMode = false
+}
+
 func (m *DialogModel) isPrompt() bool {
 	return m.Payload.Mode == ModePrompt
 }

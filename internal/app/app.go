@@ -25,10 +25,10 @@ type AppModel struct {
 	*model.BaseModel
 
 	// components
-	FileList    file_list.FileListModel
-	FilePanel   file_panel.FilePanelModel
-	StatusBar   status_bar.StatusBarModel
-	DialogModel dialog.DialogModel
+	FileList  file_list.FileListModel
+	FilePanel file_panel.FilePanelModel
+	StatusBar status_bar.StatusBarModel
+	Dialog    dialog.DialogModel
 }
 
 func newAppModel() AppModel {
@@ -36,10 +36,10 @@ func newAppModel() AppModel {
 	m := AppModel{
 		BaseModel: model.NewBaseModel(),
 
-		FileList:    file_list.New(),
-		FilePanel:   file_panel.New(),
-		StatusBar:   status_bar.New(),
-		DialogModel: dialog.New(),
+		FileList:  file_list.New(),
+		FilePanel: file_panel.New(),
+		StatusBar: status_bar.New(),
+		Dialog:    dialog.New(),
 	}
 
 	return m
@@ -52,7 +52,7 @@ func (m *AppModel) Resize(width int, height int) {
 	m.FileList.Resize(lWidth, height-3)
 	m.FilePanel.Resize(width-lWidth-4, height-1)
 	m.StatusBar.Resize(width, 1)
-	m.DialogModel.Resize(width, height)
+	m.Dialog.Resize(width, height)
 }
 
 func (m *AppModel) Blur() {
@@ -61,12 +61,12 @@ func (m *AppModel) Blur() {
 	m.FileList.Blur()
 	m.FilePanel.Blur()
 	m.StatusBar.Blur()
-	m.DialogModel.Blur()
+	m.Dialog.Blur()
 }
 
 // index: 1-filelist 2-filepanel
 func (m *AppModel) focusPanel(index int) bool {
-	if m.DialogModel.Active || store.State.InputFocus {
+	if m.Dialog.Active || store.State.InputFocus {
 		return false
 	}
 	m.Blur()
@@ -87,7 +87,7 @@ func (m AppModel) Init() tea.Cmd {
 		m.FileList.Init(),
 		m.FilePanel.Init(),
 		m.StatusBar.Init(),
-		m.DialogModel.Init(),
+		m.Dialog.Init(),
 	)
 }
 
@@ -106,8 +106,8 @@ func (m AppModel) propagate(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.FilePanel, cmd = m.FilePanel.Update(msg)
 	cmds = append(cmds, cmd)
 
-	if m.DialogModel.Active {
-		m.DialogModel, cmd = m.DialogModel.Update(msg)
+	if m.Dialog.Active {
+		m.Dialog, cmd = m.Dialog.Update(msg)
 		cmds = append(cmds, cmd)
 	}
 
@@ -128,7 +128,7 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case dialog.DialogPayload:
 		m.Blur()
-		m.DialogModel.Show(&msg)
+		m.Dialog.Show(&msg)
 		return m, nil
 
 	case store.CMD_APP_FOCUS:
@@ -221,7 +221,7 @@ func (m AppModel) View() string {
 		),
 	)
 
-	dialogView := m.DialogModel.View()
+	dialogView := m.Dialog.View()
 	viewContainer = dialog.PlaceOverlay(
 		m.Width/2-lipgloss.Width(dialogView)/2, m.Height/2-lipgloss.Height(dialogView)/2-3,
 		dialogView,

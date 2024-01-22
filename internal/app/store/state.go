@@ -19,6 +19,9 @@ type storeState struct {
 	// 编辑中
 	Editing bool
 
+	// 对话框模式
+	DialogMode bool
+
 	// 当前文件
 	file *gist.GistFile
 }
