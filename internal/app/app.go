@@ -6,12 +6,14 @@ import (
 
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	zone "github.com/lrstanley/bubblezone"
 	"github.com/shalldie/tnote/internal/app/file_list"
 	"github.com/shalldie/tnote/internal/app/file_panel"
 	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/status_bar"
 	"github.com/shalldie/tnote/internal/app/store"
+	"github.com/shalldie/tnote/internal/conf"
 )
 
 var (
@@ -23,10 +25,10 @@ type AppModel struct {
 	*model.BaseModel
 
 	// components
-	FileList    file_list.FileListModel
-	FilePanel   file_panel.FilePanelModel
-	StatusBar   status_bar.StatusBarModel
-	DialogModel dialog.DialogModel
+	FileList  file_list.FileListModel
+	FilePanel file_panel.FilePanelModel
+	StatusBar status_bar.StatusBarModel
+	Dialog    dialog.DialogModel
 }
 
 func newAppModel() AppModel {
@@ -37,8 +39,7 @@ func newAppModel() AppModel {
 		FileList:  file_list.New(),
 		FilePanel: file_panel.New(),
 		StatusBar: status_bar.New(),
-		// ConfirmModel: NewConfirmModel(),
-		DialogModel: dialog.New(),
+		Dialog:    dialog.New(),
 	}
 
 	return m
@@ -47,11 +48,11 @@ func newAppModel() AppModel {
 func (m *AppModel) Resize(width int, height int) {
 	m.BaseModel.Resize(width, height)
 
-	lWidth := 42
+	lWidth := conf.FileListWidth
 	m.FileList.Resize(lWidth, height-3)
 	m.FilePanel.Resize(width-lWidth-4, height-1)
 	m.StatusBar.Resize(width, 1)
-	m.DialogModel.Resize(width, height)
+	m.Dialog.Resize(width, height)
 }
 
 func (m *AppModel) Blur() {
@@ -60,32 +61,41 @@ func (m *AppModel) Blur() {
 	m.FileList.Blur()
 	m.FilePanel.Blur()
 	m.StatusBar.Blur()
-	m.DialogModel.Blur()
+	m.Dialog.Blur()
+}
+
+// index: 1-filelist 2-filepanel
+func (m *AppModel) focusPanel(index int) bool {
+	if m.Dialog.Active || store.State.InputFocus {
+		return false
+	}
+	m.Blur()
+
+	if index == 1 {
+		m.FileList.Focus()
+	}
+	if index == 2 {
+		m.FilePanel.Focus()
+	}
+
+	return true
 }
 
 func (m AppModel) Init() tea.Cmd {
-
-	// batches := gs.Map[IBaseModel](m.getComponents(),func (item IBaseModel)  {
-
-	// })
 
 	return tea.Batch(
 		m.FileList.Init(),
 		m.FilePanel.Init(),
 		m.StatusBar.Init(),
-		m.DialogModel.Init(),
+		m.Dialog.Init(),
 	)
 }
 
 func (m AppModel) propagate(msg tea.Msg) (tea.Model, tea.Cmd) {
-	// cmds := []tea.Cmd{}
 	var cmd tea.Cmd
 	var cmds []tea.Cmd
+
 	// Propagate to all children.
-	// m.tabs, _ = m.tabs.Update(msg)
-	// m.dialog, _ = m.dialog.Update(msg)
-	// m.list1, _ = m.list1.Update(msg)
-	// m.list2, _ = m.list2.Update(msg)
 
 	m.StatusBar, cmd = m.StatusBar.Update(msg)
 	cmds = append(cmds, cmd)
@@ -96,22 +106,11 @@ func (m AppModel) propagate(msg tea.Msg) (tea.Model, tea.Cmd) {
 	m.FilePanel, cmd = m.FilePanel.Update(msg)
 	cmds = append(cmds, cmd)
 
-	if m.DialogModel.Active {
-		m.DialogModel, cmd = m.DialogModel.Update(msg)
+	if m.Dialog.Active {
+		m.Dialog, cmd = m.Dialog.Update(msg)
 		cmds = append(cmds, cmd)
 	}
 
-	// if msg, ok := msg.(tea.WindowSizeMsg); ok {
-	// 	// m.FileList.Resize(40, msg.Height-3)
-	// 	// m.FilePanel.Resize(msg.Width-40-4, msg.Height-1)
-	// 	m.Resize(msg.Width, msg.Height)
-
-	// 	// msg.Height -= m.tabs.(tabs).height + m.list1.(list).height
-	// 	// m.history, _ = m.history.Update(msg)
-	// 	return m, nil
-	// }
-
-	// m.history, _ = m.history.Update(msg)
 	return m, tea.Batch(cmds...)
 }
 
@@ -129,21 +128,19 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 	case dialog.DialogPayload:
 		m.Blur()
-		m.DialogModel.Show(&msg)
+		m.Dialog.Show(&msg)
 		return m, nil
 
 	case store.CMD_APP_FOCUS:
-		m.Blur()
-		m.FileList.Focus()
-		return m, nil
+		if m.focusPanel(int(msg)) {
+			return m, nil
+		}
 
 	case store.CMD_INVOKE_EDIT:
 		if store.State.Editing {
-			m.FileList.Blur()
-			m.FilePanel.Focus()
+			m.focusPanel(2)
 		} else {
-			m.FilePanel.Blur()
-			m.FileList.Focus()
+			m.focusPanel(1)
 		}
 		return m, nil
 
@@ -163,16 +160,12 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 		switch msg.String() {
 
 		case "left":
-			if !m.DialogModel.Active && !store.State.InputFocus {
-				m.Blur()
-				m.FileList.Focus()
+			if m.focusPanel(1) {
 				return m, nil
 			}
 
 		case "right":
-			if !m.DialogModel.Active && !store.State.InputFocus {
-				m.Blur()
-				m.FilePanel.Focus()
+			if m.focusPanel(2) {
 				return m, nil
 			}
 
@@ -220,7 +213,6 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 func (m AppModel) View() string {
 
 	viewContainer := lipgloss.NewStyle().
-		// Background(lipgloss.Color("#282a35")).
 		Height(m.Height - 1).Render(
 		lipgloss.JoinHorizontal(
 			lipgloss.Left,
@@ -229,41 +221,26 @@ func (m AppModel) View() string {
 		),
 	)
 
-	// block := lipgloss.PlaceHorizontal(80, lipgloss.Center, fancyStyledParagraph)
-	dialogView := m.DialogModel.View()
+	dialogView := m.Dialog.View()
 	viewContainer = dialog.PlaceOverlay(
 		m.Width/2-lipgloss.Width(dialogView)/2, m.Height/2-lipgloss.Height(dialogView)/2-3,
-		// (m.Width-m.ConfirmModel.Width)/2, (m.Height-m.ConfirmModel.Height)/2,
 		dialogView,
-		// fmt.Sprintf("%v,%v,%v,%v", m.Width/2, m.ConfirmModel.Width/2, m.Height/2, m.ConfirmModel.Height/2),
 		viewContainer,
 	)
 
-	// dialogStr := lipgloss.Place(
-	// 	m.Width, m.Height,
-	// 	lipgloss.Center, lipgloss.Center,
-	// 	m.ConfirmModel.View(),
-	// 	lipgloss.WithWhitespaceChars("x"),
-	// )
-
-	// container := lipgloss.NewStyle().
-	// 	// Background(lipgloss.AdaptiveColor{Light: "#F25D94", Dark: "#F25D94"}).
-	// 	Height(m.height - 1)
-
-	return lipgloss.JoinVertical(
+	return zone.Scan(lipgloss.JoinVertical(
 		lipgloss.Top,
 		viewContainer,
-		// dialogStr,
-		// container.Render(m.filelist.View()),
 		m.StatusBar.View(),
-	)
+	))
 
 }
 
 func Run(token string) {
 
-	// gt = gist.NewGist(token)
-	app = tea.NewProgram(newAppModel(), tea.WithAltScreen())
+	zone.NewGlobal()
+
+	app = tea.NewProgram(newAppModel(), tea.WithAltScreen(), tea.WithMouseCellMotion())
 
 	go func() {
 		// utils.Log("init...")

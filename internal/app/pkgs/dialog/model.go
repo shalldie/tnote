@@ -6,6 +6,7 @@ import (
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
+	zone "github.com/lrstanley/bubblezone"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/utils"
@@ -22,6 +23,16 @@ type DialogModel struct {
 	TextInput textinput.Model
 
 	//todo: add OnClose
+}
+
+func (m *DialogModel) Focus() {
+	m.BaseModel.Focus()
+	store.State.DialogMode = true
+}
+
+func (m *DialogModel) Blur() {
+	m.BaseModel.Blur()
+	store.State.DialogMode = false
 }
 
 func (m *DialogModel) isPrompt() bool {
@@ -69,7 +80,17 @@ func (m *DialogModel) Show(payload *DialogPayload) {
 func (m *DialogModel) Close() {
 	m.Active = false
 	store.State.InputFocus = false
-	go store.Send(store.CMD_APP_FOCUS(""))
+	go store.Send(store.CMD_APP_FOCUS(1))
+}
+
+func (m *DialogModel) FnOK() {
+	ok := true
+	if m.Payload.FnOK != nil {
+		ok = m.Payload.FnOK(strings.TrimSpace(m.TextInput.Value()))
+	}
+	if ok {
+		m.Close()
+	}
 }
 
 func (m DialogModel) Init() tea.Cmd {
@@ -103,13 +124,7 @@ func (m DialogModel) Update(msg tea.Msg) (DialogModel, tea.Cmd) {
 				return m, nil
 			}
 			if m.TabIndex == 2 {
-				ok := true
-				if m.Payload.FnOK != nil {
-					ok = m.Payload.FnOK(strings.TrimSpace(m.TextInput.Value()))
-				}
-				if ok {
-					m.Close()
-				}
+				go m.FnOK()
 				return m, nil
 			}
 
@@ -118,6 +133,26 @@ func (m DialogModel) Update(msg tea.Msg) (DialogModel, tea.Cmd) {
 			return m, nil
 
 		}
+
+	case tea.MouseMsg:
+		if msg.Button != tea.MouseButtonLeft {
+			return m, nil
+		}
+		if zone.Get(m.ID + "textarea").InBounds(msg) {
+			m.TabIndex = -1 // 0-1
+			m.nextTab()
+		}
+		if zone.Get(m.ID + "btn-cancel").InBounds(msg) {
+			m.TabIndex = 0 // 1-1
+			m.nextTab()
+			m.Close()
+		}
+		if zone.Get(m.ID + "btn-ok").InBounds(msg) {
+			m.TabIndex = 1 // 2-1
+			m.nextTab()
+			m.FnOK()
+		}
+		return m, nil
 
 	}
 	return m.propagate(msg)
@@ -141,7 +176,7 @@ func (m DialogModel) View() string {
 	message := lipgloss.NewStyle().Width(diaWidth).Align(lipgloss.Left).Render(m.Payload.Message)
 
 	// prompt
-	prompt := lipgloss.NewStyle().Render(m.TextInput.View())
+	prompt := zone.Mark(m.ID+"textarea", lipgloss.NewStyle().Render(m.TextInput.View()))
 
 	ui = lipgloss.JoinVertical(lipgloss.Top,
 		message,
@@ -149,8 +184,8 @@ func (m DialogModel) View() string {
 	)
 
 	// btn
-	btnCancel := utils.Ternary(m.TabIndex == 1, activeButtonStyle, buttonStyle).Render("取消")
-	btnOK := utils.Ternary(m.TabIndex == 2, activeButtonStyle, buttonStyle).Render("确定")
+	btnCancel := zone.Mark(m.ID+"btn-cancel", utils.Ternary(m.TabIndex == 1, activeButtonStyle, buttonStyle).Render("取消"))
+	btnOK := zone.Mark(m.ID+"btn-ok", utils.Ternary(m.TabIndex == 2, activeButtonStyle, buttonStyle).Render("确定"))
 	buttons := lipgloss.JoinHorizontal(lipgloss.Top,
 		utils.Ternary(m.Payload.Mode != ModeAlert, btnCancel, ""),
 		btnOK,

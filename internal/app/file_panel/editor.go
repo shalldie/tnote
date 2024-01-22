@@ -39,7 +39,7 @@ func (m *EditorModel) Blur() {
 }
 
 func (m *EditorModel) Save() {
-	file := store.Gist.GetFile()
+	file := store.State.GetFile()
 	content := m.TextArea.Value()
 
 	m.Blur()
@@ -85,7 +85,7 @@ func (m EditorModel) Update(msg tea.Msg) (EditorModel, tea.Cmd) {
 
 	case store.CMD_UPDATE_FILE:
 		// m.Resize(m.Width, m.Height)
-		curFile := store.Gist.GetFile()
+		curFile := store.State.GetFile()
 		if curFile != nil {
 			m.TextArea.SetValue(curFile.Content)
 			for i := 0; i < 2*len(strings.Split(curFile.Content, "\n")); i++ {
@@ -123,7 +123,7 @@ func (m EditorModel) headerView() string {
 	titleStyle := lipgloss.NewStyle().Foreground(astyles.PRIMARY_ACTIVE_COLOR).Padding(0, 1).Bold(m.Active)
 	title := func() string {
 		// if store
-		file := store.Gist.GetFile()
+		file := store.State.GetFile()
 		if file == nil {
 			return titleStyle.Render("")
 		}

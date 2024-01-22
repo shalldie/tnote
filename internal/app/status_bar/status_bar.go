@@ -1,18 +1,14 @@
 package status_bar
 
 import (
-	"fmt"
-	"strings"
 	"time"
 
 	"github.com/charmbracelet/bubbles/spinner"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
-	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
+	zone "github.com/lrstanley/bubblezone"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
-	"github.com/shalldie/tnote/internal/conf"
-	"github.com/shalldie/tnote/internal/utils"
 )
 
 var S_ID = 1
@@ -46,27 +42,19 @@ func (m StatusBarModel) Update(msg tea.Msg) (StatusBarModel, tea.Cmd) {
 		switch msg.String() {
 
 		case "f12":
-			go func() {
-				content := fmt.Sprintf(`
-# tnote
-
-Note in terminal. 终端运行的记事本。
-
-> 版本 `+"`%v`"+`
-> [Github](https://github.com/shalldie/tnote)
-				`, conf.VERSION)
-
-				message := utils.RenderMarkdown(strings.TrimSpace(content), 50)
-
-				store.Send(dialog.DialogPayload{
-					Mode:    dialog.ModeAlert,
-					Message: message,
-					Width:   50,
-				})
-			}()
+			go m.showAbout()
 			return m, nil
 
 		}
+
+	case tea.MouseMsg:
+		if msg.Button != tea.MouseButtonLeft || store.State.InputFocus {
+			return m, nil
+		}
+		if zone.Get(ABOUT_ID).InBounds(msg) {
+			go m.showAbout()
+		}
+		return m, nil
 
 	case store.StatusPayload:
 		if store.State.Status.Duration > 0 {
@@ -84,6 +72,7 @@ Note in terminal. 终端运行的记事本。
 			}()
 		}
 		return m, nil
+
 	}
 
 	return m.propagate(msg)
@@ -113,7 +102,7 @@ func (m StatusBarModel) View() string {
 
 	// version
 	versionStyle := baseStyle.Copy().Background(lipgloss.Color("#6124DF"))
-	versionCol := versionStyle.Render("🛎️  关于 - F12")
+	versionCol := zone.Mark(ABOUT_ID, versionStyle.Render("🛎️  关于 - F12"))
 
 	// SPACE
 	w := lipgloss.Width

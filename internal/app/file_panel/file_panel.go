@@ -20,6 +20,10 @@ func (m *FilePanelModel) Resize(width int, height int) {
 }
 
 func (m *FilePanelModel) Focus() {
+	if m.Active {
+		return
+	}
+
 	m.BaseModel.Focus()
 	// m.Markdown.Focus()
 	if !store.State.Editing {
@@ -30,6 +34,9 @@ func (m *FilePanelModel) Focus() {
 }
 
 func (m *FilePanelModel) Blur() {
+	if !m.Active {
+		return
+	}
 	m.BaseModel.Blur()
 	m.Markdown.Blur()
 	m.Editor.Blur()

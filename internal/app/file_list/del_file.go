@@ -20,7 +20,7 @@ func (m *FileListModel) delFile(filename string) {
 
 				store.Gist.UpdateFile(filename, nil)
 
-				go store.Send(store.StatusPayload{
+				store.Send(store.StatusPayload{
 					Loading:  false,
 					Message:  fmt.Sprintf("「%v」完成删除", filename),
 					Duration: 5,

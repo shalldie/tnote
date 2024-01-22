@@ -1,6 +1,6 @@
 package store
 
-type CMD_APP_FOCUS string
+type CMD_APP_FOCUS int
 
 // 更新全部文件
 type CMD_REFRESH_FILES string

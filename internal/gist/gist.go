@@ -12,10 +12,9 @@ import (
 type H map[string]any
 
 type Gist struct {
-	TOKEN        string
-	Model        *GistModel
-	CurrentIndex int
-	Files        []*GistFile
+	TOKEN string
+	Model *GistModel
+	Files []*GistFile
 }
 
 func NewGist(token string) *Gist {
@@ -207,11 +206,4 @@ func (g *Gist) updateFiles() {
 		return gs.IndexOf(fileNames, f1.FileName) < gs.IndexOf(fileNames, f2.FileName)
 	})
 	g.Files = files
-}
-
-func (g *Gist) GetFile() *GistFile {
-	if g.CurrentIndex >= len(g.Files) {
-		return nil
-	}
-	return g.Files[g.CurrentIndex]
 }

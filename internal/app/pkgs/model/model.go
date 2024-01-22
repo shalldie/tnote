@@ -1,5 +1,7 @@
 package model
 
+import zone "github.com/lrstanley/bubblezone"
+
 type IBaseModel interface {
 	// Init() tea.Cmd
 	// Update(msg tea.Msg) (any, tea.Cmd)
@@ -11,6 +13,7 @@ type IBaseModel interface {
 }
 
 type BaseModel struct {
+	ID     string
 	Width  int
 	Height int
 	Active bool
@@ -24,14 +27,22 @@ func (m *BaseModel) Resize(width int, height int) {
 
 // 获取焦点
 func (m *BaseModel) Focus() {
+	if m.Active {
+		return
+	}
 	m.Active = true
 }
 
 // 失去焦点
 func (m *BaseModel) Blur() {
+	if !m.Active {
+		return
+	}
 	m.Active = false
 }
 
 func NewBaseModel() *BaseModel {
-	return &BaseModel{}
+	return &BaseModel{
+		ID: zone.NewPrefix(),
+	}
 }

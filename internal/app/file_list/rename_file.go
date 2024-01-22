@@ -29,12 +29,12 @@ func (m *FileListModel) renameFile(filename string) {
 
 				store.Gist.UpdateFile(filename, &gist.UpdateGistPayload{Filename: newname})
 
-				go store.Send(store.StatusPayload{
+				store.Send(store.StatusPayload{
 					Loading:  false,
 					Message:  fmt.Sprintf("「%v」->「%v」完成重命名", filename, newname),
 					Duration: 5,
 				})
-				go store.Send(store.CMD_REFRESH_FILES(newname))
+				store.Send(store.CMD_REFRESH_FILES(newname))
 			}()
 
 			return true

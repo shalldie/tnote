@@ -14,7 +14,7 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/shalldie/tnote/ci.yml?logo=github&style=flat-square)](https://github.com/shalldie/tnote/actions)
 [![License](https://img.shields.io/github/license/shalldie/tnote?logo=github&style=flat-square)](https://github.com/shalldie/tnote)
 
-<img src="https://github.com/shalldie/tnote/assets/9987486/4f7f7b51-766f-49a9-b388-8e40c0692fd2" width="900">
+<img src="https://github.com/shalldie/tnote/assets/9987486/f8c405ff-6907-4a77-977b-5cb30f03d40e" width="900">
 
 </div>
 
@@ -23,7 +23,7 @@
 ## 功能 🎯
 
 - [x] 面板
-  - [x] 快捷键操作
+  - [x] 快捷键、鼠标操作
   - [x] 存储持久化
   - [x] Confirm、Prompt、Alert
 - [x] 文件
