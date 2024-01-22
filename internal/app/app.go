@@ -249,6 +249,8 @@ func Run(token string) {
 			app.Send(cmd)
 		}
 
+		app.SetWindowTitle(fmt.Sprintf("tnote - %v", conf.VERSION))
+
 		store.Send(store.StatusPayload{
 			Loading: true,
 			Message: "loading...",
