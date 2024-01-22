@@ -74,7 +74,7 @@ tnote
 
 ```bash
 # install
-go install github.com/shalldie/tnote
+go install github.com/shalldie/tnote@latest
 # run
 tnote
 ```
@@ -82,7 +82,7 @@ tnote
 ### 3. docker
 
 ```bash
-docker run -it -e TNOTE_GIST_TOKEN=$TNOTE_GIST_TOKEN shalldie/tnote
+docker run -it -e TNOTE_GIST_TOKEN=$TNOTE_GIST_TOKEN shalldie/tnote:latest
 ```
 
 ## LICENSE
