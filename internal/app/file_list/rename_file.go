@@ -6,12 +6,13 @@ import (
 	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/gist"
+	"github.com/shalldie/tnote/internal/i18n"
 )
 
 func (m *FileListModel) renameFile(filename string) {
 	store.Send(dialog.DialogPayload{
 		Mode:        dialog.ModePrompt,
-		Message:     fmt.Sprintf("重命名文件「%v」", filename),
+		Message:     fmt.Sprintf(i18n.Get(i18nTpl, "rename_message"), filename),
 		PromptValue: filename,
 		FnOK: func(args ...string) bool {
 			newname := args[0]
@@ -24,14 +25,14 @@ func (m *FileListModel) renameFile(filename string) {
 			go func() {
 				go store.Send(store.StatusPayload{
 					Loading: true,
-					Message: "重命名中...",
+					Message: i18n.Get(i18nTpl, "rename_renaming"),
 				})
 
 				store.Gist.UpdateFile(filename, &gist.UpdateGistPayload{Filename: newname})
 
 				store.Send(store.StatusPayload{
 					Loading:  false,
-					Message:  fmt.Sprintf("「%v」->「%v」完成重命名", filename, newname),
+					Message:  fmt.Sprintf(i18n.Get(i18nTpl, "rename_done"), filename, newname),
 					Duration: 5,
 				})
 				store.Send(store.CMD_REFRESH_FILES(newname))

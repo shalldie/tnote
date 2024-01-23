@@ -14,6 +14,7 @@ import (
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/gist"
+	"github.com/shalldie/tnote/internal/i18n"
 	"github.com/shalldie/tnote/internal/utils"
 )
 
@@ -177,7 +178,7 @@ func (m FileListModel) headerView() string {
 	borderStyle := listBorderStyle.GetBorderStyle()
 
 	titleStyle := lipgloss.NewStyle().Foreground(astyles.PRIMARY_ACTIVE_COLOR).Padding(0, 1).Bold(m.Active)
-	title := titleStyle.Render("文件列表")
+	title := titleStyle.Render(i18n.Get(i18nTpl, "filelist_title"))
 	// title := titleStyle.Render("Mr. Pager")
 	// ━┓
 	line := lipgloss.NewStyle().Foreground(m.curForeground()).Render(strings.Repeat(borderStyle.Top, utils.MathMax(0, m.Width-lipgloss.Width(title)+1)) + borderStyle.TopRight)
@@ -255,7 +256,7 @@ func New() FileListModel {
 	list.DisableQuitKeybindings()
 	list.KeyMap = newListKeyMap()
 	list.AdditionalFullHelpKeys = additionalKeyMap
-	list.FilterInput.Prompt = "过滤："
+	list.FilterInput.Prompt = i18n.Get(i18nTpl, "filelist_filter")
 
 	// model
 	model := FileListModel{

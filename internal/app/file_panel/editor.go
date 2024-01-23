@@ -11,6 +11,7 @@ import (
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/gist"
+	"github.com/shalldie/tnote/internal/i18n"
 	"github.com/shalldie/tnote/internal/utils"
 )
 
@@ -50,14 +51,14 @@ func (m *EditorModel) Save() {
 
 	go store.Send(store.StatusPayload{
 		Loading: true,
-		Message: "保存中...",
+		Message: i18n.Get(i18nTpl, "saving"),
 	})
 	store.Gist.UpdateFile(file.FileName, &gist.UpdateGistPayload{Content: content})
 	go store.Send(store.CMD_REFRESH_FILES(""))
 	go store.Send(store.CMD_UPDATE_FILE(""))
 	go store.Send(store.StatusPayload{
 		Loading:  false,
-		Message:  fmt.Sprintf("「%v」保存完毕", file.FileName),
+		Message:  fmt.Sprintf(i18n.Get(i18nTpl, "saved"), file.FileName),
 		Duration: 5,
 	})
 }
@@ -148,7 +149,8 @@ func (m EditorModel) footerView() string {
 
 func NewEditorModel() EditorModel {
 	ta := textarea.New()
-	ta.Placeholder = "please enter..."
+	ta.Placeholder = i18n.Get(i18nTpl, "editor_placeholder")
+	// ta.Placeholder = "请输入..."
 	ta.CharLimit = 0
 
 	return EditorModel{

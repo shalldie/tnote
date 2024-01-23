@@ -21,7 +21,7 @@ func (m *StatusBarModel) showAbout() {
 
 Note in terminal. 终端运行的记事本。
 
-> 版本 `+"`%v`"+`
+> Version `+"`%v`"+`
 > [Github](https://github.com/shalldie/tnote)
 				`, conf.VERSION)
 
