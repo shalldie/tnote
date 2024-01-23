@@ -1,9 +1,7 @@
 package status_bar
 
 var i18nTpl = `
-en_US:
-  about: 🛎️  About - F12
-
-zh_CN:
-  about: 🛎️  关于 - F12
+about:
+  en_US: 🛎️  About - F12
+  zh_CN: 🛎️  关于 - F12
 `

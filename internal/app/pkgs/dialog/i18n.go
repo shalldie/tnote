@@ -1,14 +1,13 @@
 package dialog
 
 var i18nTpl = `
-en_US:
-  cancel: Cancel
-  ok: OK
-  placeholder: Please enter...
-
-
-zh_CN:
-  cancel: 取消
-  ok: 确定
-  placeholder: 请输入...
+cancel:
+  en_US: Cancel
+  zh_CN: 取消
+ok:
+  en_US: OK
+  zh_CN: 确定
+placeholder:
+  en_US: Please enter...
+  zh_CN: 请输入...
 `

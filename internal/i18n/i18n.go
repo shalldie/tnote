@@ -40,5 +40,5 @@ func Get(tpl string, key string) string {
 	if err != nil {
 		panic(err)
 	}
-	return dic[LANG][key]
+	return dic[key][LANG]
 }
