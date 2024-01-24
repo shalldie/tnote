@@ -22,22 +22,22 @@ English | [中文](./README.zh-CN.md)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/shalldie/tnote/ci.yml?logo=github&style=flat-square)](https://github.com/shalldie/tnote/actions)
 [![License](https://img.shields.io/github/license/shalldie/tnote?logo=github&style=flat-square)](https://github.com/shalldie/tnote)
 
-<img src="https://github.com/shalldie/tnote/assets/9987486/1964cbc5-3a10-47a1-9d13-66f8debb8ad0" width="900">
+<img src="https://github.com/shalldie/tnote/assets/9987486/109dac72-1596-46d5-a727-e939f74a0fd2" width="900">
 
 </div>
 
 <!-- 封面区域 end -->
 
-`tnote` is a notepad application running on `Terminal`, allowing you to quickly access, synchronize content, and record your life on different devices.
+`tnote` is a notepad application running on `Terminal`, allowing you to quickly access, synchronize content, and record your idea on different devices.
 
 - [x] Application 🎯
   - [x] Shortcut keys, mouse operations
-  - [x] Storage cloud persistence
+  - [x] Cloud storage persistence
   - [x] i18n
 - [x] Files
   - [x] Add, delete, check, and modify
 - [x] Detail 📝
-  - [x] Markdown highlight
+  - [x] Markdown highlighted
   - [x] Edit and save
 - [x] Installation
   - [x] binary
@@ -53,7 +53,7 @@ The application is built on GitHub Gist and requires [applying for an access tok
 export TNOTE_GIST_TOKEN="<your_access_token>"
 ```
 
-| 环境变量              | 默认值  | 描述                                                  |
+| Environment Variable  | Default | Description                                           |
 | :-------------------- | :-----: | :---------------------------------------------------- |
 | `TNOTE_GIST_TOKEN`    |         | `access token` applied for                            |
 | `TNOTE_LANG` / `LANG` | `en_US` | Language preferred, optional values: `en_US`、`zh_CN` |
@@ -62,7 +62,7 @@ export TNOTE_GIST_TOKEN="<your_access_token>"
 
 ### 1. binary
 
-[Download](https://github.com/shalldie/tnote/releases), download and execute it, adding to `PATH`` would be even better.
+[Download](https://github.com/shalldie/tnote/releases), download and execute it, adding to `PATH` would be even better.
 
 | File                 | OS                       |
 | :------------------- | :----------------------- |

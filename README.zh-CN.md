@@ -22,17 +22,17 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/shalldie/tnote/ci.yml?logo=github&style=flat-square)](https://github.com/shalldie/tnote/actions)
 [![License](https://img.shields.io/github/license/shalldie/tnote?logo=github&style=flat-square)](https://github.com/shalldie/tnote)
 
-<img src="https://github.com/shalldie/tnote/assets/9987486/1964cbc5-3a10-47a1-9d13-66f8debb8ad0" width="900">
+<img src="https://github.com/shalldie/tnote/assets/9987486/109dac72-1596-46d5-a727-e939f74a0fd2" width="900">
 
 </div>
 
 <!-- 封面区域 end -->
 
-`tnote` 是一个运行在 `Terminal` 的记事本应用程序，让你可以在不同设备快速访问、同步内容，记录自己的生活。
+`tnote` 是一个运行在 `Terminal` 的记事本应用程序，让你可以在不同设备快速访问、同步内容，记录自己的想法。
 
 - [x] 应用 🎯
   - [x] 快捷键、鼠标操作
-  - [x] 存储云端持久化
+  - [x] 云端存储持久化
   - [x] 国际化
 - [x] 文件
   - [x] 增删查改

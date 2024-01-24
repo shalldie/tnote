@@ -49,10 +49,10 @@ key_down:
   en_US: down
   zh_CN: 下
 key_pgup:
-  en_US: prev page
+  en_US: prev pg
   zh_CN: 上一页
 key_pgdown:
-  en_US: next page
+  en_US: next pg
   zh_CN: 下一页
 key_filter:
   en_US: filter
@@ -71,7 +71,7 @@ key_filter_less:
   zh_CN: 折叠
 # key custom
 key_new:
-  en_US: new file
+  en_US: new
   zh_CN: 新建
 key_rename:
   en_US: rename

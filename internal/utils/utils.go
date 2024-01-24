@@ -37,6 +37,7 @@ func RenderMarkdown(content string, width int) string {
 	r, _ := glamour.NewTermRenderer(
 		glamour.WithWordWrap(width),
 		glamour.WithStandardStyle(background),
+		glamour.WithPreservedNewLines(),
 		// glamour.WithAutoStyle(),
 	)
 
