@@ -1,7 +1,7 @@
 <!-- 中英文切换 -->
 <div align="right">
 
-English | [中文](./README.zh-CN.md)
+[English](./README.md) | 中文
 
 </div>
 <!-- 中英文切换 end -->
@@ -28,43 +28,43 @@ English | [中文](./README.zh-CN.md)
 
 <!-- 封面区域 end -->
 
-`tnote` is a notepad application running on `Terminal`, allowing you to quickly access, synchronize content, and record your life on different devices.
+`tnote` 是一个运行在 `Terminal` 的记事本应用程序，让你可以在不同设备快速访问、同步内容，记录自己的生活。
 
-- [x] Application 🎯
-  - [x] Shortcut keys, mouse operations
-  - [x] Storage cloud persistence
-  - [x] i18n
-- [x] Files
-  - [x] Add, delete, check, and modify
-- [x] Detail 📝
-  - [x] Markdown highlight
-  - [x] Edit and save
-- [x] Installation
+- [x] 应用 🎯
+  - [x] 快捷键、鼠标操作
+  - [x] 存储云端持久化
+  - [x] 国际化
+- [x] 文件
+  - [x] 增删查改
+- [x] 详情 📝
+  - [x] Markdown 高亮
+  - [x] 编辑、保存
+- [x] 安装
   - [x] binary
   - [x] go install
   - [x] docker
 
-## Prepare & Config
+## 准备&配置
 
-The application is built on GitHub Gist and requires [applying for an access token](https://github.com/settings/tokens/new), and then add it to the environment variable `TNOTE_GIST_TOKEN`。
+应用基于 github gist 构建，需要去 [申请 access token](https://github.com/settings/tokens/new)，然后添加到环境变量 `TNOTE_GIST_TOKEN`。
 
 ```bash
 # ~/.bashrc
 export TNOTE_GIST_TOKEN="<your_access_token>"
 ```
 
-| 环境变量              | 默认值  | 描述                                                  |
-| :-------------------- | :-----: | :---------------------------------------------------- |
-| `TNOTE_GIST_TOKEN`    |         | `access token` applied for                            |
-| `TNOTE_LANG` / `LANG` | `en_US` | Language preferred, optional values: `en_US`、`zh_CN` |
+| 环境变量              | 默认值  | 描述                                 |
+| :-------------------- | :-----: | :----------------------------------- |
+| `TNOTE_GIST_TOKEN`    |         | 申请到的 access token                |
+| `TNOTE_LANG` / `LANG` | `en_US` | 使用的语言，可选值：`en_US`、`zh_CN` |
 
-## Installation
+## 安装&运行
 
 ### 1. binary
 
-[Download](https://github.com/shalldie/tnote/releases), download and execute it, adding to `PATH`` would be even better.
+[Download](https://github.com/shalldie/tnote/releases)，下载后直接执行即可，加入 `PATH` 更佳。
 
-| File                 | OS                       |
+| 文件                 | 适用系统                 |
 | :------------------- | :----------------------- |
 | `tnote.darwin-amd64` | `Mac amd64`、`Mac arm64` |
 | `tnote.linux-amd64`  | `Linux amd64`            |
@@ -83,7 +83,7 @@ tnote
 
 ### 2. go install
 
-Need `go@1.20+` environment.
+需要 `go@1.20+` 环境
 
 ```bash
 # install

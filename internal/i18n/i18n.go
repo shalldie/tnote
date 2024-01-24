@@ -21,11 +21,10 @@ var (
 example:
 
 var i18nTpl = `
+hello:
 
-	en-US:
-		hello: hello
-	zh-CN:
-		hello: 你好
+	en_US: hello
+	zh_CN: 你好
 
 `
 
