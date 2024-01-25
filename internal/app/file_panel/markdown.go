@@ -92,11 +92,11 @@ func (m MarkdownModel) Update(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 		}
 
 		// 向下滚动
-		if msg.Button == tea.MouseButtonWheelDown && msg.Action == tea.MouseActionPress {
+		if msg.Button == tea.MouseButtonWheelDown && msg.Action == tea.MouseActionPress && m.Active {
 			m.Viewport.SetYOffset(m.Viewport.YOffset + 1)
 		}
 		// 向上 滚动
-		if msg.Button == tea.MouseButtonWheelUp && msg.Action == tea.MouseActionPress {
+		if msg.Button == tea.MouseButtonWheelUp && msg.Action == tea.MouseActionPress && m.Active {
 			m.Viewport.SetYOffset(m.Viewport.YOffset - 1)
 		}
 		// 点击

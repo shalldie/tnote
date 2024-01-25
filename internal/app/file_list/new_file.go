@@ -7,13 +7,14 @@ import (
 	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/gist"
+	"github.com/shalldie/tnote/internal/i18n"
 )
 
 func validateFilename(filename string) bool {
 	if utf8.RuneCountInString(filename) < 3 {
 
 		go store.Send(store.StatusPayload{
-			Message:  "文件名长度需要大于3",
+			Message:  i18n.Get(i18nTpl, "new_namevalid"),
 			Duration: 3,
 		})
 		return false
@@ -24,7 +25,7 @@ func validateFilename(filename string) bool {
 func (m *FileListModel) newFile() {
 	store.Send(dialog.DialogPayload{
 		Mode:    dialog.ModePrompt,
-		Message: "新建文件，请输入文件名",
+		Message: i18n.Get(i18nTpl, "new_message"),
 		FnOK: func(args ...string) bool {
 			filename := args[0]
 
@@ -36,13 +37,13 @@ func (m *FileListModel) newFile() {
 			go func() {
 				go store.Send(store.StatusPayload{
 					Loading: true,
-					Message: "新建中...",
+					Message: i18n.Get(i18nTpl, "new_creating"),
 				})
 				store.Gist.UpdateFile(filename, &gist.UpdateGistPayload{Content: "To be edited."})
 
 				store.Send(store.StatusPayload{
 					Loading:  false,
-					Message:  fmt.Sprintf("「%v」完成新建", filename),
+					Message:  fmt.Sprintf(i18n.Get(i18nTpl, "new_done"), filename),
 					Duration: 5,
 				})
 				store.Send(store.CMD_REFRESH_FILES(filename))

@@ -9,6 +9,7 @@ import (
 	zone "github.com/lrstanley/bubblezone"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
+	"github.com/shalldie/tnote/internal/i18n"
 	"github.com/shalldie/tnote/internal/utils"
 )
 
@@ -164,7 +165,7 @@ func (m DialogModel) View() string {
 		return ""
 	}
 
-	diaWidth := 42
+	diaWidth := 46
 	ui := ""
 
 	// width
@@ -176,7 +177,7 @@ func (m DialogModel) View() string {
 	message := lipgloss.NewStyle().Width(diaWidth).Align(lipgloss.Left).Render(m.Payload.Message)
 
 	// prompt
-	prompt := zone.Mark(m.ID+"textarea", lipgloss.NewStyle().Render(m.TextInput.View()))
+	prompt := zone.Mark(m.ID+"textarea", lipgloss.NewStyle().MarginTop(1).Render(m.TextInput.View()))
 
 	ui = lipgloss.JoinVertical(lipgloss.Top,
 		message,
@@ -184,8 +185,8 @@ func (m DialogModel) View() string {
 	)
 
 	// btn
-	btnCancel := zone.Mark(m.ID+"btn-cancel", utils.Ternary(m.TabIndex == 1, activeButtonStyle, buttonStyle).Render("取消"))
-	btnOK := zone.Mark(m.ID+"btn-ok", utils.Ternary(m.TabIndex == 2, activeButtonStyle, buttonStyle).Render("确定"))
+	btnCancel := zone.Mark(m.ID+"btn-cancel", utils.Ternary(m.TabIndex == 1, activeButtonStyle, buttonStyle).Render(i18n.Get(i18nTpl, "cancel")))
+	btnOK := zone.Mark(m.ID+"btn-ok", utils.Ternary(m.TabIndex == 2, activeButtonStyle, buttonStyle).Render(i18n.Get(i18nTpl, "ok")))
 	buttons := lipgloss.JoinHorizontal(lipgloss.Top,
 		utils.Ternary(m.Payload.Mode != ModeAlert, btnCancel, ""),
 		btnOK,
@@ -198,7 +199,7 @@ func (m DialogModel) View() string {
 
 func New() DialogModel {
 	input := textinput.New()
-	input.Placeholder = "请输入..."
+	input.Placeholder = i18n.Get(i18nTpl, "placeholder")
 	input.Width = 30
 	input.PromptStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
 	input.TextStyle = input.PromptStyle

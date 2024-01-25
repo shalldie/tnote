@@ -9,6 +9,7 @@ import (
 	zone "github.com/lrstanley/bubblezone"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
+	"github.com/shalldie/tnote/internal/i18n"
 )
 
 var S_ID = 1
@@ -102,7 +103,7 @@ func (m StatusBarModel) View() string {
 
 	// version
 	versionStyle := baseStyle.Copy().Background(lipgloss.Color("#6124DF"))
-	versionCol := zone.Mark(ABOUT_ID, versionStyle.Render("🛎️  关于 - F12"))
+	versionCol := zone.Mark(ABOUT_ID, versionStyle.Render(i18n.Get(i18nTpl, "about")))
 
 	// SPACE
 	w := lipgloss.Width
