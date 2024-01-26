@@ -8,7 +8,7 @@ var (
 	// 版本
 	VERSION = "v1.2.0"
 	// filelist 宽度
-	FileListWidth = 42
+	FileListWidth = 44
 )
 
 // https://github.com/charmbracelet/lipgloss/issues/40

@@ -16,23 +16,21 @@ import (
 // https://github.com/charmbracelet/lipgloss/pull/102/files
 
 type DialogModel struct {
-	*model.BaseModel
+	*model.BoxModel
 	Payload  *DialogPayload
 	TabIndex int // 0-textarea 1-btnCancel 2-btnOK
 
 	// components
 	TextInput textinput.Model
-
-	//todo: add OnClose
 }
 
 func (m *DialogModel) Focus() {
-	m.BaseModel.Focus()
+	m.BoxModel.Focus()
 	store.State.DialogMode = true
 }
 
 func (m *DialogModel) Blur() {
-	m.BaseModel.Blur()
+	m.BoxModel.Blur()
 	store.State.DialogMode = false
 }
 
@@ -173,6 +171,9 @@ func (m DialogModel) View() string {
 		diaWidth = m.Payload.Width
 	}
 
+	// title
+	m.HTitle = m.Payload.Title
+
 	// message
 	message := lipgloss.NewStyle().Width(diaWidth).Align(lipgloss.Left).Render(m.Payload.Message)
 
@@ -192,19 +193,32 @@ func (m DialogModel) View() string {
 		btnOK,
 	)
 
-	ui = lipgloss.JoinVertical(lipgloss.Right, ui, buttons)
+	ui = dialogBoxStyle.Render(
+		lipgloss.JoinVertical(lipgloss.Right, ui, buttons),
+	)
 
-	return dialogBoxStyle.Render(ui)
+	m.Resize(
+		lipgloss.Width(ui)+2, //  border
+		lipgloss.Height(ui),
+	)
+
+	return m.Render(ui)
 }
 
 func New() DialogModel {
+	// box
+	box := model.NewBoxModel()
+	box.BorderActiveColor = lipgloss.Color("#874BFD")
+
+	// input
 	input := textinput.New()
 	input.Placeholder = i18n.Get(i18nTpl, "placeholder")
 	input.Width = 30
 	input.PromptStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
 	input.TextStyle = input.PromptStyle
+
 	return DialogModel{
-		BaseModel: model.NewBaseModel(),
+		BoxModel:  box,
 		TextInput: input,
 	}
 }

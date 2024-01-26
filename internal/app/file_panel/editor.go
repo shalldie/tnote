@@ -16,14 +16,14 @@ import (
 )
 
 type EditorModel struct {
-	*model.BaseModel
+	*model.BoxModel
 
 	TextArea textarea.Model
 }
 
 func (m *EditorModel) Resize(width int, height int) {
-	m.BaseModel.Resize(width, height)
-	m.TextArea.SetWidth(width)
+	m.BoxModel.Resize(width, height)
+	m.TextArea.SetWidth(width - 2)
 	m.TextArea.SetHeight(height - 2)
 }
 
@@ -115,9 +115,22 @@ func (m EditorModel) View() string {
 	if !m.Active {
 		return ""
 	}
-	return fmt.Sprintf("%s\n%s\n%s", m.headerView(), m.TextArea.View(), m.footerView())
-	// style := lipgloss.NewStyle().BorderTop(true)
-	// return style.Render(m.TextArea.View())
+
+	m.HTitle = func() string {
+		// if store
+		file := store.State.GetFile()
+		if file == nil {
+			return ""
+		}
+		return file.FileName
+	}()
+
+	m.FTitle = func() string {
+		percent := float64(m.TextArea.Line()+1) / float64(m.TextArea.LineCount()) * 100
+		return fmt.Sprintf("%3.f%%", percent)
+	}()
+
+	return m.Render(m.TextArea.View())
 }
 
 func (m EditorModel) headerView() string {
@@ -150,11 +163,11 @@ func (m EditorModel) footerView() string {
 func NewEditorModel() EditorModel {
 	ta := textarea.New()
 	ta.Placeholder = i18n.Get(i18nTpl, "editor_placeholder")
-	// ta.Placeholder = "请输入..."
 	ta.CharLimit = 0
+	ta.Prompt = " "
 
 	return EditorModel{
-		BaseModel: model.NewBaseModel(),
-		TextArea:  ta,
+		BoxModel: model.NewBoxModel(),
+		TextArea: ta,
 	}
 }

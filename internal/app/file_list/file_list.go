@@ -2,7 +2,6 @@ package file_list
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/spinner"
@@ -10,32 +9,24 @@ import (
 	"github.com/charmbracelet/lipgloss"
 	zone "github.com/lrstanley/bubblezone"
 	"github.com/shalldie/gog/gs"
-	"github.com/shalldie/tnote/internal/app/astyles"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/gist"
 	"github.com/shalldie/tnote/internal/i18n"
-	"github.com/shalldie/tnote/internal/utils"
 )
 
-var listBorderStyle = lipgloss.NewStyle().Border(lipgloss.ThickBorder())
-
 type FileListModel struct {
-	*model.BaseModel
+	*model.BoxModel
 
 	spinner spinner.Model
 	list    list.Model
 }
 
 func (m *FileListModel) Resize(width int, height int) {
-	m.BaseModel.Resize(width, height)
+	m.BoxModel.Resize(width, height)
 
 	m.list.SetWidth(width - 2)
-	m.list.SetHeight(height)
-}
-
-func (m *FileListModel) curForeground() lipgloss.Color {
-	return utils.Ternary(m.Active, astyles.PRIMARY_ACTIVE_COLOR, astyles.PRIMARY_NORMAL_COLOR)
+	m.list.SetHeight(height - 2)
 }
 
 func (m FileListModel) Init() tea.Cmd {
@@ -150,14 +141,6 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 }
 
 func (m FileListModel) View() string {
-	// lipgloss.ThickBorder()
-	style := listBorderStyle.Copy().
-		BorderTop(false).
-		BorderForeground(m.curForeground())
-
-	style = style.
-		Width(m.Width).
-		Height(m.Height)
 
 	content := func() string {
 		if len(m.list.Items()) > 0 {
@@ -166,23 +149,7 @@ func (m FileListModel) View() string {
 		return fmt.Sprintf(" %v loading...", m.spinner.View())
 	}()
 
-	header := m.headerView()
-	body := style.Render(content)
-	return zone.Mark(m.ID, lipgloss.JoinVertical(lipgloss.Left,
-		header,
-		body,
-	))
-}
-
-func (m FileListModel) headerView() string {
-	borderStyle := listBorderStyle.GetBorderStyle()
-
-	titleStyle := lipgloss.NewStyle().Foreground(astyles.PRIMARY_ACTIVE_COLOR).Padding(0, 1).Bold(m.Active)
-	title := titleStyle.Render(i18n.Get(i18nTpl, "filelist_title"))
-	// title := titleStyle.Render("Mr. Pager")
-	// ━┓
-	line := lipgloss.NewStyle().Foreground(m.curForeground()).Render(strings.Repeat(borderStyle.Top, utils.MathMax(0, m.Width-lipgloss.Width(title)+1)) + borderStyle.TopRight)
-	return lipgloss.JoinHorizontal(lipgloss.Center, title, line)
+	return zone.Mark(m.ID, m.Render(content))
 }
 
 func (m *FileListModel) refreshFiles() tea.Cmd {
@@ -218,17 +185,6 @@ func (m *FileListModel) selectFile(filename string) {
 			store.Send(store.CMD_UPDATE_FILE(""))
 		}()
 	}
-	// targetIndex = gs.FindIndex(store.Gist.Files, func(item *gist.GistFile, i int) bool {
-	// 	return item.FileName == filename
-	// })
-
-	// if targetIndex != store.Gist.CurrentIndex {
-	// 	go func() {
-	// 		store.Gist.CurrentIndex = targetIndex
-
-	// 		store.Send(store.CMD_UPDATE_FILE(""))
-	// 	}()
-	// }
 }
 
 func New() FileListModel {
@@ -258,11 +214,15 @@ func New() FileListModel {
 	list.AdditionalFullHelpKeys = additionalKeyMap
 	list.FilterInput.Prompt = i18n.Get(i18nTpl, "filelist_filter")
 
+	// box
+	boxModel := model.NewBoxModel()
+	boxModel.HTitle = i18n.Get(i18nTpl, "filelist_title")
+
 	// model
 	model := FileListModel{
-		BaseModel: model.NewBaseModel(),
-		spinner:   s,
-		list:      list,
+		BoxModel: boxModel,
+		spinner:  s,
+		list:     list,
 	}
 
 	model.Focus()

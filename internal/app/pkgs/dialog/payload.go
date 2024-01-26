@@ -8,6 +8,7 @@ var (
 
 type DialogPayload struct {
 	Mode        int // 0 - alert模式，1 - confirm模式，2 - prompt模式
+	Title       string
 	Message     string
 	PromptValue string
 	FnOK        func(args ...string) bool

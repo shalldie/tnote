@@ -11,6 +11,7 @@ import (
 func (m *FileListModel) delFile(filename string) {
 	store.Send(dialog.DialogPayload{
 		Mode:    dialog.ModeConfirm,
+		Title:   i18n.Get(i18nTpl, "del_title"),
 		Message: fmt.Sprintf(i18n.Get(i18nTpl, "del_confirm"), filename),
 		FnOK: func(args ...string) bool {
 			go func() {

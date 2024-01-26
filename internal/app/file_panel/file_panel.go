@@ -2,7 +2,6 @@ package file_panel
 
 import (
 	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
 )
@@ -100,17 +99,11 @@ func (m FilePanelModel) Update(msg tea.Msg) (FilePanelModel, tea.Cmd) {
 }
 
 func (m FilePanelModel) View() string {
-	// style := utils.Ternary(m.Active, boxActiveStyle, boxStyle)
-	style := lipgloss.NewStyle()
-	style = style.Copy().
-		Width(m.Width).
-		Height(m.Height)
-	// Padding(0, 1)
 
 	if store.State.Editing {
-		return style.Render(m.Editor.View())
+		return m.Editor.View()
 	}
-	return style.Render(m.Markdown.View())
+	return m.Markdown.View()
 }
 
 func New() FilePanelModel {

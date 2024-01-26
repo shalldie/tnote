@@ -12,6 +12,7 @@ import (
 func (m *FileListModel) renameFile(filename string) {
 	store.Send(dialog.DialogPayload{
 		Mode:        dialog.ModePrompt,
+		Title:       i18n.Get(i18nTpl, "rename_title"),
 		Message:     fmt.Sprintf(i18n.Get(i18nTpl, "rename_message"), filename),
 		PromptValue: filename,
 		FnOK: func(args ...string) bool {

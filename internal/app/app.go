@@ -48,9 +48,9 @@ func newAppModel() AppModel {
 func (m *AppModel) Resize(width int, height int) {
 	m.BaseModel.Resize(width, height)
 
-	lWidth := conf.FileListWidth
-	m.FileList.Resize(lWidth, height-3)
-	m.FilePanel.Resize(width-lWidth-4, height-1)
+	lWidth := conf.FileListWidth // border另算
+	m.FileList.Resize(lWidth, height-1)
+	m.FilePanel.Resize(width-lWidth, height-1)
 	m.StatusBar.Resize(width, 1)
 	m.Dialog.Resize(width, height)
 }
@@ -240,7 +240,11 @@ func Run(token string) {
 
 	zone.NewGlobal()
 
-	app = tea.NewProgram(newAppModel(), tea.WithAltScreen(), tea.WithMouseCellMotion())
+	app = tea.NewProgram(
+		newAppModel(),
+		tea.WithAltScreen(),
+		tea.WithMouseCellMotion(),
+	)
 
 	go func() {
 		// utils.Log("init...")

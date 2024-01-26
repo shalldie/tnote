@@ -2,9 +2,12 @@ package file_list
 
 var i18nTpl = `
 # del file
+del_title:
+  en_US: Delete File
+  zh_CN: 删除文件
 del_confirm:
-  en_US: Are you sure you want to delete the file 「%v」?
-  zh_CN: 确定要删除文件「%v」吗？
+  en_US: Are you sure you want to delete 「%v」?
+  zh_CN: 确定要删除「%v」吗？
 del_deleting:
   en_US: deleting...
   zh_CN: 删除中...
@@ -12,6 +15,9 @@ del_done:
   en_US: 「%v」Complete deletion
   zh_CN: 「%v」完成删除
 # new file
+new_title:
+  en_US: New File
+  zh_CN: 新文件
 new_namevalid:
   en_US: The file name length needs to be greater than 3
   zh_CN: 文件名长度需要大于3
@@ -25,6 +31,9 @@ new_done:
   en_US: 「%v」Complete new creation
   zh_CN: 「%v」完成新建
 # rename file
+rename_title:
+  en_US: Rename File
+  zh_CN: 重命名
 rename_message:
   en_US: Rename file「%v」
   zh_CN: 重命名文件「%v」
