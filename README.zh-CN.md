@@ -11,7 +11,7 @@
 
 <img src="https://user-images.githubusercontent.com/9987486/229472271-62a5d923-f7b7-416c-913e-c842ecc2de4d.png" width="320" />
 
-### Note in terminal, based on Github Gist. 🧑‍💻
+### Note in terminal, based on Github Gist. 🦋
 
 `终端运行的记事本，基于 Github Gist 构建。`
 
@@ -22,7 +22,7 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/shalldie/tnote/ci.yml?logo=github&style=flat-square)](https://github.com/shalldie/tnote/actions)
 [![License](https://img.shields.io/github/license/shalldie/tnote?logo=github&style=flat-square)](https://github.com/shalldie/tnote)
 
-<img src="https://github.com/shalldie/tnote/assets/9987486/109dac72-1596-46d5-a727-e939f74a0fd2" width="900">
+<img src="https://github.com/shalldie/tnote/assets/9987486/6e18aa03-59c8-402a-abca-eed293443dcc" width="900">
 
 </div>
 
