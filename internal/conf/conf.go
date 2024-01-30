@@ -6,7 +6,7 @@ import (
 
 var (
 	// 版本
-	VERSION = "v1.2.0"
+	VERSION = "v1.2.1"
 	// filelist 宽度
 	FileListWidth = 44
 )
