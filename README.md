@@ -11,9 +11,9 @@ English | [中文](./README.zh-CN.md)
 
 <img src="https://user-images.githubusercontent.com/9987486/229472271-62a5d923-f7b7-416c-913e-c842ecc2de4d.png" width="320" />
 
-### Note in terminal, based on Github Gist. 🦋
+### Cloud Notebook in terminal, based on Github Gist. 🦋
 
-`终端运行的记事本，基于 Github Gist 构建。`
+`终端中运行的云笔记本，基于 Github Gist 构建。`
 
 [![Release Version](https://img.shields.io/github/v/release/shalldie/tnote?display_name=tag&logo=github&style=flat-square)](https://github.com/shalldie/tnote)
 [![Docker Image Version](https://img.shields.io/docker/v/shalldie/tnote/latest?style=flat-square&logo=docker)](https://hub.docker.com/r/shalldie/tnote/tags)
@@ -28,7 +28,7 @@ English | [中文](./README.zh-CN.md)
 
 <!-- 封面区域 end -->
 
-`tnote` is a notepad application running on `Terminal`, allowing you to quickly access, synchronize content, and record your idea on different devices.
+`tnote` is a notebook application running on `Terminal`, allowing you to quickly access, synchronize content, and record your idea on different devices.
 
 - [x] Application 🎯
   - [x] Shortcut keys, mouse operations
