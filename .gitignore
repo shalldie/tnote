@@ -21,3 +21,4 @@ output
 __debug_bin
 # debug env
 *.env
+.vscode

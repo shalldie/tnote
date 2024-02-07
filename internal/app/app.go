@@ -236,7 +236,7 @@ func (m AppModel) View() string {
 
 }
 
-func Run(token string) {
+func Run() {
 
 	zone.NewGlobal()
 
@@ -260,7 +260,7 @@ func Run(token string) {
 			Message: "loading...",
 		})
 
-		store.Setup(token)
+		store.Setup()
 
 		store.Send(store.StatusPayload{Loading: false})
 		store.Send(store.CMD_REFRESH_FILES(""))

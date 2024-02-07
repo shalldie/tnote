@@ -40,8 +40,8 @@ func (s *storeState) SetFile(file *gist.GistFile) {
 	s.file = file
 }
 
-func Setup(token string) {
-	Gist = gist.NewGist(token).Setup()
+func Setup() {
+	Gist = gist.NewGist().Setup()
 }
 
 var State = &storeState{

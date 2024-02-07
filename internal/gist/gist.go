@@ -7,20 +7,21 @@ import (
 	"strconv"
 
 	"github.com/shalldie/gog/gs"
+	"github.com/shalldie/tnote/internal/conf"
 )
+
+const GITHUB_API_PREFIX = "https://api.github.com"
+const GITEE_API_PREFIX = "https://gitee.com/api/v5"
 
 type H map[string]any
 
 type Gist struct {
-	TOKEN string
 	Model *GistModel
 	Files []*GistFile
 }
 
-func NewGist(token string) *Gist {
-	return &Gist{
-		TOKEN: token,
-	}
+func NewGist() *Gist {
+	return &Gist{}
 }
 
 func (g *Gist) Setup() *Gist {
@@ -52,35 +53,48 @@ func (g *Gist) Setup() *Gist {
 	return g
 }
 
+func (g *Gist) fetch(url string, fetchOptions *FetchOptions) []byte {
+
+	apiPrefix := GITHUB_API_PREFIX
+
+	if conf.IsGitee() {
+		apiPrefix = GITEE_API_PREFIX
+
+		if fetchOptions.Method == "GET" {
+			if fetchOptions.Query == nil {
+				fetchOptions.Query = make(map[string]string)
+			}
+			fetchOptions.Query["access_token"] = conf.TNOTE_GIST_TOKEN_GITEE
+		}
+
+		if fetchOptions.Params != nil {
+			fetchOptions.Params["access_token"] = conf.TNOTE_GIST_TOKEN_GITEE
+		}
+
+	}
+
+	return fetch(apiPrefix+url, fetchOptions)
+}
+
 func (g *Gist) getHeaders() map[string]string {
+	// gitee
+	if conf.IsGitee() {
+		return map[string]string{
+			"Content-Type": "application/json;charset=UTF-8",
+		}
+	}
+	// github
 	return map[string]string{
 		"Accept":               "application/vnd.github+json",
-		"Authorization":        fmt.Sprintf("bearer %v", g.TOKEN),
+		"Authorization":        fmt.Sprintf("bearer %v", conf.TNOTE_GIST_TOKEN),
 		"X-GitHub-Api-Version": "2022-11-28",
 	}
 }
 
-// func (g *Gist) Query(content string) string {
-
-// 	client := &http.Client{}
-
-// 	paramsObj := make(map[string]string)
-// 	paramsObj["query"] = content
-// 	paramsBytes, _ := json.Marshal(paramsObj)
-
-// 	req, _ := http.NewRequest("POST", "https://api.github.com/graphql", bytes.NewReader(paramsBytes))
-// 	req.Header.Add("Authorization", fmt.Sprintf("bearer %v", g.TOKEN))
-
-// 	res, _ := client.Do(req)
-// 	body, _ := io.ReadAll(res.Body)
-
-// 	return string(body)
-// }
-
 // 获取 gists 列表
 func (g *Gist) FetchGists(page int, perPage int) []*GistModel {
 
-	body := fetch("https://api.github.com/gists", &FetchOptions{
+	body := g.fetch("/gists", &FetchOptions{
 		Method: "GET",
 		Query: map[string]string{
 			"page":     strconv.Itoa(page),
@@ -117,7 +131,7 @@ func (g *Gist) FetchFile(fileName string) string {
 
 // 创建 gist
 func (g *Gist) CreateGist(fileName string, content string) *GistModel {
-	body := fetch("https://api.github.com/gists", &FetchOptions{
+	body := g.fetch("/gists", &FetchOptions{
 		Method: "POST",
 		Params: H{
 			"title":       SPECIAL_DESCRIPTION,
@@ -132,8 +146,8 @@ func (g *Gist) CreateGist(fileName string, content string) *GistModel {
 		Headers: g.getHeaders(),
 	})
 
-	var model *GistModel
-
+	// var model *GistModel
+	model := &GistModel{}
 	err := json.Unmarshal(body, model)
 
 	if err != nil {
@@ -146,7 +160,7 @@ func (g *Gist) CreateGist(fileName string, content string) *GistModel {
 // 更新文件，https://docs.github.com/zh/rest/gists/gists?apiVersion=2022-11-28#update-a-gist
 func (g *Gist) UpdateFile(fileName string, payload *UpdateGistPayload) {
 
-	body := fetch("https://api.github.com/gists/"+g.Model.Id, &FetchOptions{
+	body := g.fetch("/gists/"+g.Model.Id, &FetchOptions{
 		Method:  "PATCH",
 		Headers: g.getHeaders(),
 		Params: H{
@@ -177,7 +191,7 @@ func (g *Gist) UpdateFile(fileName string, payload *UpdateGistPayload) {
 }
 
 func (g *Gist) Update() {
-	body := fetch("https://api.github.com/gists/"+g.Model.Id, &FetchOptions{
+	body := g.fetch("/gists/"+g.Model.Id, &FetchOptions{
 		Method:  "GET",
 		Headers: g.getHeaders(),
 	})
@@ -195,7 +209,8 @@ func (g *Gist) Update() {
 
 func (g *Gist) updateFiles() {
 	files := make([]*GistFile, 0)
-	for fileName := range g.Model.Files {
+	for fileName, file := range g.Model.Files {
+		file.FileName = fileName // 兼容 gitee 没有 fileName
 		files = append(files, g.Model.Files[fileName])
 	}
 	fileNames := gs.Map(files, func(f *GistFile, _ int) string {
