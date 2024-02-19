@@ -9,7 +9,8 @@ import (
 	"github.com/shalldie/tnote/internal/i18n"
 )
 
-func (m *FileListModel) renameFile(filename string) {
+func (m *FileListModel) renameFile(file *gist.GistFile) {
+	filename := file.FileName
 	store.Send(dialog.DialogPayload{
 		Mode:        dialog.ModePrompt,
 		Title:       i18n.Get(i18nTpl, "rename_title"),
@@ -29,7 +30,10 @@ func (m *FileListModel) renameFile(filename string) {
 					Message: i18n.Get(i18nTpl, "rename_renaming"),
 				})
 
-				store.Gist.UpdateFile(filename, &gist.UpdateGistPayload{Filename: newname})
+				store.Gist.UpdateFile(filename, &gist.UpdateGistPayload{
+					Filename: newname,
+					Content:  file.Content, // gitee 需要这个
+				})
 
 				store.Send(store.StatusPayload{
 					Loading:  false,
