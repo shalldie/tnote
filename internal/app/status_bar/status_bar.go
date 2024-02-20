@@ -9,6 +9,7 @@ import (
 	zone "github.com/lrstanley/bubblezone"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
+	"github.com/shalldie/tnote/internal/conf"
 	"github.com/shalldie/tnote/internal/i18n"
 )
 
@@ -42,15 +43,28 @@ func (m StatusBarModel) Update(msg tea.Msg) (StatusBarModel, tea.Cmd) {
 	case tea.KeyMsg:
 		switch msg.String() {
 
+		case "f10":
+			go store.Send(store.CMD_SHOW_PLATFORM(true))
+			return m, nil
+
 		case "f12":
 			go m.showAbout()
 			return m, nil
 
 		}
 
+	case store.CMD_SHOW_PLATFORM:
+		if msg {
+			go m.showPlatform()
+		}
+		return m, nil
+
 	case tea.MouseMsg:
 		if msg.Button != tea.MouseButtonLeft || store.State.InputFocus {
 			return m, nil
+		}
+		if zone.Get(PLATFORM_ID).InBounds(msg) {
+			go store.Send(store.CMD_SHOW_PLATFORM(true))
 		}
 		if zone.Get(ABOUT_ID).InBounds(msg) {
 			go m.showAbout()
@@ -101,6 +115,10 @@ func (m StatusBarModel) View() string {
 	// helpStyle := baseStyle.Copy().Background(lipgloss.Color("#A550DF"))
 	// helpCol := helpStyle.Render("🛎️  Help - F12")
 
+	// platform
+	pfStyle := baseStyle.Copy().Background(lipgloss.Color("#A550DF"))
+	pfCol := zone.Mark(PLATFORM_ID, pfStyle.Render(conf.PF_CURRENT+" - F10"))
+
 	// version
 	versionStyle := baseStyle.Copy().Background(lipgloss.Color("#6124DF"))
 	versionCol := zone.Mark(ABOUT_ID, versionStyle.Render(i18n.Get(i18nTpl, "about")))
@@ -111,13 +129,14 @@ func (m StatusBarModel) View() string {
 		// Foreground(lipgloss.Color("#FFFDF5")).
 		// Background(lipgloss.Color("#6124DF")).
 		// Width(m.Width - w(statusCol) - w(versionCol) - w(helpCol)).
-		Width(m.Width - w(statusCol) - w(versionCol)).
+		Width(m.Width - w(statusCol) - w(pfCol) - w(versionCol)).
 		Render(store.State.Status.Message)
 
 	return lipgloss.JoinHorizontal(lipgloss.Top,
 		statusCol,
 		spaceCol,
 		// helpCol,
+		pfCol,
 		versionCol,
 	)
 

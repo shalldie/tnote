@@ -3,10 +3,12 @@ package dialog
 import (
 	"strings"
 
+	"github.com/charmbracelet/bubbles/list"
 	"github.com/charmbracelet/bubbles/textinput"
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	zone "github.com/lrstanley/bubblezone"
+	"github.com/shalldie/gog/gs"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/i18n"
@@ -22,6 +24,7 @@ type DialogModel struct {
 
 	// components
 	TextInput textinput.Model
+	Select    list.Model
 }
 
 func (m *DialogModel) Focus() {
@@ -32,6 +35,10 @@ func (m *DialogModel) Focus() {
 func (m *DialogModel) Blur() {
 	m.BoxModel.Blur()
 	store.State.DialogMode = false
+}
+
+func (m *DialogModel) isSelect() bool {
+	return len(m.Payload.SelectList) > 0
 }
 
 func (m *DialogModel) isPrompt() bool {
@@ -74,6 +81,8 @@ func (m *DialogModel) Show(payload *DialogPayload) {
 	if m.isPrompt() {
 		m.TextInput.Focus()
 	}
+	// select
+	m.updateSelect()
 }
 
 func (m *DialogModel) Close() {
@@ -85,7 +94,13 @@ func (m *DialogModel) Close() {
 func (m *DialogModel) FnOK() {
 	ok := true
 	if m.Payload.FnOK != nil {
-		ok = m.Payload.FnOK(strings.TrimSpace(m.TextInput.Value()))
+		result := strings.TrimSpace(m.TextInput.Value())
+		if m.isSelect() {
+			if item, ok := m.Select.SelectedItem().(selectItem); ok {
+				result = string(item)
+			}
+		}
+		ok = m.Payload.FnOK(result)
 	}
 	if ok {
 		m.Close()
@@ -102,6 +117,9 @@ func (m DialogModel) propagate(msg tea.Msg) (DialogModel, tea.Cmd) {
 	var cmds []tea.Cmd
 
 	m.TextInput, cmd = m.TextInput.Update(msg)
+	cmds = append(cmds, cmd)
+
+	m.Select, cmd = m.Select.Update(msg)
 	cmds = append(cmds, cmd)
 
 	return m, tea.Batch(cmds...)
@@ -177,13 +195,20 @@ func (m DialogModel) View() string {
 	// message
 	message := lipgloss.NewStyle().Width(diaWidth).Align(lipgloss.Left).Render(m.Payload.Message)
 
+	// select
+	sl := utils.Ternary(m.isSelect(), m.Select.View(), "")
+
 	// prompt
 	prompt := zone.Mark(m.ID+"textarea", lipgloss.NewStyle().MarginTop(1).Render(m.TextInput.View()))
 
-	ui = lipgloss.JoinVertical(lipgloss.Top,
+	stacks := gs.Filter([]string{
 		message,
+		sl,
 		utils.Ternary(m.Payload.Mode == ModePrompt, prompt, ""),
-	)
+	}, func(str string, index int) bool {
+		return len(str) > 0
+	})
+	ui = lipgloss.JoinVertical(lipgloss.Top, stacks...)
 
 	// btn
 	btnCancel := zone.Mark(m.ID+"btn-cancel", utils.Ternary(m.TabIndex == 1, activeButtonStyle, buttonStyle).Render(i18n.Get(i18nTpl, "cancel")))
@@ -220,5 +245,6 @@ func New() DialogModel {
 	return DialogModel{
 		BoxModel:  box,
 		TextInput: input,
+		Select:    createSelect(),
 	}
 }
