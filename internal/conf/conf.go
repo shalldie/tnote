@@ -7,7 +7,7 @@ import (
 
 var (
 	// 版本
-	VERSION = "v1.2.1"
+	VERSION = "v1.3.0"
 	// gist token
 	TNOTE_GIST_TOKEN = ""
 	// gist token gitee

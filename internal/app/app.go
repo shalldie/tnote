@@ -248,7 +248,6 @@ func Run() {
 	)
 
 	go func() {
-		// utils.Log("init...")
 
 		store.SendImpl = func(cmd any) {
 			app.Send(cmd)

@@ -22,7 +22,7 @@
 [![Build Status](https://img.shields.io/github/actions/workflow/status/shalldie/tnote/ci.yml?logo=github&style=flat-square)](https://github.com/shalldie/tnote/actions)
 [![License](https://img.shields.io/github/license/shalldie/tnote?logo=github&style=flat-square)](https://github.com/shalldie/tnote)
 
-<img src="https://github.com/shalldie/tnote/assets/9987486/81a942ad-c00f-45ae-8e2f-3a29b4496bee" width="900">
+<img src="https://github.com/shalldie/tnote/assets/9987486/57902934-4a58-482a-adff-fafba92dbae9" width="900">
 
 </div>
 
