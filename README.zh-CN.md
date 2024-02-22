@@ -13,7 +13,7 @@
 
 ### Cloud Notebook in terminal, based on Gist. 🦋
 
-`终端中运行的云笔记本，基于 Github Gist 构建。`
+`终端中运行的云笔记本，基于 Gist 构建。`
 
 [![Release Version](https://img.shields.io/github/v/release/shalldie/tnote?display_name=tag&logo=github&style=flat-square)](https://github.com/shalldie/tnote)
 [![Docker Image Version](https://img.shields.io/docker/v/shalldie/tnote/latest?style=flat-square&logo=docker)](https://hub.docker.com/r/shalldie/tnote/tags)
