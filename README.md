@@ -11,7 +11,7 @@ English | [中文](./README.zh-CN.md)
 
 <img src="https://user-images.githubusercontent.com/9987486/229472271-62a5d923-f7b7-416c-913e-c842ecc2de4d.png" width="320" />
 
-### Cloud Notebook in terminal, based on Github Gist. 🦋
+### Cloud Notebook in terminal, based on Gist. 🦋
 
 `终端中运行的云笔记本，基于 Github Gist 构建。`
 
@@ -22,7 +22,7 @@ English | [中文](./README.zh-CN.md)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/shalldie/tnote/ci.yml?logo=github&style=flat-square)](https://github.com/shalldie/tnote/actions)
 [![License](https://img.shields.io/github/license/shalldie/tnote?logo=github&style=flat-square)](https://github.com/shalldie/tnote)
 
-<img src="https://github.com/shalldie/tnote/assets/9987486/81a942ad-c00f-45ae-8e2f-3a29b4496bee" width="900">
+<img src="https://github.com/shalldie/tnote/assets/9987486/57902934-4a58-482a-adff-fafba92dbae9" width="900">
 
 </div>
 
@@ -32,7 +32,7 @@ English | [中文](./README.zh-CN.md)
 
 - [x] Application 🎯
   - [x] Shortcut keys, mouse operations
-  - [x] Cloud storage persistence
+  - [x] Cloud storage persistence, support Github/Gitee
   - [x] i18n
 - [x] Files
   - [x] Add, delete, check, and modify
@@ -46,17 +46,20 @@ English | [中文](./README.zh-CN.md)
 
 ## Prepare & Config
 
-The application is built on GitHub Gist and requires [applying for an access token](https://github.com/settings/tokens/new), and then add it to the environment variable `TNOTE_GIST_TOKEN`。
+The application is built on gist, support Github/Gitee.
+
+- [Applying for Github access token](https://github.com/settings/tokens/new), and then add it to the environment variable `TNOTE_GIST_TOKEN`。
+- [Applying for Gitee access token](https://github.com/settings/tokens/new), and then add it to the environment variable `TNOTE_GIST_TOKEN`。
 
 ```bash
-# ~/.bashrc
+# ~/.bashrc, github
 export TNOTE_GIST_TOKEN="<your_access_token>"
 ```
 
-| Environment Variable  | Default | Description                                           |
-| :-------------------- | :-----: | :---------------------------------------------------- |
-| `TNOTE_GIST_TOKEN`    |         | `access token` applied for                            |
-| `TNOTE_LANG` / `LANG` | `en_US` | Language preferred, optional values: `en_US`、`zh_CN` |
+| Environment Variable                          | Default | Description                                           |
+| :-------------------------------------------- | :-----: | :---------------------------------------------------- |
+| `TNOTE_GIST_TOKEN` / `TNOTE_GIST_TOKEN_GITEE` |         | `access token` applied for                            |
+| `TNOTE_LANG` / `LANG`                         | `en_US` | Language preferred, optional values: `en_US`、`zh_CN` |
 
 ## Installation
 

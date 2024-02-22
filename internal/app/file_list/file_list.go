@@ -118,7 +118,7 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 			case "r":
 				file := store.State.GetFile()
 				if file != nil {
-					go m.renameFile(file.FileName)
+					go m.renameFile(file)
 				}
 				return m, nil
 

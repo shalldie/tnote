@@ -40,8 +40,18 @@ func (s *storeState) SetFile(file *gist.GistFile) {
 	s.file = file
 }
 
-func Setup(token string) {
-	Gist = gist.NewGist(token).Setup()
+func Setup() {
+	if Gist == nil {
+		Gist = gist.NewGist()
+	}
+	Send(StatusPayload{
+		Loading: true,
+		Message: "loading...",
+	})
+	Gist.Setup()
+	Send(StatusPayload{Loading: false})
+	Send(CMD_REFRESH_FILES(""))
+	Send(CMD_UPDATE_FILE(""))
 }
 
 var State = &storeState{

@@ -11,6 +11,7 @@ type DialogPayload struct {
 	Title       string
 	Message     string
 	PromptValue string
+	SelectList  []string
 	FnOK        func(args ...string) bool
 	Width       int // 宽度，默认 42
 }

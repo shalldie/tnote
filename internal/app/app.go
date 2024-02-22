@@ -7,6 +7,7 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 	"github.com/charmbracelet/lipgloss"
 	zone "github.com/lrstanley/bubblezone"
+	"github.com/shalldie/gog/gs"
 	"github.com/shalldie/tnote/internal/app/file_list"
 	"github.com/shalldie/tnote/internal/app/file_panel"
 	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
@@ -14,11 +15,11 @@ import (
 	"github.com/shalldie/tnote/internal/app/status_bar"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/conf"
+	"github.com/shalldie/tnote/internal/utils"
 )
 
 var (
 	app *tea.Program
-	// gt  *gist.Gist
 )
 
 type AppModel struct {
@@ -236,7 +237,7 @@ func (m AppModel) View() string {
 
 }
 
-func Run(token string) {
+func Run() {
 
 	zone.NewGlobal()
 
@@ -247,7 +248,6 @@ func Run(token string) {
 	)
 
 	go func() {
-		// utils.Log("init...")
 
 		store.SendImpl = func(cmd any) {
 			app.Send(cmd)
@@ -255,23 +255,20 @@ func Run(token string) {
 
 		app.SetWindowTitle(fmt.Sprintf("tnote - %v", conf.VERSION))
 
-		store.Send(store.StatusPayload{
-			Loading: true,
-			Message: "loading...",
+		pfList := gs.Filter([]string{
+			utils.Ternary(conf.HasGithub(), conf.PF_GITHUB, ""),
+			utils.Ternary(conf.HasGitee(), conf.PF_GITEE, ""),
+		}, func(pf string, index int) bool {
+			return len(pf) > 0
 		})
 
-		store.Setup(token)
+		if len(pfList) == 1 {
+			conf.PF_CURRENT = pfList[0]
+			store.Setup()
+		} else {
+			store.Send(store.CMD_SHOW_PLATFORM(true))
+		}
 
-		store.Send(store.StatusPayload{Loading: false})
-		store.Send(store.CMD_REFRESH_FILES(""))
-		store.Send(store.CMD_UPDATE_FILE(""))
-
-		// time.Sleep(time.Second * 3)
-		// app.Send(dialog.DialogPayload{
-		// 	Message:     "hello world",
-		// 	Mode:        1,
-		// 	PromptValue: "这个是默认值",
-		// })
 	}()
 
 	if _, err := app.Run(); err != nil {
