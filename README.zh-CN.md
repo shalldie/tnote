@@ -11,7 +11,7 @@
 
 <img src="https://user-images.githubusercontent.com/9987486/229472271-62a5d923-f7b7-416c-913e-c842ecc2de4d.png" width="320" />
 
-### Cloud Notebook in terminal, based on Github Gist. 🦋
+### Cloud Notebook in terminal, based on Gist. 🦋
 
 `终端中运行的云笔记本，基于 Github Gist 构建。`
 
@@ -32,7 +32,7 @@
 
 - [x] 应用 🎯
   - [x] 快捷键、鼠标操作
-  - [x] 云端存储持久化
+  - [x] 云端存储持久化，支持 Github/Gitee
   - [x] 国际化
 - [x] 文件
   - [x] 增删查改
@@ -46,17 +46,20 @@
 
 ## 准备&配置
 
-应用基于 github gist 构建，需要去 [申请 access token](https://github.com/settings/tokens/new)，然后添加到环境变量 `TNOTE_GIST_TOKEN`。
+应用基于 gist 构建，支持 Github/Gitee 平台。
+
+- [申请 Github access token](https://github.com/settings/tokens/new)，添加到环境变量 `TNOTE_GIST_TOKEN`。
+- [申请 Gitee access token](https://gitee.com/profile/personal_access_tokens/new)，添加到环境变量 `TNOTE_GIST_TOKEN_GITEE`。
 
 ```bash
-# ~/.bashrc
+# ~/.bashrc, github
 export TNOTE_GIST_TOKEN="<your_access_token>"
 ```
 
-| 环境变量              | 默认值  | 描述                                 |
-| :-------------------- | :-----: | :----------------------------------- |
-| `TNOTE_GIST_TOKEN`    |         | 申请到的 access token                |
-| `TNOTE_LANG` / `LANG` | `en_US` | 使用的语言，可选值：`en_US`、`zh_CN` |
+| 环境变量                                      | 默认值  | 描述                                 |
+| :-------------------------------------------- | :-----: | :----------------------------------- |
+| `TNOTE_GIST_TOKEN` / `TNOTE_GIST_TOKEN_GITEE` |         | 申请到的 access token                |
+| `TNOTE_LANG` / `LANG`                         | `en_US` | 使用的语言，可选值：`en_US`、`zh_CN` |
 
 ## 安装&运行
 
