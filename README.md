@@ -49,7 +49,7 @@ English | [中文](./README.zh-CN.md)
 The application is built on gist, support Github/Gitee.
 
 - [Applying for Github access token](https://github.com/settings/tokens/new), and then add it to the environment variable `TNOTE_GIST_TOKEN`。
-- [Applying for Gitee access token](https://github.com/settings/tokens/new), and then add it to the environment variable `TNOTE_GIST_TOKEN`。
+- [Applying for Gitee access token](https://gitee.com/profile/personal_access_tokens/new), and then add it to the environment variable `TNOTE_GIST_TOKEN_GITEE`。
 
 ```bash
 # ~/.bashrc, github
