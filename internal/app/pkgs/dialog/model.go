@@ -15,6 +15,12 @@ import (
 	"github.com/shalldie/tnote/internal/utils"
 )
 
+// https://github.com/charmbracelet/lipgloss/releases
+// 等待 lipgloss 升级到 v2
+// 可使用 layer、canvas 实现更灵活的布局
+// pr: https://github.com/charmbracelet/lipgloss/pull/591
+
+// v1 时候其它用户的尝试：
 // https://github.com/charmbracelet/lipgloss/pull/102/files
 
 type DialogModel struct {
