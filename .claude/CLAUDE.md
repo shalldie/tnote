@@ -12,7 +12,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 # 本地运行（需在环境变量中设置 TNOTE_GIST_TOKEN 或 TNOTE_GIST_TOKEN_GITEE）
 go run main.go
 
-# 交叉编译发布产物到 ./output（linux/darwin，amd64/arm64），并用 upx 压缩
+# 交叉编译发布产物到 ./output（linux/darwin/windows，amd64/arm64），并用 upx 压缩
 bash ./scripts/build.sh
 
 # 单目标构建
@@ -23,7 +23,7 @@ go vet ./...
 gofmt -l .
 ```
 
-仓库中没有测试代码。需要 `go@1.25+`（见 `go.mod`）。
+仓库中没有测试代码。需要 `go@1.26+`（见 `go.mod`）。
 
 ### 必需的环境变量
 - `TNOTE_GIST_TOKEN`（GitHub token）或 `TNOTE_GIST_TOKEN_GITEE`（Gitee token）：至少设置一个，否则启动时直接退出（`internal/conf/conf.go`）。若两者都设置，启动时会提示选择平台。
@@ -32,7 +32,9 @@ gofmt -l .
 ## 架构
 
 ### Bubble Tea（Elm 架构）
-UI 基于 `charmbracelet/bubbletea`。每个组件都遵循 `Init` / `Update(msg) (model, cmd)` / `View() string` 三元组，且都是**值类型**——`Update` 返回的是新副本，因此修改后必须重新赋值回去（参见 `internal/app/app.go` 的 `AppModel.propagate`）。根模型 `AppModel` 组合了四个子组件并向它们转发消息：`FileList`、`FilePanel`、`StatusBar`、`Dialog`。
+UI 基于 charmbracelet 的 **v2** 系列。注意导入路径：bubbletea/bubbles/lipgloss/glamour 均为 vanity 域名 `charm.land/*/v2`，bubblezone 例外，是 `github.com/lrstanley/bubblezone/v2`。每个组件都遵循 `Init` / `Update(msg) (model, cmd)` / `View()` 三元组，且都是**值类型**——`Update` 返回的是新副本，因此修改后必须重新赋值回去（参见 `internal/app/app.go` 的 `AppModel.propagate`）。根模型 `AppModel` 组合了四个子组件并向它们转发消息：`FileList`、`FilePanel`、`StatusBar`、`Dialog`。
+
+> v2 关键差异（迁移易踩坑）：只有根模型 `AppModel.View()` 返回 `tea.View`，且程序级开关（AltScreen、鼠标模式、窗口标题）是在这个 `tea.View` 的字段上设置的（不再走 `NewProgram` options）；**所有子组件的 `View()` 仍返回 `string`**。鼠标消息按类型分裂为 `tea.MouseClickMsg`/`tea.MouseWheelMsg` 等（不再是单结构体 + Action）；键盘消息用 `tea.KeyPressMsg`（`tea.KeyMsg` 是接口）。`lipgloss.Style.Width(n)` 在 v2 是**含边框在内**的目标宽度（`BoxModel.Render` 据此用 `Width(m.Width)`）。
 
 ### store：全局状态 + 消息总线（`internal/app/store`）
 这是串联各组件的核心，是理解本项目的关键：
@@ -61,7 +63,7 @@ UI 基于 `charmbracelet/bubbletea`。每个组件都遵循 `Init` / `Update(msg
 - `BoxModel`：内嵌 `BaseModel`，增加带 header/footer 标题的边框盒渲染。
 
 ### 鼠标区域（mouse zones）
-用 `lrstanley/bubblezone` 标记可点击区域。`zone.Scan` 包裹根视图；组件用 `zone.Mark(m.ID, ...)` 标记自己的输出，并在鼠标事件里用 `zone.Get(id).InBounds(msg)` 判断命中。ID 前缀由 `NewBaseModel` 中的 `zone.NewPrefix()` 生成。
+用 `lrstanley/bubblezone/v2` 标记可点击区域。`zone.Scan` 包裹根视图；组件用 `zone.Mark(m.ID, ...)` 标记自己的输出，并在鼠标事件里用 `zone.Get(id).InBounds(msg)` 判断命中。ID 前缀由 `NewBaseModel` 中的 `zone.NewPrefix()` 生成。
 
 ## CI / 发布
 `.github/workflows/ci.yml` 在每次 push 时通过 `scripts/build.sh` 构建；在打 tag（`v*`）时通过 GitHub Release 发布二进制。`.github/workflows/docker.yml` 在打 tag 时构建并推送多架构 Docker 镜像。应用版本号硬编码在 `internal/conf/conf.go`（`VERSION`）。

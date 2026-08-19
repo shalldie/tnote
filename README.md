@@ -67,11 +67,13 @@ export TNOTE_GIST_TOKEN="<your_access_token>"
 
 [Download](https://github.com/shalldie/tnote/releases), download and execute it, adding to `PATH` would be even better.
 
-| File                 | OS                       |
-| :------------------- | :----------------------- |
-| `tnote.darwin-amd64` | `Mac amd64`、`Mac arm64` |
-| `tnote.linux-amd64`  | `Linux amd64`            |
-| `tnote.linux-arm64`  | `Linux arm64`            |
+| File                    | OS            |
+| :---------------------- | :------------ |
+| `tnote.darwin-amd64`    | `Mac amd64`   |
+| `tnote.darwin-arm64`    | `Mac arm64`   |
+| `tnote.linux-amd64`     | `Linux amd64` |
+| `tnote.linux-arm64`     | `Linux arm64` |
+| `tnote.windows-amd64.exe` | `Windows amd64` |
 
 example:
 
@@ -86,7 +88,7 @@ tnote
 
 ### 2. go install
 
-Need `go@1.20+` environment.
+Need `go@1.26+` environment.
 
 ```bash
 # install
