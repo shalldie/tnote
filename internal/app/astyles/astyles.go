@@ -1,8 +1,8 @@
 package astyles
 
-import "github.com/charmbracelet/lipgloss"
+import "charm.land/lipgloss/v2"
 
-const (
+var (
 	// 绿色
 	PRIMARY_NORMAL_COLOR = lipgloss.Color("#215c41")
 	// PRIMARY_NORMAL_COLOR = lipgloss.Color("#ddd")

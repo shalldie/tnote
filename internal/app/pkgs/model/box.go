@@ -1,9 +1,10 @@
 package model
 
 import (
+	"image/color"
 	"strings"
 
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/lipgloss/v2"
 	"github.com/shalldie/tnote/internal/app/astyles"
 	"github.com/shalldie/tnote/internal/utils"
 )
@@ -20,12 +21,12 @@ type BoxModel struct {
 	// footer title
 	FTitle string
 
-	BorderNormalColor lipgloss.Color
+	BorderNormalColor color.Color
 
-	BorderActiveColor lipgloss.Color
+	BorderActiveColor color.Color
 }
 
-func (m *BoxModel) curForeground() lipgloss.Color {
+func (m *BoxModel) curForeground() color.Color {
 	return utils.Ternary(m.Active, m.BorderActiveColor, m.BorderNormalColor)
 }
 
@@ -37,7 +38,7 @@ func (m *BoxModel) curStyle() lipgloss.Style {
 func (m *BoxModel) Render(innerView string) string {
 	style := lipgloss.NewStyle().
 		Margin(0).
-		Width(m.Width - 2).Height(m.Height - 2).
+		Width(m.Width).Height(m.Height - 2).
 		Border(boxBorder).
 		BorderTop(false).BorderBottom(false).
 		BorderForeground(m.curForeground())
@@ -108,6 +109,5 @@ func NewBoxModel() *BoxModel {
 		BorderActiveColor: astyles.PRIMARY_ACTIVE_COLOR,
 	}
 
-	lipgloss.NewStyle().Border(lipgloss.ThickBorder()).BorderForeground()
 	return m
 }

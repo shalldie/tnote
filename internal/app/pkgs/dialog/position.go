@@ -3,12 +3,9 @@
 package dialog
 
 import (
-	"bytes"
 	"strings"
 
-	"github.com/mattn/go-runewidth"
-	"github.com/muesli/ansi"
-	"github.com/muesli/reflow/truncate"
+	"github.com/charmbracelet/x/ansi"
 	"github.com/shalldie/tnote/internal/utils"
 )
 
@@ -45,8 +42,8 @@ func PlaceOverlay(x, y int, fg, bg string /* opts ...lipgloss.WhitespaceOption *
 
 		pos := 0
 		if x > 0 {
-			left := truncate.String(bgLine, uint(x))
-			pos = ansi.PrintableRuneWidth(left)
+			left := ansi.Truncate(bgLine, x, "")
+			pos = ansi.StringWidth(left)
 			b.WriteString(left)
 			if pos < x {
 				b.WriteString(ws.render(x - pos))
@@ -56,11 +53,11 @@ func PlaceOverlay(x, y int, fg, bg string /* opts ...lipgloss.WhitespaceOption *
 
 		fgLine := fgLines[i-y]
 		b.WriteString(fgLine)
-		pos += ansi.PrintableRuneWidth(fgLine)
+		pos += ansi.StringWidth(fgLine)
 
-		right := cutLeft(bgLine, pos)
-		bgWidth := ansi.PrintableRuneWidth(bgLine)
-		rightWidth := ansi.PrintableRuneWidth(right)
+		right := ansi.TruncateLeft(bgLine, pos, "")
+		bgWidth := ansi.StringWidth(bgLine)
+		rightWidth := ansi.StringWidth(right)
 		if rightWidth <= bgWidth-pos {
 			b.WriteString(ws.render(bgWidth - rightWidth - pos))
 		}
@@ -68,47 +65,6 @@ func PlaceOverlay(x, y int, fg, bg string /* opts ...lipgloss.WhitespaceOption *
 		b.WriteString(right)
 	}
 
-	return b.String()
-}
-
-// cutLeft cuts printable characters from the left.
-// This function is heavily based on muesli's ansi and truncate packages.
-func cutLeft(s string, cutWidth int) string {
-	var (
-		pos    int
-		isAnsi bool
-		ab     bytes.Buffer
-		b      bytes.Buffer
-	)
-	for _, c := range s {
-		var w int
-		if c == ansi.Marker || isAnsi {
-			isAnsi = true
-			ab.WriteRune(c)
-			if ansi.IsTerminator(c) {
-				isAnsi = false
-				if bytes.HasSuffix(ab.Bytes(), []byte("[0m")) {
-					ab.Reset()
-				}
-			}
-		} else {
-			w = runewidth.RuneWidth(c)
-		}
-
-		if pos >= cutWidth {
-			if b.Len() == 0 {
-				if ab.Len() > 0 {
-					b.Write(ab.Bytes())
-				}
-				if pos-cutWidth > 1 {
-					b.WriteByte(' ')
-					continue
-				}
-			}
-			b.WriteRune(c)
-		}
-		pos += w
-	}
 	return b.String()
 }
 
@@ -122,7 +78,7 @@ func getLines(s string) (lines []string, widest int) {
 	lines = strings.Split(s, "\n")
 
 	for _, l := range lines {
-		w := ansi.PrintableRuneWidth(l)
+		w := ansi.StringWidth(l)
 		if widest < w {
 			widest = w
 		}

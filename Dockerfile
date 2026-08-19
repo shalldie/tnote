@@ -1,5 +1,5 @@
 # --- 构建 ---
-FROM golang:1.20-alpine AS builder
+FROM golang:1.26-alpine AS builder
 
 COPY ./ /app/
 

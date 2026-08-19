@@ -1,8 +1,8 @@
 package file_list
 
 import (
-	"github.com/charmbracelet/bubbles/key"
-	"github.com/charmbracelet/bubbles/list"
+	"charm.land/bubbles/v2/key"
+	"charm.land/bubbles/v2/list"
 	"github.com/shalldie/tnote/internal/i18n"
 )
 

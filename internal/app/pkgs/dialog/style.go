@@ -1,6 +1,6 @@
 package dialog
 
-import "github.com/charmbracelet/lipgloss"
+import "charm.land/lipgloss/v2"
 
 var dialogBoxStyle = lipgloss.NewStyle().
 	// Border(lipgloss.ThickBorder()).

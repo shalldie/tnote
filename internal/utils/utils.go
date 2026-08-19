@@ -2,9 +2,11 @@ package utils
 
 import (
 	"errors"
+	"os"
+	"sync"
 
-	"github.com/charmbracelet/glamour"
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/glamour/v2"
+	"charm.land/lipgloss/v2"
 )
 
 // 三元运算
@@ -28,11 +30,7 @@ func MathMin(a int, b int) int {
 
 // 渲染 markdown
 func RenderMarkdown(content string, width int) string {
-	background := "light"
-
-	if lipgloss.HasDarkBackground() {
-		background = "dark"
-	}
+	background := detectBackground()
 
 	r, _ := glamour.NewTermRenderer(
 		glamour.WithWordWrap(width),
@@ -46,6 +44,24 @@ func RenderMarkdown(content string, width int) string {
 		return errors.Unwrap(err).Error()
 	}
 	return markdown
+}
+
+// 终端背景色只探测一次并缓存。
+// lipgloss v2 的 HasDarkBackground 会向终端发送 OSC 查询并同步等待响应，
+// 若每次渲染 markdown 都调用，列表上下切换时会因这次阻塞式终端 I/O 偶发卡顿。
+var (
+	bgOnce  sync.Once
+	bgValue string
+)
+
+func detectBackground() string {
+	bgOnce.Do(func() {
+		bgValue = "light"
+		if lipgloss.HasDarkBackground(os.Stdin, os.Stdout) {
+			bgValue = "dark"
+		}
+	})
+	return bgValue
 }
 
 // func Log(msg string) {

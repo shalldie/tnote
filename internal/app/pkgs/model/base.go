@@ -1,6 +1,6 @@
 package model
 
-import zone "github.com/lrstanley/bubblezone"
+import zone "github.com/lrstanley/bubblezone/v2"
 
 type IBaseModel interface {
 	// Init() tea.Cmd

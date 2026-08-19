@@ -1,7 +1,7 @@
 package file_panel
 
 import (
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
 )
@@ -85,7 +85,7 @@ func (m FilePanelModel) Update(msg tea.Msg) (FilePanelModel, tea.Cmd) {
 	// 	}
 	// 	return m, nil
 
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		switch msg.String() {
 		// case "left":
 		// 	m.Active = false

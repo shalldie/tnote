@@ -2,12 +2,13 @@ package file_list
 
 import (
 	"fmt"
+	"os"
 
-	"github.com/charmbracelet/bubbles/list"
-	"github.com/charmbracelet/bubbles/spinner"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-	zone "github.com/lrstanley/bubblezone"
+	"charm.land/bubbles/v2/list"
+	"charm.land/bubbles/v2/spinner"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
+	zone "github.com/lrstanley/bubblezone/v2"
 	"github.com/shalldie/gog/gs"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
@@ -57,22 +58,29 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 
 	switch msg := msg.(type) {
 
-	case tea.MouseMsg:
+	case tea.MouseWheelMsg:
 		if store.State.InputFocus || !zone.Get(m.ID).InBounds(msg) {
 			return m, nil
 		}
 		isHover := m.Active && zone.Get(m.ID).InBounds(msg)
 		// 向下滚动
-		if isHover && msg.Button == tea.MouseButtonWheelDown && msg.Action == tea.MouseActionPress {
+		if isHover && msg.Button == tea.MouseWheelDown {
 			m.list.CursorDown()
 		}
 		// 向上 滚动
-		if isHover && msg.Button == tea.MouseButtonWheelUp && msg.Action == tea.MouseActionPress {
+		if isHover && msg.Button == tea.MouseWheelUp {
 			m.list.CursorUp()
 		}
 
+		return m, nil
+
+	case tea.MouseClickMsg:
+		if store.State.InputFocus || !zone.Get(m.ID).InBounds(msg) {
+			return m, nil
+		}
+
 		// click
-		if msg.Button == tea.MouseButtonLeft && msg.Action == tea.MouseActionPress {
+		if msg.Button == tea.MouseLeft {
 			// active
 			if !m.Active {
 				go store.Send(store.CMD_APP_FOCUS(1))
@@ -100,7 +108,7 @@ func (m FileListModel) Update(msg tea.Msg) (FileListModel, tea.Cmd) {
 		m.selectFile(string(msg))
 		return m, nil
 
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 
 		// ready 了才能操作
 		if len(m.list.Items()) <= 0 {
@@ -194,17 +202,19 @@ func New() FileListModel {
 	s.Style = lipgloss.NewStyle().Foreground(lipgloss.Color("#fff"))
 
 	// listDelegate，list item 选中色
+	lightDark := lipgloss.LightDark(lipgloss.HasDarkBackground(os.Stdin, os.Stdout))
+	selectedColor := lightDark(lipgloss.Color("#000000"), lipgloss.Color("#00acf8"))
 	listDelegate := list.NewDefaultDelegate()
 	listDelegate.Styles.SelectedTitle = listDelegate.Styles.SelectedTitle.Copy().
-		Foreground(lipgloss.AdaptiveColor{Light: "#000000", Dark: "#00acf8"}).
+		Foreground(selectedColor).
 		BorderStyle(lipgloss.ThickBorder()).
-		BorderLeftForeground(lipgloss.AdaptiveColor{Light: "#000000", Dark: "#00acf8"}).
+		BorderLeftForeground(selectedColor).
 		Bold(true)
 
 	listDelegate.Styles.SelectedDesc = listDelegate.Styles.SelectedDesc.Copy().
 		Foreground(listDelegate.Styles.NormalDesc.GetForeground()).
 		BorderStyle(lipgloss.ThickBorder()).
-		BorderLeftForeground(lipgloss.AdaptiveColor{Light: "#000000", Dark: "#00acf8"})
+		BorderLeftForeground(selectedColor)
 
 	// list
 	list := list.New([]list.Item{}, listDelegate, 0, 0)
