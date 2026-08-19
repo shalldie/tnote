@@ -24,7 +24,7 @@ func (m *FileListModel) renameFile(file *gist.GistFile) {
 				return false
 			}
 
-			go func() {
+			store.SafeGo(func() {
 				go store.Send(store.StatusPayload{
 					Loading: true,
 					Message: i18n.Get(i18nTpl, "rename_renaming"),
@@ -41,7 +41,7 @@ func (m *FileListModel) renameFile(file *gist.GistFile) {
 					Duration: 5,
 				})
 				store.Send(store.CMD_REFRESH_FILES(newname))
-			}()
+			})
 
 			return true
 		},

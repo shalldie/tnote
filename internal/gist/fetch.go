@@ -6,12 +6,13 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
+	"time"
 )
 
 const SPECIAL_DESCRIPTION = "Private gist for tnote."
 
 func fetch(fetchUrl string, fetchOptions *FetchOptions) []byte {
-	client := &http.Client{}
+	client := &http.Client{Timeout: 10 * time.Second}
 
 	queryValues := url.Values{}
 

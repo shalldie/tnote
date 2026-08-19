@@ -37,7 +37,7 @@ func (m *StatusBarModel) showPlatform() {
 			}
 
 			conf.PF_CURRENT = args[0]
-			go store.Setup()
+			store.SafeGo(store.Setup)
 			return true
 		},
 	})

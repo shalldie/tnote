@@ -101,7 +101,7 @@ func (m EditorModel) Update(msg tea.Msg) (EditorModel, tea.Cmd) {
 		case "esc":
 			if m.TextArea.Focused() {
 				go store.Send(store.CMD_INVOKE_EDIT(false))
-				go m.Save()
+				store.SafeGo(m.Save)
 				return m, nil
 			}
 		}

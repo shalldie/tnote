@@ -264,7 +264,7 @@ func Run() {
 
 		if len(pfList) == 1 {
 			conf.PF_CURRENT = pfList[0]
-			store.Setup()
+			store.SafeGo(store.Setup)
 		} else {
 			store.Send(store.CMD_SHOW_PLATFORM(true))
 		}

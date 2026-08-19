@@ -14,7 +14,7 @@ func (m *FileListModel) delFile(filename string) {
 		Title:   i18n.Get(i18nTpl, "del_title"),
 		Message: fmt.Sprintf(i18n.Get(i18nTpl, "del_confirm"), filename),
 		FnOK: func(args ...string) bool {
-			go func() {
+			store.SafeGo(func() {
 				go store.Send(store.StatusPayload{
 					Loading: true,
 					Message: i18n.Get(i18nTpl, "del_deleting"),
@@ -29,7 +29,7 @@ func (m *FileListModel) delFile(filename string) {
 				})
 				store.Send(store.CMD_REFRESH_FILES(""))
 				store.Send(store.CMD_UPDATE_FILE(""))
-			}()
+			})
 
 			return true
 		},

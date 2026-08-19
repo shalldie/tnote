@@ -35,7 +35,7 @@ func (m *FileListModel) newFile() {
 				return false
 			}
 
-			go func() {
+			store.SafeGo(func() {
 				go store.Send(store.StatusPayload{
 					Loading: true,
 					Message: i18n.Get(i18nTpl, "new_creating"),
@@ -49,7 +49,7 @@ func (m *FileListModel) newFile() {
 				})
 				store.Send(store.CMD_REFRESH_FILES(filename))
 				store.Send(store.CMD_UPDATE_FILE(""))
-			}()
+			})
 
 			return true
 		},
