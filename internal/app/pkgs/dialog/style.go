@@ -14,7 +14,7 @@ var buttonStyle = lipgloss.NewStyle().
 	MarginTop(1).
 	MarginLeft(2)
 
-var activeButtonStyle = buttonStyle.Copy().
+var activeButtonStyle = buttonStyle.
 	Foreground(lipgloss.Color("#FFF7DB")).
 	Background(lipgloss.Color("#F25D94")).
 	// MarginRight(2).

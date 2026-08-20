@@ -205,13 +205,13 @@ func New() FileListModel {
 	lightDark := lipgloss.LightDark(lipgloss.HasDarkBackground(os.Stdin, os.Stdout))
 	selectedColor := lightDark(lipgloss.Color("#000000"), lipgloss.Color("#00acf8"))
 	listDelegate := list.NewDefaultDelegate()
-	listDelegate.Styles.SelectedTitle = listDelegate.Styles.SelectedTitle.Copy().
+	listDelegate.Styles.SelectedTitle = listDelegate.Styles.SelectedTitle.
 		Foreground(selectedColor).
 		BorderStyle(lipgloss.ThickBorder()).
 		BorderLeftForeground(selectedColor).
 		Bold(true)
 
-	listDelegate.Styles.SelectedDesc = listDelegate.Styles.SelectedDesc.Copy().
+	listDelegate.Styles.SelectedDesc = listDelegate.Styles.SelectedDesc.
 		Foreground(listDelegate.Styles.NormalDesc.GetForeground()).
 		BorderStyle(lipgloss.ThickBorder()).
 		BorderLeftForeground(selectedColor)

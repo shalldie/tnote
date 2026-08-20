@@ -102,12 +102,12 @@ func (m StatusBarModel) View() string {
 		Padding(0, 1)
 
 	// status
-	statusStyle := baseStyle.Copy().
+	statusStyle := baseStyle.
 		// Foreground(lipgloss.AdaptiveColor{Light: "#343433", Dark: "#C1C6B2"}).
 		Background(lipgloss.Color("#F25D94"))
 	statusCol := statusStyle.Render(m.spinner.View())
 	if !store.State.Status.Loading {
-		statusStyle = statusStyle.Copy().Background(lipgloss.Color("#42b883"))
+		statusStyle = statusStyle.Background(lipgloss.Color("#42b883"))
 		statusCol = statusStyle.Render("✔") // √,✓,✔
 	}
 
@@ -116,16 +116,16 @@ func (m StatusBarModel) View() string {
 	// helpCol := helpStyle.Render("🛎️  Help - F12")
 
 	// platform
-	pfStyle := baseStyle.Copy().Background(lipgloss.Color("#A550DF"))
+	pfStyle := baseStyle.Background(lipgloss.Color("#A550DF"))
 	pfCol := zone.Mark(PLATFORM_ID, pfStyle.Render(conf.PF_CURRENT+" - F10"))
 
 	// version
-	versionStyle := baseStyle.Copy().Background(lipgloss.Color("#6124DF"))
+	versionStyle := baseStyle.Background(lipgloss.Color("#6124DF"))
 	versionCol := zone.Mark(ABOUT_ID, versionStyle.Render(i18n.Get(i18nTpl, "about")))
 
 	// SPACE
 	w := lipgloss.Width
-	spaceCol := baseStyle.Copy().
+	spaceCol := baseStyle.
 		// Foreground(lipgloss.Color("#FFFDF5")).
 		// Background(lipgloss.Color("#6124DF")).
 		// Width(m.Width - w(statusCol) - w(versionCol) - w(helpCol)).
