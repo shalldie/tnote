@@ -99,14 +99,14 @@ func (m *DialogModel) Close() {
 
 func (m *DialogModel) FnOK() {
 	ok := true
-	if m.Payload.FnOK != nil {
+	if m.Payload.fnOK != nil {
 		result := strings.TrimSpace(m.TextInput.Value())
 		if m.isSelect() {
 			if item, ok := m.Select.SelectedItem().(selectItem); ok {
 				result = string(item)
 			}
 		}
-		ok = m.Payload.FnOK(result)
+		ok = m.Payload.fnOK(result)
 	}
 	if ok {
 		m.Close()

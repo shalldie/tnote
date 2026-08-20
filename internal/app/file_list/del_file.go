@@ -9,11 +9,10 @@ import (
 )
 
 func (m *FileListModel) delFile(filename string) {
-	store.Send(dialog.DialogPayload{
-		Mode:    dialog.ModeConfirm,
-		Title:   i18n.Get(i18nTpl, "del_title"),
-		Message: fmt.Sprintf(i18n.Get(i18nTpl, "del_confirm"), filename),
-		FnOK: func(args ...string) bool {
+	store.Send(dialog.Confirm(
+		i18n.Get(i18nTpl, "del_title"),
+		fmt.Sprintf(i18n.Get(i18nTpl, "del_confirm"), filename),
+		func() bool {
 			store.SafeGo(func() {
 				go store.Send(store.StatusPayload{
 					Loading: true,
@@ -33,6 +32,6 @@ func (m *FileListModel) delFile(filename string) {
 
 			return true
 		},
-	})
+	))
 
 }

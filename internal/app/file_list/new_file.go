@@ -23,13 +23,11 @@ func validateFilename(filename string) bool {
 }
 
 func (m *FileListModel) newFile() {
-	store.Send(dialog.DialogPayload{
-		Mode:    dialog.ModePrompt,
-		Title:   i18n.Get(i18nTpl, "new_title"),
-		Message: i18n.Get(i18nTpl, "new_message"),
-		FnOK: func(args ...string) bool {
-			filename := args[0]
-
+	store.Send(dialog.Prompt(
+		i18n.Get(i18nTpl, "new_title"),
+		i18n.Get(i18nTpl, "new_message"),
+		"",
+		func(filename string) bool {
 			valid := validateFilename(filename)
 			if !valid {
 				return false
@@ -53,5 +51,5 @@ func (m *FileListModel) newFile() {
 
 			return true
 		},
-	})
+	))
 }

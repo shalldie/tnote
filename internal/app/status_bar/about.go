@@ -27,9 +27,5 @@ Cloud Notebook in terminal. 终端中运行的云笔记本。
 
 	message := utils.RenderMarkdown(strings.TrimSpace(content), 50)
 
-	store.Send(dialog.DialogPayload{
-		Mode:    dialog.ModeAlert,
-		Message: message,
-		Width:   50,
-	})
+	store.Send(dialog.Alert("", message).WithWidth(50))
 }
