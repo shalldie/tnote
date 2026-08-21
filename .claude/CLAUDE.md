@@ -65,5 +65,15 @@ UI 基于 charmbracelet 的 **v2** 系列。注意导入路径：bubbletea/bubbl
 ### 鼠标区域（mouse zones）
 用 `lrstanley/bubblezone/v2` 标记可点击区域。`zone.Scan` 包裹根视图；组件用 `zone.Mark(m.ID, ...)` 标记自己的输出，并在鼠标事件里用 `zone.Get(id).InBounds(msg)` 判断命中。ID 前缀由 `NewBaseModel` 中的 `zone.NewPrefix()` 生成。
 
+bubblezone 靠往字符串里注入**零宽的私有 ANSI 转义序列**来标记区域，最后由 `zone.Scan` 解析出坐标。这决定了叠加渲染的实现方式——见下。
+
+### 模态弹框叠加（`internal/app/pkgs/dialog/position.go`）
+`PlaceOverlay(x, y, fg, bg)` 把对话框 `fg` 叠加到主界面 `bg` 之上（`app.go` 的 `AppModel.View` 调用），做法是**字符串级逐行裁剪拼接**（依赖 `charmbracelet/x/ansi` 的 `Truncate`/`TruncateLeft`/`StringWidth`）。
+
+**为什么不用 lipgloss v2 原生的 `Layer`/`Compositor`**：Compositor 基于 cell-buffer 重绘，合成时只保留可见字符，会**剥离 bubblezone 注入的 ANSI 区域标记**，导致对话框内按钮/输入框的鼠标点击全部失效。字符串拼接则原样保留 `fg` 里的标记，交由外层 `zone.Scan` 正确解析。二者是「视觉合成」与「鼠标命中」两个正交问题，不能互相替代，混用还会互相破坏。
+
+**未来计划**：待 bubblezone 支持把区域标记写入 cell-buffer（而非零宽 ANSI 流）后，即可迁移到原生 `lipgloss.Compositor` 并删除 `position.go`。在此之前，`position.go` 是一段只依赖底层 `x/ansi` 的自有工具代码，跟随 `x/ansi` 升级即可，无需等待任何上游 PR 合并。
+
+
 ## CI / 发布
 `.github/workflows/ci.yml` 在每次 push 时通过 `scripts/build.sh` 构建；在打 tag（`v*`）时通过 GitHub Release 发布二进制。`.github/workflows/docker.yml` 在打 tag 时构建并推送多架构 Docker 镜像。应用版本号硬编码在 `internal/conf/conf.go`（`VERSION`）。

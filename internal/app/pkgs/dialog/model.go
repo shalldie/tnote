@@ -15,13 +15,8 @@ import (
 	"github.com/shalldie/tnote/internal/utils"
 )
 
-// https://github.com/charmbracelet/lipgloss/releases
-// 等待 lipgloss 升级到 v2
-// 可使用 layer、canvas 实现更灵活的布局
-// pr: https://github.com/charmbracelet/lipgloss/pull/591
-
-// v1 时候其它用户的尝试：
-// https://github.com/charmbracelet/lipgloss/pull/102/files
+// 模态弹框叠加到主界面的实现见 position.go 的 PlaceOverlay，
+// 那里也记录了为什么不用 lipgloss v2 原生的 Layer/Compositor。
 
 type DialogModel struct {
 	*model.BoxModel
