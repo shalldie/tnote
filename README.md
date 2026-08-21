@@ -9,11 +9,11 @@ English | [中文](./README.zh-CN.md)
 <!-- 封面区域 -->
 <div align="center">
 
-<img src="https://user-images.githubusercontent.com/9987486/229472271-62a5d923-f7b7-416c-913e-c842ecc2de4d.png" width="320" />
+<img src="./images/logo.png" width="320" />
 
-### Cloud Notebook in terminal, based on Gist. 🦋
+### Cloud notebook in terminal, based on Gist. 🦋
 
-`终端中运行的云笔记本，基于 Gist 构建。`
+`终端中的云笔记本，基于 Gist 构建。`
 
 [![Release Version](https://img.shields.io/github/v/release/shalldie/tnote?display_name=tag&logo=github&style=flat-square)](https://github.com/shalldie/tnote)
 [![Docker Image Version](https://img.shields.io/docker/v/shalldie/tnote/latest?style=flat-square&logo=docker)](https://hub.docker.com/r/shalldie/tnote/tags)
@@ -22,7 +22,7 @@ English | [中文](./README.zh-CN.md)
 [![Build Status](https://img.shields.io/github/actions/workflow/status/shalldie/tnote/ci.yml?logo=github&style=flat-square)](https://github.com/shalldie/tnote/actions)
 [![License](https://img.shields.io/github/license/shalldie/tnote?logo=github&style=flat-square)](https://github.com/shalldie/tnote)
 
-<img src="https://github.com/shalldie/tnote/assets/9987486/57902934-4a58-482a-adff-fafba92dbae9" width="900">
+<img src="./images/tnote.webp" width="900">
 
 </div>
 
@@ -67,13 +67,13 @@ export TNOTE_GIST_TOKEN="<your_access_token>"
 
 [Download](https://github.com/shalldie/tnote/releases), download and execute it, adding to `PATH` would be even better.
 
-| File                    | OS            |
-| :---------------------- | :------------ |
-| `tnote.darwin-amd64`    | `Mac amd64`   |
-| `tnote.darwin-arm64`    | `Mac arm64`   |
-| `tnote.linux-amd64`     | `Linux amd64` |
-| `tnote.linux-arm64`     | `Linux arm64` |
-| `tnote.windows-amd64.exe` | `Windows amd64` |
+|  #  | File                      | OS            |
+| :-: | :------------------------ | :------------ |
+|  1  | `tnote.darwin-amd64`      | Mac amd64     |
+|  2  | `tnote.darwin-arm64`      | Mac arm64     |
+|  3  | `tnote.linux-amd64`       | Linux amd64   |
+|  4  | `tnote.linux-arm64`       | Linux arm64   |
+|  5  | `tnote.windows-amd64.exe` | Windows amd64 |
 
 example:
 
