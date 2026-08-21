@@ -3,9 +3,9 @@ package file_list
 import (
 	"fmt"
 
-	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
-	"github.com/shalldie/tnote/internal/app/store"
-	"github.com/shalldie/tnote/internal/i18n"
+	"github.com/shalldie/tnote/v2/internal/app/pkgs/dialog"
+	"github.com/shalldie/tnote/v2/internal/app/store"
+	"github.com/shalldie/tnote/v2/internal/i18n"
 )
 
 func (m *FileListModel) delFile(filename string) {

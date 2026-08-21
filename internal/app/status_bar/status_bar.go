@@ -7,10 +7,10 @@ import (
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
 	zone "github.com/lrstanley/bubblezone/v2"
-	"github.com/shalldie/tnote/internal/app/pkgs/model"
-	"github.com/shalldie/tnote/internal/app/store"
-	"github.com/shalldie/tnote/internal/conf"
-	"github.com/shalldie/tnote/internal/i18n"
+	"github.com/shalldie/tnote/v2/internal/app/pkgs/model"
+	"github.com/shalldie/tnote/v2/internal/app/store"
+	"github.com/shalldie/tnote/v2/internal/conf"
+	"github.com/shalldie/tnote/v2/internal/i18n"
 )
 
 var S_ID = 1

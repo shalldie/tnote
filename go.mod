@@ -1,4 +1,4 @@
-module github.com/shalldie/tnote
+module github.com/shalldie/tnote/v2
 
 go 1.26.0
 

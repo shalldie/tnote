@@ -8,14 +8,14 @@ import (
 	"charm.land/lipgloss/v2"
 	zone "github.com/lrstanley/bubblezone/v2"
 	"github.com/shalldie/gog/gs"
-	"github.com/shalldie/tnote/internal/app/file_list"
-	"github.com/shalldie/tnote/internal/app/file_panel"
-	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
-	"github.com/shalldie/tnote/internal/app/pkgs/model"
-	"github.com/shalldie/tnote/internal/app/status_bar"
-	"github.com/shalldie/tnote/internal/app/store"
-	"github.com/shalldie/tnote/internal/conf"
-	"github.com/shalldie/tnote/internal/utils"
+	"github.com/shalldie/tnote/v2/internal/app/file_list"
+	"github.com/shalldie/tnote/v2/internal/app/file_panel"
+	"github.com/shalldie/tnote/v2/internal/app/pkgs/dialog"
+	"github.com/shalldie/tnote/v2/internal/app/pkgs/model"
+	"github.com/shalldie/tnote/v2/internal/app/status_bar"
+	"github.com/shalldie/tnote/v2/internal/app/store"
+	"github.com/shalldie/tnote/v2/internal/conf"
+	"github.com/shalldie/tnote/v2/internal/utils"
 )
 
 var (

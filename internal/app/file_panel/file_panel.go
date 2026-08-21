@@ -2,8 +2,8 @@ package file_panel
 
 import (
 	tea "charm.land/bubbletea/v2"
-	"github.com/shalldie/tnote/internal/app/pkgs/model"
-	"github.com/shalldie/tnote/internal/app/store"
+	"github.com/shalldie/tnote/v2/internal/app/pkgs/model"
+	"github.com/shalldie/tnote/v2/internal/app/store"
 )
 
 type FilePanelModel struct {

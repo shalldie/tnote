@@ -9,10 +9,10 @@ import (
 	"charm.land/lipgloss/v2"
 	zone "github.com/lrstanley/bubblezone/v2"
 	"github.com/shalldie/gog/gs"
-	"github.com/shalldie/tnote/internal/app/pkgs/model"
-	"github.com/shalldie/tnote/internal/app/store"
-	"github.com/shalldie/tnote/internal/i18n"
-	"github.com/shalldie/tnote/internal/utils"
+	"github.com/shalldie/tnote/v2/internal/app/pkgs/model"
+	"github.com/shalldie/tnote/v2/internal/app/store"
+	"github.com/shalldie/tnote/v2/internal/i18n"
+	"github.com/shalldie/tnote/v2/internal/utils"
 )
 
 // 模态弹框叠加到主界面的实现见 position.go 的 PlaceOverlay，

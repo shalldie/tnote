@@ -3,7 +3,7 @@ package store
 import (
 	"fmt"
 
-	"github.com/shalldie/tnote/internal/i18n"
+	"github.com/shalldie/tnote/v2/internal/i18n"
 )
 
 var i18nTpl = `

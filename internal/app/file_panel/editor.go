@@ -7,12 +7,12 @@ import (
 	"charm.land/bubbles/v2/textarea"
 	tea "charm.land/bubbletea/v2"
 	"charm.land/lipgloss/v2"
-	"github.com/shalldie/tnote/internal/app/astyles"
-	"github.com/shalldie/tnote/internal/app/pkgs/model"
-	"github.com/shalldie/tnote/internal/app/store"
-	"github.com/shalldie/tnote/internal/gist"
-	"github.com/shalldie/tnote/internal/i18n"
-	"github.com/shalldie/tnote/internal/utils"
+	"github.com/shalldie/tnote/v2/internal/app/astyles"
+	"github.com/shalldie/tnote/v2/internal/app/pkgs/model"
+	"github.com/shalldie/tnote/v2/internal/app/store"
+	"github.com/shalldie/tnote/v2/internal/gist"
+	"github.com/shalldie/tnote/v2/internal/i18n"
+	"github.com/shalldie/tnote/v2/internal/utils"
 )
 
 type EditorModel struct {

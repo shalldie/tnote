@@ -7,7 +7,7 @@ import (
 	"strconv"
 
 	"github.com/shalldie/gog/gs"
-	"github.com/shalldie/tnote/internal/conf"
+	"github.com/shalldie/tnote/v2/internal/conf"
 )
 
 const GITHUB_API_PREFIX = "https://api.github.com"

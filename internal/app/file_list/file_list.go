@@ -10,10 +10,10 @@ import (
 	"charm.land/lipgloss/v2"
 	zone "github.com/lrstanley/bubblezone/v2"
 	"github.com/shalldie/gog/gs"
-	"github.com/shalldie/tnote/internal/app/pkgs/model"
-	"github.com/shalldie/tnote/internal/app/store"
-	"github.com/shalldie/tnote/internal/gist"
-	"github.com/shalldie/tnote/internal/i18n"
+	"github.com/shalldie/tnote/v2/internal/app/pkgs/model"
+	"github.com/shalldie/tnote/v2/internal/app/store"
+	"github.com/shalldie/tnote/v2/internal/gist"
+	"github.com/shalldie/tnote/v2/internal/i18n"
 )
 
 type FileListModel struct {

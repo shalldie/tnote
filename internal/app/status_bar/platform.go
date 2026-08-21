@@ -1,10 +1,10 @@
 package status_bar
 
 import (
-	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
-	"github.com/shalldie/tnote/internal/app/store"
-	"github.com/shalldie/tnote/internal/conf"
-	"github.com/shalldie/tnote/internal/i18n"
+	"github.com/shalldie/tnote/v2/internal/app/pkgs/dialog"
+	"github.com/shalldie/tnote/v2/internal/app/store"
+	"github.com/shalldie/tnote/v2/internal/conf"
+	"github.com/shalldie/tnote/v2/internal/i18n"
 )
 
 // zone

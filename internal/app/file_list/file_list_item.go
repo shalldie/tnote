@@ -6,8 +6,8 @@ import (
 
 	"charm.land/lipgloss/v2"
 	zone "github.com/lrstanley/bubblezone/v2"
-	"github.com/shalldie/tnote/internal/conf"
-	"github.com/shalldie/tnote/internal/gist"
+	"github.com/shalldie/tnote/v2/internal/conf"
+	"github.com/shalldie/tnote/v2/internal/gist"
 )
 
 type FileListItem struct {

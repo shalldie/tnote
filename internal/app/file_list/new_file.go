@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"unicode/utf8"
 
-	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
-	"github.com/shalldie/tnote/internal/app/store"
-	"github.com/shalldie/tnote/internal/gist"
-	"github.com/shalldie/tnote/internal/i18n"
+	"github.com/shalldie/tnote/v2/internal/app/pkgs/dialog"
+	"github.com/shalldie/tnote/v2/internal/app/store"
+	"github.com/shalldie/tnote/v2/internal/gist"
+	"github.com/shalldie/tnote/v2/internal/i18n"
 )
 
 func validateFilename(filename string) bool {

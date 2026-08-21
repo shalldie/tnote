@@ -92,7 +92,7 @@ Need `go@1.26+` environment.
 
 ```bash
 # install
-go install github.com/shalldie/tnote@latest
+go install github.com/shalldie/tnote/v2@latest
 # run
 tnote
 ```

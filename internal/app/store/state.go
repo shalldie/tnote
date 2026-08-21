@@ -4,7 +4,7 @@ package store
 import (
 	"sync"
 
-	"github.com/shalldie/tnote/internal/gist"
+	"github.com/shalldie/tnote/v2/internal/gist"
 )
 
 var Gist *gist.Gist

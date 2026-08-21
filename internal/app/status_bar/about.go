@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/shalldie/tnote/internal/app/pkgs/dialog"
-	"github.com/shalldie/tnote/internal/app/store"
-	"github.com/shalldie/tnote/internal/conf"
-	"github.com/shalldie/tnote/internal/utils"
+	"github.com/shalldie/tnote/v2/internal/app/pkgs/dialog"
+	"github.com/shalldie/tnote/v2/internal/app/store"
+	"github.com/shalldie/tnote/v2/internal/conf"
+	"github.com/shalldie/tnote/v2/internal/utils"
 )
 
 // zone

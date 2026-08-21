@@ -3,7 +3,7 @@ package file_list
 import (
 	"charm.land/bubbles/v2/key"
 	"charm.land/bubbles/v2/list"
-	"github.com/shalldie/tnote/internal/i18n"
+	"github.com/shalldie/tnote/v2/internal/i18n"
 )
 
 func newListKeyMap() list.KeyMap {

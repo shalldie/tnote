@@ -5,8 +5,8 @@ import (
 	"strings"
 
 	"charm.land/lipgloss/v2"
-	"github.com/shalldie/tnote/internal/app/astyles"
-	"github.com/shalldie/tnote/internal/utils"
+	"github.com/shalldie/tnote/v2/internal/app/astyles"
+	"github.com/shalldie/tnote/v2/internal/utils"
 )
 
 var boxBorder = lipgloss.ThickBorder()
