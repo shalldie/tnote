@@ -13,14 +13,12 @@ var PLATFORM_ID = "STATUSBAR_SHOW_PLATFORM"
 // 展示 「平台」弹框
 func (m *StatusBarModel) showPlatform() {
 
-	store.Send(dialog.DialogPayload{
-		Mode:       dialog.ModeAlert,
-		Title:      i18n.Get(i18nTpl, "platform"),
-		Message:    i18n.Get(i18nTpl, "selectpf") + "\n",
-		SelectList: []string{conf.PF_GITHUB, conf.PF_GITEE},
-		Width:      50,
-		FnOK: func(args ...string) bool {
-			if args[0] == conf.PF_GITHUB && !conf.HasGithub() {
+	store.Send(dialog.Select(
+		i18n.Get(i18nTpl, "platform"),
+		i18n.Get(i18nTpl, "selectpf")+"\n",
+		[]string{conf.PF_GITHUB, conf.PF_GITEE},
+		func(choice string) bool {
+			if choice == conf.PF_GITHUB && !conf.HasGithub() {
 				go store.Send(store.StatusPayload{
 					Message:  "No $TNOTE_GIST_TOKEN in $PATH",
 					Duration: 3,
@@ -28,7 +26,7 @@ func (m *StatusBarModel) showPlatform() {
 				return false
 			}
 
-			if args[0] == conf.PF_GITEE && !conf.HasGitee() {
+			if choice == conf.PF_GITEE && !conf.HasGitee() {
 				go store.Send(store.StatusPayload{
 					Message:  "No $TNOTE_GIST_TOKEN_GITEE in $PATH",
 					Duration: 3,
@@ -36,9 +34,9 @@ func (m *StatusBarModel) showPlatform() {
 				return false
 			}
 
-			conf.PF_CURRENT = args[0]
-			go store.Setup()
+			conf.PF_CURRENT = choice
+			store.SafeGo(store.Setup)
 			return true
 		},
-	})
+	).WithWidth(50))
 }

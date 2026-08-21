@@ -5,13 +5,13 @@ import (
 	"io"
 	"strings"
 
-	"github.com/charmbracelet/bubbles/list"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/bubbles/v2/list"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/shalldie/gog/gs"
 )
 
-// https://github.com/charmbracelet/bubbletea/blob/master/examples/list-simple/main.go
+// https://charm.land/bubbletea/v2/blob/master/examples/list-simple/main.go
 
 var (
 	itemStyle         = lipgloss.NewStyle().PaddingLeft(4)

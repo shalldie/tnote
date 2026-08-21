@@ -3,10 +3,10 @@ package status_bar
 import (
 	"time"
 
-	"github.com/charmbracelet/bubbles/spinner"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-	zone "github.com/lrstanley/bubblezone"
+	"charm.land/bubbles/v2/spinner"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
+	zone "github.com/lrstanley/bubblezone/v2"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/conf"
@@ -40,7 +40,7 @@ func (m StatusBarModel) Update(msg tea.Msg) (StatusBarModel, tea.Cmd) {
 	switch msg := msg.(type) {
 
 	// 	return m, nil
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		switch msg.String() {
 
 		case "f10":
@@ -59,8 +59,8 @@ func (m StatusBarModel) Update(msg tea.Msg) (StatusBarModel, tea.Cmd) {
 		}
 		return m, nil
 
-	case tea.MouseMsg:
-		if msg.Button != tea.MouseButtonLeft || store.State.InputFocus {
+	case tea.MouseClickMsg:
+		if msg.Button != tea.MouseLeft || store.State.InputFocus {
 			return m, nil
 		}
 		if zone.Get(PLATFORM_ID).InBounds(msg) {
@@ -98,16 +98,16 @@ func (m StatusBarModel) View() string {
 	baseStyle := lipgloss.NewStyle().
 		// Foreground(lipgloss.Color("#FFFDF5")).
 		Foreground(lipgloss.Color("#ffffff")).
-		Background(lipgloss.AdaptiveColor{Light: "#3c3836", Dark: "#3c3836"}).
+		Background(lipgloss.Color("#3c3836")).
 		Padding(0, 1)
 
 	// status
-	statusStyle := baseStyle.Copy().
+	statusStyle := baseStyle.
 		// Foreground(lipgloss.AdaptiveColor{Light: "#343433", Dark: "#C1C6B2"}).
-		Background(lipgloss.AdaptiveColor{Light: "#F25D94", Dark: "#F25D94"})
+		Background(lipgloss.Color("#F25D94"))
 	statusCol := statusStyle.Render(m.spinner.View())
 	if !store.State.Status.Loading {
-		statusStyle = statusStyle.Copy().Background(lipgloss.Color("#42b883"))
+		statusStyle = statusStyle.Background(lipgloss.Color("#42b883"))
 		statusCol = statusStyle.Render("✔") // √,✓,✔
 	}
 
@@ -116,16 +116,16 @@ func (m StatusBarModel) View() string {
 	// helpCol := helpStyle.Render("🛎️  Help - F12")
 
 	// platform
-	pfStyle := baseStyle.Copy().Background(lipgloss.Color("#A550DF"))
+	pfStyle := baseStyle.Background(lipgloss.Color("#A550DF"))
 	pfCol := zone.Mark(PLATFORM_ID, pfStyle.Render(conf.PF_CURRENT+" - F10"))
 
 	// version
-	versionStyle := baseStyle.Copy().Background(lipgloss.Color("#6124DF"))
+	versionStyle := baseStyle.Background(lipgloss.Color("#6124DF"))
 	versionCol := zone.Mark(ABOUT_ID, versionStyle.Render(i18n.Get(i18nTpl, "about")))
 
 	// SPACE
 	w := lipgloss.Width
-	spaceCol := baseStyle.Copy().
+	spaceCol := baseStyle.
 		// Foreground(lipgloss.Color("#FFFDF5")).
 		// Background(lipgloss.Color("#6124DF")).
 		// Width(m.Width - w(statusCol) - w(versionCol) - w(helpCol)).

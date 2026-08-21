@@ -11,20 +11,17 @@ import (
 
 func (m *FileListModel) renameFile(file *gist.GistFile) {
 	filename := file.FileName
-	store.Send(dialog.DialogPayload{
-		Mode:        dialog.ModePrompt,
-		Title:       i18n.Get(i18nTpl, "rename_title"),
-		Message:     fmt.Sprintf(i18n.Get(i18nTpl, "rename_message"), filename),
-		PromptValue: filename,
-		FnOK: func(args ...string) bool {
-			newname := args[0]
-
+	store.Send(dialog.Prompt(
+		i18n.Get(i18nTpl, "rename_title"),
+		fmt.Sprintf(i18n.Get(i18nTpl, "rename_message"), filename),
+		filename,
+		func(newname string) bool {
 			valid := validateFilename(newname)
 			if !valid {
 				return false
 			}
 
-			go func() {
+			store.SafeGo(func() {
 				go store.Send(store.StatusPayload{
 					Loading: true,
 					Message: i18n.Get(i18nTpl, "rename_renaming"),
@@ -41,10 +38,10 @@ func (m *FileListModel) renameFile(file *gist.GistFile) {
 					Duration: 5,
 				})
 				store.Send(store.CMD_REFRESH_FILES(newname))
-			}()
+			})
 
 			return true
 		},
-	})
+	))
 
 }

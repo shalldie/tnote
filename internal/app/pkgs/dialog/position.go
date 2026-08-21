@@ -1,19 +1,21 @@
-// edit from https://github.com/charmbracelet/lipgloss/pull/102/files
-
 package dialog
 
 import (
-	"bytes"
 	"strings"
 
-	"github.com/mattn/go-runewidth"
-	"github.com/muesli/ansi"
-	"github.com/muesli/reflow/truncate"
-	"github.com/shalldie/tnote/internal/utils"
+	"github.com/charmbracelet/x/ansi"
 )
 
-// PlaceOverlay places fg on top of bg.
-func PlaceOverlay(x, y int, fg, bg string /* opts ...lipgloss.WhitespaceOption */) string {
+// PlaceOverlay 把 fg 叠加渲染到 bg 之上（模态弹框用）。
+//
+// 思路源自 https://github.com/charmbracelet/lipgloss/pull/102/files
+// 用字符串级拼接而非 lipgloss v2 的原生 Layer/Compositor：后者在合成时会
+// 剥离 bubblezone 注入的鼠标区域标记，导致对话框内的按钮/输入框点击失效。
+//
+// 未来计划：待 bubblezone 支持把区域标记写入 lipgloss v2 的 cell-buffer
+// （而非当前的零宽 ANSI 转义流）后，本函数即可替换为原生 lipgloss.Compositor，
+// 届时可删除本文件。跟踪点：bubblezone 对 cell-buffer / Canvas 的适配。
+func PlaceOverlay(x, y int, fg, bg string) string {
 	fgLines, fgWidth := getLines(fg)
 	bgLines, bgWidth := getLines(bg)
 	bgHeight := len(bgLines)
@@ -27,12 +29,6 @@ func PlaceOverlay(x, y int, fg, bg string /* opts ...lipgloss.WhitespaceOption *
 	x = clamp(x, 0, bgWidth-fgWidth)
 	y = clamp(y, 0, bgHeight-fgHeight)
 
-	// lipgloss.whitespace
-	ws := &whitespace{}
-	// for _, opt := range opts {
-	// 	opt(ws)
-	// }
-
 	var b strings.Builder
 	for i, bgLine := range bgLines {
 		if i > 0 {
@@ -45,24 +41,26 @@ func PlaceOverlay(x, y int, fg, bg string /* opts ...lipgloss.WhitespaceOption *
 
 		pos := 0
 		if x > 0 {
-			left := truncate.String(bgLine, uint(x))
-			pos = ansi.PrintableRuneWidth(left)
+			left := ansi.Truncate(bgLine, x, "")
+			pos = ansi.StringWidth(left)
 			b.WriteString(left)
 			if pos < x {
-				b.WriteString(ws.render(x - pos))
+				// 用空格填充左侧留白（原 lipgloss whitespace 渲染器仅在此处
+				// 输出纯空格；带样式/宽字符的填充能力从未启用，故直接内联）
+				b.WriteString(strings.Repeat(" ", x-pos))
 				pos = x
 			}
 		}
 
 		fgLine := fgLines[i-y]
 		b.WriteString(fgLine)
-		pos += ansi.PrintableRuneWidth(fgLine)
+		pos += ansi.StringWidth(fgLine)
 
-		right := cutLeft(bgLine, pos)
-		bgWidth := ansi.PrintableRuneWidth(bgLine)
-		rightWidth := ansi.PrintableRuneWidth(right)
+		right := ansi.TruncateLeft(bgLine, pos, "")
+		bgWidth := ansi.StringWidth(bgLine)
+		rightWidth := ansi.StringWidth(right)
 		if rightWidth <= bgWidth-pos {
-			b.WriteString(ws.render(bgWidth - rightWidth - pos))
+			b.WriteString(strings.Repeat(" ", bgWidth-rightWidth-pos))
 		}
 
 		b.WriteString(right)
@@ -71,49 +69,8 @@ func PlaceOverlay(x, y int, fg, bg string /* opts ...lipgloss.WhitespaceOption *
 	return b.String()
 }
 
-// cutLeft cuts printable characters from the left.
-// This function is heavily based on muesli's ansi and truncate packages.
-func cutLeft(s string, cutWidth int) string {
-	var (
-		pos    int
-		isAnsi bool
-		ab     bytes.Buffer
-		b      bytes.Buffer
-	)
-	for _, c := range s {
-		var w int
-		if c == ansi.Marker || isAnsi {
-			isAnsi = true
-			ab.WriteRune(c)
-			if ansi.IsTerminator(c) {
-				isAnsi = false
-				if bytes.HasSuffix(ab.Bytes(), []byte("[0m")) {
-					ab.Reset()
-				}
-			}
-		} else {
-			w = runewidth.RuneWidth(c)
-		}
-
-		if pos >= cutWidth {
-			if b.Len() == 0 {
-				if ab.Len() > 0 {
-					b.Write(ab.Bytes())
-				}
-				if pos-cutWidth > 1 {
-					b.WriteByte(' ')
-					continue
-				}
-			}
-			b.WriteRune(c)
-		}
-		pos += w
-	}
-	return b.String()
-}
-
 func clamp(v, lower, upper int) int {
-	return utils.MathMin(utils.MathMax(v, lower), upper)
+	return max(lower, min(v, upper))
 }
 
 // Split a string into lines, additionally returning the size of the widest
@@ -122,7 +79,7 @@ func getLines(s string) (lines []string, widest int) {
 	lines = strings.Split(s, "\n")
 
 	for _, l := range lines {
-		w := ansi.PrintableRuneWidth(l)
+		w := ansi.StringWidth(l)
 		if widest < w {
 			widest = w
 		}

@@ -1,6 +1,6 @@
 package dialog
 
-import "github.com/charmbracelet/lipgloss"
+import "charm.land/lipgloss/v2"
 
 var dialogBoxStyle = lipgloss.NewStyle().
 	// Border(lipgloss.ThickBorder()).
@@ -14,7 +14,7 @@ var buttonStyle = lipgloss.NewStyle().
 	MarginTop(1).
 	MarginLeft(2)
 
-var activeButtonStyle = buttonStyle.Copy().
+var activeButtonStyle = buttonStyle.
 	Foreground(lipgloss.Color("#FFF7DB")).
 	Background(lipgloss.Color("#F25D94")).
 	// MarginRight(2).

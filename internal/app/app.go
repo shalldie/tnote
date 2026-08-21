@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"os"
 
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-	zone "github.com/lrstanley/bubblezone"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
+	zone "github.com/lrstanley/bubblezone/v2"
 	"github.com/shalldie/gog/gs"
 	"github.com/shalldie/tnote/internal/app/file_list"
 	"github.com/shalldie/tnote/internal/app/file_panel"
@@ -155,7 +155,7 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	// 	return m, cmd
 
 	// Is it a key press?
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 
 		// Cool, what was the actual key pressed?
 		switch msg.String() {
@@ -211,7 +211,7 @@ func (m AppModel) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 	return m.propagate(msg)
 }
 
-func (m AppModel) View() string {
+func (m AppModel) View() tea.View {
 
 	viewContainer := lipgloss.NewStyle().
 		Height(m.Height - 1).Render(
@@ -229,11 +229,17 @@ func (m AppModel) View() string {
 		viewContainer,
 	)
 
-	return zone.Scan(lipgloss.JoinVertical(
+	content := zone.Scan(lipgloss.JoinVertical(
 		lipgloss.Top,
 		viewContainer,
 		m.StatusBar.View(),
 	))
+
+	v := tea.NewView(content)
+	v.AltScreen = true
+	v.MouseMode = tea.MouseModeCellMotion
+	v.WindowTitle = fmt.Sprintf("tnote - %v", conf.VERSION)
+	return v
 
 }
 
@@ -243,8 +249,6 @@ func Run() {
 
 	app = tea.NewProgram(
 		newAppModel(),
-		tea.WithAltScreen(),
-		tea.WithMouseCellMotion(),
 	)
 
 	go func() {
@@ -252,8 +256,6 @@ func Run() {
 		store.SendImpl = func(cmd any) {
 			app.Send(cmd)
 		}
-
-		app.SetWindowTitle(fmt.Sprintf("tnote - %v", conf.VERSION))
 
 		pfList := gs.Filter([]string{
 			utils.Ternary(conf.HasGithub(), conf.PF_GITHUB, ""),
@@ -264,7 +266,7 @@ func Run() {
 
 		if len(pfList) == 1 {
 			conf.PF_CURRENT = pfList[0]
-			store.Setup()
+			store.SafeGo(store.Setup)
 		} else {
 			store.Send(store.CMD_SHOW_PLATFORM(true))
 		}

@@ -3,10 +3,10 @@ package file_panel
 import (
 	"fmt"
 
-	"github.com/charmbracelet/bubbles/viewport"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-	zone "github.com/lrstanley/bubblezone"
+	"charm.land/bubbles/v2/viewport"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
+	zone "github.com/lrstanley/bubblezone/v2"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
 	"github.com/shalldie/tnote/internal/gist"
@@ -24,7 +24,7 @@ type MarkdownModel struct {
 func NewMarkdownModel() MarkdownModel {
 	model := MarkdownModel{
 		BoxModel: model.NewBoxModel(),
-		Viewport: viewport.New(0, 0),
+		Viewport: viewport.New(),
 	}
 
 	return model
@@ -33,8 +33,8 @@ func NewMarkdownModel() MarkdownModel {
 func (m *MarkdownModel) Resize(width int, height int) {
 	m.BoxModel.Resize(width, height)
 
-	m.Viewport.Width = width - 2
-	m.Viewport.Height = height - 2
+	m.Viewport.SetWidth(width - 2)
+	m.Viewport.SetHeight(height - 2)
 
 	m.renderFile()
 }
@@ -51,8 +51,8 @@ func (m *MarkdownModel) renderFile() {
 	m.file = curFile
 	if curFile != nil {
 		m.Viewport.SetContent(
-			lipgloss.NewStyle().Width(m.Viewport.Width).Height(m.Viewport.Height).
-				Render(utils.RenderMarkdown(curFile.Content, m.Viewport.Width)),
+			lipgloss.NewStyle().Width(m.Viewport.Width()).Height(m.Viewport.Height()).
+				Render(utils.RenderMarkdown(curFile.Content, m.Viewport.Width())),
 		)
 		m.Viewport.SetYOffset(0)
 	}
@@ -82,27 +82,35 @@ func (m MarkdownModel) Update(msg tea.Msg) (MarkdownModel, tea.Cmd) {
 		m.renderFile()
 		return m, nil
 
-	case tea.MouseMsg:
+	case tea.MouseWheelMsg:
 		if !zone.Get(m.ID).InBounds(msg) || store.State.DialogMode {
 			return m, nil
 		}
 
 		// 向下滚动
-		if msg.Button == tea.MouseButtonWheelDown && msg.Action == tea.MouseActionPress && m.Active {
-			m.Viewport.SetYOffset(m.Viewport.YOffset + 1)
+		if msg.Button == tea.MouseWheelDown && m.Active {
+			m.Viewport.SetYOffset(m.Viewport.YOffset() + 1)
 		}
 		// 向上 滚动
-		if msg.Button == tea.MouseButtonWheelUp && msg.Action == tea.MouseActionPress && m.Active {
-			m.Viewport.SetYOffset(m.Viewport.YOffset - 1)
+		if msg.Button == tea.MouseWheelUp && m.Active {
+			m.Viewport.SetYOffset(m.Viewport.YOffset() - 1)
 		}
+
+		return m, nil
+
+	case tea.MouseClickMsg:
+		if !zone.Get(m.ID).InBounds(msg) || store.State.DialogMode {
+			return m, nil
+		}
+
 		// 点击
-		if msg.Button == tea.MouseButtonLeft && msg.Action == tea.MouseActionPress {
+		if msg.Button == tea.MouseLeft {
 			go store.Send(store.CMD_APP_FOCUS(2))
 		}
 
 		return m, nil
 
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		switch msg.String() {
 		}
 

@@ -4,9 +4,9 @@ import (
 	"fmt"
 	"strings"
 
-	"github.com/charmbracelet/bubbles/textarea"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/bubbles/v2/textarea"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 	"github.com/shalldie/tnote/internal/app/astyles"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
@@ -96,12 +96,12 @@ func (m EditorModel) Update(msg tea.Msg) (EditorModel, tea.Cmd) {
 		}
 		return m, nil
 
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		switch msg.String() {
 		case "esc":
 			if m.TextArea.Focused() {
 				go store.Send(store.CMD_INVOKE_EDIT(false))
-				go m.Save()
+				store.SafeGo(m.Save)
 				return m, nil
 			}
 		}

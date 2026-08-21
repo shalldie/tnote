@@ -3,11 +3,11 @@ package dialog
 import (
 	"strings"
 
-	"github.com/charmbracelet/bubbles/list"
-	"github.com/charmbracelet/bubbles/textinput"
-	tea "github.com/charmbracelet/bubbletea"
-	"github.com/charmbracelet/lipgloss"
-	zone "github.com/lrstanley/bubblezone"
+	"charm.land/bubbles/v2/list"
+	"charm.land/bubbles/v2/textinput"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
+	zone "github.com/lrstanley/bubblezone/v2"
 	"github.com/shalldie/gog/gs"
 	"github.com/shalldie/tnote/internal/app/pkgs/model"
 	"github.com/shalldie/tnote/internal/app/store"
@@ -15,7 +15,8 @@ import (
 	"github.com/shalldie/tnote/internal/utils"
 )
 
-// https://github.com/charmbracelet/lipgloss/pull/102/files
+// 模态弹框叠加到主界面的实现见 position.go 的 PlaceOverlay，
+// 那里也记录了为什么不用 lipgloss v2 原生的 Layer/Compositor。
 
 type DialogModel struct {
 	*model.BoxModel
@@ -93,14 +94,14 @@ func (m *DialogModel) Close() {
 
 func (m *DialogModel) FnOK() {
 	ok := true
-	if m.Payload.FnOK != nil {
+	if m.Payload.fnOK != nil {
 		result := strings.TrimSpace(m.TextInput.Value())
 		if m.isSelect() {
 			if item, ok := m.Select.SelectedItem().(selectItem); ok {
 				result = string(item)
 			}
 		}
-		ok = m.Payload.FnOK(result)
+		ok = m.Payload.fnOK(result)
 	}
 	if ok {
 		m.Close()
@@ -127,7 +128,7 @@ func (m DialogModel) propagate(msg tea.Msg) (DialogModel, tea.Cmd) {
 
 func (m DialogModel) Update(msg tea.Msg) (DialogModel, tea.Cmd) {
 	switch msg := msg.(type) {
-	case tea.KeyMsg:
+	case tea.KeyPressMsg:
 		switch msg.String() {
 		// tab
 		case "tab":
@@ -151,8 +152,8 @@ func (m DialogModel) Update(msg tea.Msg) (DialogModel, tea.Cmd) {
 
 		}
 
-	case tea.MouseMsg:
-		if msg.Button != tea.MouseButtonLeft {
+	case tea.MouseClickMsg:
+		if msg.Button != tea.MouseLeft {
 			return m, nil
 		}
 		if zone.Get(m.ID + "textarea").InBounds(msg) {
@@ -238,9 +239,14 @@ func New() DialogModel {
 	// input
 	input := textinput.New()
 	input.Placeholder = i18n.Get(i18nTpl, "placeholder")
-	input.Width = 30
-	input.PromptStyle = lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
-	input.TextStyle = input.PromptStyle
+	input.SetWidth(30)
+	promptStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("205"))
+	styles := input.Styles()
+	styles.Focused.Prompt = promptStyle
+	styles.Focused.Text = promptStyle
+	styles.Blurred.Prompt = promptStyle
+	styles.Blurred.Text = promptStyle
+	input.SetStyles(styles)
 
 	return DialogModel{
 		BoxModel:  box,
